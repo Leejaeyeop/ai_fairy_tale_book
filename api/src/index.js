@@ -32,64 +32,66 @@ async function createStory() {
 }
 
 async function createImg() {
-  // for(let text of texts[0]) {
-  //   const response = await openai.createImage({
-  //     prompt: text,
-  //     n: 1,
-  //     size: "128x128",
-  //   });
-  //   imgs.push(response.data[0].url)
-  // }
+  for(let text of texts) {
+    const response = await openai.createImage({
+      prompt: text,
+      n: 1,
+      size: "256x256",
+    });
+    imgs.push(response.data.data[0].url)
+  }
   // console.log(texts[0])
-  const response = await openai.createImage({
-    prompt: texts[0],
-    n: 1,
-    size: "256x256",
-  });
-  imgs.push(response.data.data[0].url)
+  // const response = await openai.createImage({
+  //   prompt: texts[0],
+  //   n: 1,
+  //   size: "256x256",
+  // });
+  console.log(imgs)
 }
 
 function initPdf() {
   doc = new pdfDocumnet();
-  doc.pipe(fs.createWriteStream("output.pdf"));
   // doc.font("NanumGothic.ttf");
-
 }
 
-function completePdf() {
-  doc.end()
-}
+// function completePdf() {
+//   doc.end()
+//   console.log("end")
+// }
 
 async function createPdf() {
-  for(let i = 0; i<texts.length; i++) {
-    let text = texts[i]
-    let imgUrl = imgs[i]
-    console.log("시작")
-    https.get(imgUrl, (response) => {
-      console.log(response)
-      const chunks = [];
-    
-      response.on('data', (chunk) => {
-        chunks.push(chunk);
-      });
-    
-      response.on('end', () => {
-        const buffer = Buffer.concat(chunks);
-        const doc = new pdfDocumnet();
-        // doc.pipe(fs.createWriteStream("output.pdf"));
-        console.log("삽입")
-        doc.image(buffer).text(text);
-      });
-    }).on('error', (error) => {
-      console.error(error);
-    });
+  const imgPromises = [];
+  for (let i = 0; i < imgs.length; i++) {
+    let text = texts[i];
+    let imgUrl = imgs[i];
+    imgPromises.push(
+      new Promise((resolve, reject) => {
+        https.get(imgUrl, (response) => {
+          const chunks = [];
+          response.on('data', (chunk) => {
+            chunks.push(chunk);
+          });
+          response.on('end', () => {
+            const buffer = Buffer.concat(chunks);
+            resolve({ buffer, text });
+          });
+        }).on('error', (error) => {
+          reject(error);
+        });
+      })
+    );
   }
-} 
 
-// server open
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
+  for await (const { buffer, text } of imgPromises) {
+    doc.addPage();
+    doc.image(buffer).text(text);
+  }
+
+  doc.pipe(fs.createWriteStream('output.pdf'));
+  doc.end();
+
+  console.log('종료');
+}
 
 async function main() {
   // pdf 파일 생성
@@ -100,10 +102,11 @@ async function main() {
   await createImg()
   // pdf를 만든다.
   await createPdf()
-  // pdf 파일 제작 완료
-  completePdf()
 }
 
-
 main()
-// createImg()
+
+// server open
+app.listen(3000, function () {
+  console.log('Example app listening on port 3000!');
+});
