@@ -1,15 +1,19 @@
-require('dotenv').config();
-const express = require('express');
-const app = express()
-const { Configuration, OpenAIApi } = require("openai");
+import dotenv from 'dotenv'
+import express from 'express';
+import { Configuration, OpenAIApi } from 'openai';
+import * as pdfDocumnet from 'PDFKit';
+import fs from 'fs';
+import https from 'https';
+import pdfjsLib from 'pdfjs-dist';
+
+dotenv.config()
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY
 });
 const openai = new OpenAIApi(configuration);
-const pdfDocumnet = require('pdfkit');
-const fs = require('fs');
-const https = require('https');
+// const pdfDocumnet = require('pdfkit');
 
+const app = express()
 // sample data
 let texts = []
 let imgs = []
@@ -82,6 +86,7 @@ async function createPdf() {
     );
   }
 
+  // 순서를 보장한다... 즉, 여기서 buffer로 보내도 되고, pdf를 생성 해도 된다.
   for await (const { buffer, text } of imgPromises) {
     doc.addPage();
     doc.image(buffer).text(text);
@@ -104,9 +109,36 @@ async function main() {
   await createPdf()
 }
 
-main()
+// main()
 
 // server open
-app.listen(3000, function () {
-  console.log('Example app listening on port 3000!');
-});
+// app.listen(3000, function () {
+//   console.log('Example app listening on port 3000!');
+// });
+function pdfParse() {
+
+  const pdfPath = 'output.pdf'
+  const loadingTask = pdfjsLib.getDocument(pdfPath);
+
+  loadingTask.promise.then( pdf => {
+    const numPages = pdf.numPages
+    for(let i =1; i<=numPages; i++) {
+      pdf.getPage(i).then(page => {
+        const viewport = page.getViewport({ scale:1 });
+        const canvas = document.createElement('canvas')
+        const canvasContext = canvas.getContext('2d')
+        canvas.height = viewport.height
+        canvas.width = viewport.width
+
+        const renderTask = page.render({
+          canvasContext,
+          viewport
+        })
+
+      })
+    }
+  })
+  
+}
+
+pdfParse()
