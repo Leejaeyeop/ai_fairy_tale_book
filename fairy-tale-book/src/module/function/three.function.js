@@ -1,7 +1,9 @@
 import * as THREE from 'three';
 // import { OBJLoader } from 'three/addons/loaders/OBJLoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+
 
 export default class ThreeTest {
     constructor() {
@@ -332,52 +334,96 @@ export default class ThreeTest {
         })
     }
 
+    // async _loadFire() {
+    //     return new Promise((resolve)=> {
+    //         // 불
+    //         this._loader.load(
+    //             '/animated_fire/scene.gltf',
+    //             ( gltf ) => {
+    //                 // add the loaded glTF model to the scene
+    //                 const model = gltf.scene 
+
+    //                 const scaleFactor = 1;
+    //                 model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+    //                 const animations = gltf.animations;
+    //                 const mixer = new THREE.AnimationMixer( model );
+    //                 console.log(animations)
+    //                 const action = mixer.clipAction( animations[ 0 ] );
+                    
+    //                 const animationActions = []
+    //                 animationActions.push(action)
+    //                 // animationsFolder.add(animations, 'default')
+    //                 action.play();
+
+    //                 const clock = new THREE.Clock()
+    //                 function animate() {
+    //                     requestAnimationFrame( animate );
+    //                     mixer.update(  clock.getDelta()  );
+    //                 }
+    //                 animate();
+
+    //                 // Optional: Set the model's initial position and rotation
+    //                 model.position.set(0.4, -0.65, 0);
+                    
+    //                 model.rotation.y -= Math.PI/2;
+    //                 resolve(model)
+    //             },
+    //             // called whrenderile loading is progressing
+    //             function ( xhr ) {
+    //                 console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    //             },
+    //             // called when loading has errors
+    //             function ( error ) {
+    //                 console.log( 'An error happened', error );
+    //             }
+    //         )
+    //     })
+    // }  
+
     async _loadFire() {
         return new Promise((resolve)=> {
-            // 불
-            this._loader.load(
-                '/animated_fire/scene.gltf',
-                ( gltf ) => {
-                    // add the loaded glTF model to the scene
-                    const model = gltf.scene 
+            const loader = new FBXLoader();
+            loader.load(
+                '/fire/Animated_fire.fbx',
+                ( object ) => {
 
-                    const scaleFactor = 1;
-                    model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+                    const scaleFactor = 0.01;
+                    object.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-                    const animations = gltf.animations;
-                    const mixer = new THREE.AnimationMixer( model );
-                    const action = mixer.clipAction( animations[ 0 ] );
-                    
-                    const animationActions = []
-                    animationActions.push(action)
-                    // animationsFolder.add(animations, 'default')
-                    
-                    action.reset()
-                    action.fadeIn(1)
+                    // 로드 완료 후 처리할 내용
+                    const mixer = new THREE.AnimationMixer( object );
+            
+                    // 에니메이션 추가
+                    const animation = object.animations[ 0 ];
+                    const action = mixer.clipAction( animation );
                     action.play();
-                    function animate() {
-                        requestAnimationFrame( animate );
-                        mixer.update( 0.1 );
+            
+                    // 렌더링 반복 처리 함수
+                    const clock = new THREE.Clock();
+                    function render() {
+                        requestAnimationFrame( render );
+                        const delta = clock.getDelta();
+                        mixer.update( delta );
                     }
-                    animate();
-
-                    // Optional: Set the model's initial position and rotation
-                    model.position.set(0.4, -0.65, 0);
+                    render();
                     
-                    model.rotation.y += Math.PI/2;
-                    resolve(model)
+                    object.position.set(0.4, -0.65, 0);
+                    
+                    object.rotation.y -= Math.PI/2;
+                    resolve(object)
                 },
-                // called whrenderile loading is progressing
-                function ( xhr ) {
+                ( xhr ) => {
+                    // 로딩 중 처리할 내용
                     console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
                 },
-                // called when loading has errors
-                function ( error ) {
-                    console.log( 'An error happened', error );
+                ( error ) => {
+                    // 에러 발생 시 처리할 내용
+                    console.error( error );
                 }
-            )
+            );            
         })
-    }  
+    }
 
     async _loadFirePlace() {
         return new Promise((resolve)=> {
