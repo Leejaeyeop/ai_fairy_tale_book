@@ -26,7 +26,6 @@ export default class ThreeTest {
 
         this._initModel()
         this._setupCamera()
-        // this._setupLight()
         this._setupControls()
 
         // resize
@@ -142,17 +141,7 @@ export default class ThreeTest {
         //         console.log( 'An error happened', error );
         //     }
         // );
-        
-        // 바닥을 위한 평면 지오메트리 생성
-        // const planeGeometry = new THREE.PlaneGeometry(100, 100);
-        // // 바닥에 적용할 머티리얼 생성
-        // const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x808080 });
-        // // 메쉬 생성
-        // const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
-        // // 바닥을 x-z 평면에 놓기 위해 회전
-        // planeMesh.rotation.x = -Math.PI / 2;
-        // // 씬에 추가
-        // scene.add(planeMesh);
+    
 
         //// 벽 생성
         // var wallWidth = 60; // 벽의 너비
@@ -194,12 +183,50 @@ export default class ThreeTest {
         this._light.position.setY(this._light.position.y + 3)
 
         // 임시
-        const AmbientLight = new THREE.AmbientLight( 0x404040 ); // soft white light
-
-        this._scene.add(this._light, AmbientLight)
+        // const AmbientLight = new THREE.AmbientLight( 0x404040, 0.2 ); // soft white light
+        // this._scene.add(this._light)
+        this._scene.add(this._light)
 
         // console.log(candle)
         // this._light.position.set(candle.getWorldPosition())
+    }
+
+    // 벽난로 불에 광원 추가
+    _setUpLightOnFire(fire) {
+        const light = new THREE.PointLight(0xffad33)
+        light.intensity = 1
+        light.distance = 100
+        // light.decay = 1
+        light.position.set(0,0,0)
+
+        this._lightFire = light
+        const helper = new THREE.PointLightHelper( this._lightFire)
+        this._scene.add(helper)
+
+        fire.getWorldPosition(this._lightFire.position)
+
+        this._scene.add(this._lightFire)
+        this._lightFire.position.setY(this._lightFire.position.y + 2)
+        this._lightFire.position.setX(this._lightFire.position.x -1)
+        // create a particle system to generate the actual flames
+        // const flameGeometry = new THREE.Geometry();
+        // for (let i = 0; i < 100; i++) {
+        // const particle = new THREE.Vector3(
+        //     THREE.MathUtils.randFloatSpread(2),
+        //     THREE.MathUtils.randFloatSpread(2) + 3,
+        //     THREE.MathUtils.randFloatSpread(2)
+        // );
+        // flameGeometry.vertices.push(particle);
+        // }
+        // const flameMaterial = new THREE.PointsMaterial({
+        // color: 0xff6600,
+        // size: 0.1,
+        // blending: THREE.AdditiveBlending,
+        // transparent: true,
+        // });
+        // const flameParticles = new THREE.Points(flameGeometry, flameMaterial);
+        // this._scene.add(flameParticles
+        //     )
     }
 
     _setupControls() {
@@ -225,11 +252,13 @@ export default class ThreeTest {
         const firePlace = await this._loadFirePlace()
         const fire = await this._loadFire()
         firePlace.add(fire)
-
         obj.add(firePlace)
 
+        // this._loadFloor()
+        this._loadWall()
         this._scene.add(obj)
         this._setupLight(candle)
+        this._setUpLightOnFire(fire)
     }
 
     async _loadCandle() {
@@ -269,6 +298,71 @@ export default class ThreeTest {
         })
     }
 
+    // _loadFloor() {
+    //     this._loader.load('/stylized_wood/scene.gltf', (gltf) => {
+    //       // gltf.scene에는 모든 객체들이 들어있습니다.
+    //       // gltf.scene.children 배열에서 메테리얼을 찾을 수 있습니다.
+    //       const scaleFactor = 0.01;
+    //       const material = gltf.scene;
+
+    //       material.scale.set(scaleFactor, scaleFactor, scaleFactor)
+    //     //   console.log(material)
+    //     //   // 해당 메테리얼을 다른 객체에 적용할 수 있습니다.
+    //     //   const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+    //       this._scene.add(material);
+    //     });
+    // }
+
+    _loadWall() {
+
+        const loader = new GLTFLoader();
+
+        // loader.load('/wooden_floor/scene.gltf', (gltf) => {
+        //   // gltf.scene에는 모든 객체들이 들어있습니다.
+        //   // gltf.scene.children 배열에서 메테리얼을 찾을 수 있습니다.
+        //   const scaleFactor = 0.01;
+        //   const model = gltf.scene
+        //   model.scale.set(scaleFactor, scaleFactor, scaleFactor)
+        //   model.position.set(0,3,-10)
+        // //   console.log(material)
+        // //   // 해당 메테리얼을 다른 객체에 적용할 수 있습니다.
+        // //   const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+        //   this._scene.add(model);
+        // });
+        loader.load('/wooden_floor/scene.gltf', (gltf) => {
+            gltf.scene.traverse( (node) => {
+                if (node.isMesh) {
+                // material로 부터 texture을 추출해, repeat 패턴을 만든다.  
+                const texture = node.material.map
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(5, 5);
+
+                const material = new THREE.MeshStandardMaterial({
+                    map: texture
+                })
+                
+                //   console.log(material)
+                //     mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
+                  
+                  // this._scene.add(mesh);
+                  // do something with the material
+
+                  const geometry = new THREE.PlaneGeometry(40, 30);  
+                  // create a mesh by combining the geometry and material
+                  const floor = new THREE.Mesh(geometry, material);
+      
+                  // rotate the floor to be horizontal
+                  floor.rotation.x = -Math.PI / 2;
+                  floor.position.set(5,0,10)
+                  // add the floor to the scene
+                  this._scene.add(floor);
+
+                }
+              });
+        })
+    }
+ 
     async _loadDesk() {
         // 책상
         return new Promise((resolve)=> {
