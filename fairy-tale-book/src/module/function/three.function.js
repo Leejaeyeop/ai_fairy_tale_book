@@ -255,7 +255,15 @@ export default class ThreeTest {
         obj.add(firePlace)
 
         // this._loadFloor()
+        this._loadFloor()
         this._loadWall()
+
+        const clock = await this._loadClock()
+        obj.add(clock)
+
+        const window = await this._loadWindow()
+        obj.add(window)
+
         this._scene.add(obj)
         this._setupLight(candle)
         this._setUpLightOnFire(fire)
@@ -269,10 +277,10 @@ export default class ThreeTest {
                     // add the loaded glTF model to the scene
                     const model = gltf.scene 
 
-                    const scaleFactor = 0.000015;
+                    const scaleFactor = 0.00005;
                     model.scale.set(scaleFactor, scaleFactor, scaleFactor);
                 
-                    model.position.set(0.4, 0.58, -0.1);
+                    model.position.set(-0.7, 2.1, -1.6);
 
                     const animations = gltf.animations;
                     const mixer = new THREE.AnimationMixer( model );
@@ -298,22 +306,46 @@ export default class ThreeTest {
         })
     }
 
-    // _loadFloor() {
-    //     this._loader.load('/stylized_wood/scene.gltf', (gltf) => {
-    //       // gltf.scene에는 모든 객체들이 들어있습니다.
-    //       // gltf.scene.children 배열에서 메테리얼을 찾을 수 있습니다.
-    //       const scaleFactor = 0.01;
-    //       const material = gltf.scene;
-
-    //       material.scale.set(scaleFactor, scaleFactor, scaleFactor)
-    //     //   console.log(material)
-    //     //   // 해당 메테리얼을 다른 객체에 적용할 수 있습니다.
-    //     //   const mesh = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), material);
-    //       this._scene.add(material);
-    //     });
-    // }
-
     _loadWall() {
+        this._loader.load('/vintage_wallpaper/scene.gltf', (gltf) => {
+            gltf.scene.traverse( (node) => {
+                if (node.isMesh) {
+                // material로 부터 texture을 추출해, repeat 패턴을 만든다.  
+                const texture = node.material.map
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(5, 5);
+
+                const material = new THREE.MeshStandardMaterial({
+                    map: texture
+                })
+
+                  const geometry = new THREE.PlaneGeometry(40, 20);  
+                  // create a mesh by combining the geometry and material
+                  const wall = new THREE.Mesh(geometry, material);
+      
+                  // rotate the floor to be horizontal
+                  //   floor.rotation.x = -Math.PI / 2;
+                  wall.position.set(5,8.5,-5)
+                  // add the floor to the scene
+                  this._scene.add(wall);
+
+                  const geometry2 = new THREE.PlaneGeometry(40, 20);  
+                  // create a mesh by combining the geometry and material
+                  const wall2 = new THREE.Mesh(geometry2, material);
+      
+                  // rotate the floor to be horizontal
+                  wall2.rotation.y = -Math.PI / 2;
+                  wall2.position.set(25,8.5, 5)
+                  // add the floor to the scene
+                  this._scene.add(wall2);
+
+                }
+              });
+        });
+    }
+
+    _loadFloor() {
 
         const loader = new GLTFLoader();
 
@@ -362,12 +394,73 @@ export default class ThreeTest {
               });
         })
     }
+
+    async _loadWindow() {
+        // 창문
+        return new Promise((resolve)=> {
+            this._loader.load(
+                '/victorian_window/scene.gltf',
+                function ( gltf ) {
+                    // add the loaded glTF model to the scene
+                    const model = gltf.scene 
+    
+                    const scaleFactor = 0.005;
+                    model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+    
+                    // Optional: Set the model's initial position and rotation
+                    model.position.set(24, 10, 5);
+                    model.rotation.y += Math.PI/2;
+                    // Optional: Set the model's scale
+
+                    resolve(model)
+                }.bind(this),
+                // called while loading is progressing
+                function ( xhr ) {
+                    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+                },
+                // called when loading has errors
+                function ( error ) {
+                    console.log( 'An error happened', error );
+                }
+            )
+        })
+    }
  
     async _loadDesk() {
         // 책상
         return new Promise((resolve)=> {
             this._loader.load(
-                '/simple_desk/scene.gltf',
+                '/antique_office_desk/scene.gltf',
+                function ( gltf ) {
+                    // add the loaded glTF model to the scene
+                    const model = gltf.scene 
+    
+                    const scaleFactor = 3;
+                    model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+    
+                    // Optional: Set the model's initial position and rotation
+                    model.position.set(0, 0, 0);
+                    model.rotation.y -= Math.PI/2;
+                    // Optional: Set the model's scale
+
+                    resolve(model)
+                }.bind(this),
+                // called while loading is progressing
+                function ( xhr ) {
+                    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+                },
+                // called when loading has errors
+                function ( error ) {
+                    console.log( 'An error happened', error );
+                }
+            )
+        })
+    }
+
+    async _loadClock() {
+        return new Promise((resolve)=> {
+            this._loader.load(
+                '/old_wall_clock/scene.gltf',
                 function ( gltf ) {
                     // add the loaded glTF model to the scene
                     const model = gltf.scene 
@@ -375,8 +468,25 @@ export default class ThreeTest {
                     const scaleFactor = 10;
                     model.scale.set(scaleFactor, scaleFactor, scaleFactor);
     
+                    // 로드 완료 후 처리할 내용
+                    // const mixer = new THREE.AnimationMixer( gltf );
+
+                    // // 에니메이션 추가
+                    // const animation = gltf.animations[ 0 ];
+                    // const action = mixer.clipAction( animation );
+                    // action.play();
+            
+                    // // 렌더링 반복 처리 함수
+                    // const clock = new THREE.Clock();
+                    // function render() {
+                    //     requestAnimationFrame( render );
+                    //     const delta = clock.getDelta();
+                    //     mixer.update( delta );
+                    // }
+                    // render();
+
                     // Optional: Set the model's initial position and rotation
-                    model.position.set(0, 0, 0);
+                    model.position.set(0, 10, -4);
                     // model.rotation.set(0,5,0)
                     // Optional: Set the model's scale
 
@@ -427,53 +537,6 @@ export default class ThreeTest {
             )
         })
     }
-
-    // async _loadFire() {
-    //     return new Promise((resolve)=> {
-    //         // 불
-    //         this._loader.load(
-    //             '/animated_fire/scene.gltf',
-    //             ( gltf ) => {
-    //                 // add the loaded glTF model to the scene
-    //                 const model = gltf.scene 
-
-    //                 const scaleFactor = 1;
-    //                 model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-    //                 const animations = gltf.animations;
-    //                 const mixer = new THREE.AnimationMixer( model );
-    //                 console.log(animations)
-    //                 const action = mixer.clipAction( animations[ 0 ] );
-                    
-    //                 const animationActions = []
-    //                 animationActions.push(action)
-    //                 // animationsFolder.add(animations, 'default')
-    //                 action.play();
-
-    //                 const clock = new THREE.Clock()
-    //                 function animate() {
-    //                     requestAnimationFrame( animate );
-    //                     mixer.update(  clock.getDelta()  );
-    //                 }
-    //                 animate();
-
-    //                 // Optional: Set the model's initial position and rotation
-    //                 model.position.set(0.4, -0.65, 0);
-                    
-    //                 model.rotation.y -= Math.PI/2;
-    //                 resolve(model)
-    //             },
-    //             // called whrenderile loading is progressing
-    //             function ( xhr ) {
-    //                 console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-    //             },
-    //             // called when loading has errors
-    //             function ( error ) {
-    //                 console.log( 'An error happened', error );
-    //             }
-    //         )
-    //     })
-    // }  
 
     async _loadFire() {
         return new Promise((resolve)=> {
@@ -532,7 +595,7 @@ export default class ThreeTest {
                     model.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
                     // Optional: Set the model's initial position and rotation
-                    model.position.set(15, 5, 20);
+                    model.position.set(22.5, 4.5, 17);
                     
                     model.rotation.y -= Math.PI;
                     resolve(model)
