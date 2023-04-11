@@ -249,24 +249,27 @@ export default class ThreeTest {
         const chair = await this._loadChair()
         obj.add(chair)
         
-        const firePlace = await this._loadFirePlace()
-        const fire = await this._loadFire()
-        firePlace.add(fire)
-        obj.add(firePlace)
+        // const firePlace = await this._loadFirePlace()
+        // const fire = await this._loadFire()
+        // firePlace.add(fire)
+        // obj.add(firePlace)
 
         // this._loadFloor()
         this._loadFloor()
-        this._loadWall()
+        // this._loadWall()
 
-        const clock = await this._loadClock()
-        obj.add(clock)
+        // const clock = await this._loadClock()
+        // obj.add(clock)
 
-        const window = await this._loadWindow()
-        obj.add(window)
+        // const window = await this._loadWindow()
+        // obj.add(window)
+
+        const book = await this._loadBook()
+        obj.add(book)
 
         this._scene.add(obj)
         this._setupLight(candle)
-        this._setUpLightOnFire(fire)
+        // this._setUpLightOnFire(fire)
     }
 
     async _loadCandle() {
@@ -425,7 +428,84 @@ export default class ThreeTest {
             )
         })
     }
- 
+
+    // async _loadBook() {
+    //     return new Promise((resolve)=> {
+    //         this._loader.load(
+    //             'bookColor/bookColor.gltf',
+    //             function ( gltf ) {
+    //                 // add the loaded glTF model to the scene
+    //                 const model = gltf.scene 
+    
+    //                 const scaleFactor = 1.5;
+    //                 model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+    
+    //                 // Optional: Set the model's initial position and rotation
+    //                 model.position.set(0, 7, 0);
+    //                 // model.rotation.y -= Math.PI/2;
+
+    //                 const animations = gltf.animations;
+    //                 console.log(animations)
+    //                 const mixer = new THREE.AnimationMixer( model );
+    //                 const action = mixer.clipAction( animations[ 0 ] );
+    //                 action.play();
+    //                 function animate() {
+    //                     requestAnimationFrame( animate );
+    //                     mixer.update( 0.02 );
+    //                 }
+    //                 animate();
+
+    //                 resolve(model)
+    //             }.bind(this),
+    //             // called while loading is progressing
+    //             function ( xhr ) {
+    //                 console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    //             },
+    //             // called when loading has errors
+    //             function ( error ) {
+    //                 console.log( 'An error happened', error );
+    //             }
+                
+    //         )
+    //     }) 
+    // }
+
+    async _loadBook() {
+        return new Promise((resolve)=> {
+            this._loader.load(
+                'bookColor/bookColorUvTest.gltf',
+                function ( gltf ) {
+                    gltf.scene.traverse(function (child) {
+                        if (child.isMesh) {
+                          // Create a new texture to replace the UV-mapped texture
+                          const newTexture = new THREE.TextureLoader().load('/book-cover2-image.jpeg');
+                        console.log(newTexture)
+                          // Assign the new texture to the existing material
+                          child.material.map = newTexture;
+                          child.material.needsUpdate = true;
+                        }
+                      });
+                    const model = gltf.scene 
+    
+                    const scaleFactor = 1;
+                    model.scale.set(scaleFactor, scaleFactor, scaleFactor);
+        
+                    model.position.set(0, 7, 0);
+                    resolve(model)
+                }.bind(this),
+                // called while loading is progressing
+                function ( xhr ) {
+                    console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+                },
+                // called when loading has errors
+                function ( error ) {
+                    console.log( 'An error happened', error );
+                }
+                
+            )
+        }) 
+    }
+
     async _loadDesk() {
         // 책상
         return new Promise((resolve)=> {
