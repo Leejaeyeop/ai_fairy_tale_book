@@ -183,9 +183,9 @@ export default class ThreeTest {
         this._light.position.setY(this._light.position.y + 3)
 
         // 임시
-        // const AmbientLight = new THREE.AmbientLight( 0x404040, 0.2 ); // soft white light
+        const AmbientLight = new THREE.AmbientLight( 0x404040, 0.2 ); // soft white light
         // this._scene.add(this._light)
-        this._scene.add(this._light)
+        this._scene.add(this._light, AmbientLight)
 
         // console.log(candle)
         // this._light.position.set(candle.getWorldPosition())
@@ -429,64 +429,40 @@ export default class ThreeTest {
         })
     }
 
-    // async _loadBook() {
-    //     return new Promise((resolve)=> {
-    //         this._loader.load(
-    //             'bookColor/bookColor.gltf',
-    //             function ( gltf ) {
-    //                 // add the loaded glTF model to the scene
-    //                 const model = gltf.scene 
-    
-    //                 const scaleFactor = 1.5;
-    //                 model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-    
-    //                 // Optional: Set the model's initial position and rotation
-    //                 model.position.set(0, 7, 0);
-    //                 // model.rotation.y -= Math.PI/2;
-
-    //                 const animations = gltf.animations;
-    //                 console.log(animations)
-    //                 const mixer = new THREE.AnimationMixer( model );
-    //                 const action = mixer.clipAction( animations[ 0 ] );
-    //                 action.play();
-    //                 function animate() {
-    //                     requestAnimationFrame( animate );
-    //                     mixer.update( 0.02 );
-    //                 }
-    //                 animate();
-
-    //                 resolve(model)
-    //             }.bind(this),
-    //             // called while loading is progressing
-    //             function ( xhr ) {
-    //                 console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-    //             },
-    //             // called when loading has errors
-    //             function ( error ) {
-    //                 console.log( 'An error happened', error );
-    //             }
-                
-    //         )
-    //     }) 
-    // }
-
     async _loadBook() {
         return new Promise((resolve)=> {
             this._loader.load(
-                'bookColor/bookColorUvTest.gltf',
+                'bookColor/bookColor.glb',
                 function ( gltf ) {
-                    gltf.scene.traverse(function (child) {
+                    // 텍스쳐 입히기
+                    // coverL의 cover-front에만 texture를 입힘
+                    gltf.scene.children[2].children[0].traverse(function (child) {
                         if (child.isMesh) {
                           // Create a new texture to replace the UV-mapped texture
                           const newTexture = new THREE.TextureLoader().load('/book-cover2-image.jpeg');
-                        console.log(newTexture)
                           // Assign the new texture to the existing material
                           child.material.map = newTexture;
                           child.material.needsUpdate = true;
                         }
+                        console.log(child)
                       });
+
                     const model = gltf.scene 
-    
+
+                    const animations = gltf.animations;
+                    console.log(animations)
+                    const mixer = new THREE.AnimationMixer( model );
+                    const action = mixer.clipAction( animations[ 0 ] );
+                    action.play();
+                    const action2 = mixer.clipAction( animations[ 1 ] );
+                    action2.play();
+                    function animate() {
+                        requestAnimationFrame( animate );
+                        mixer.update( 0.01 );
+                    }
+                    animate();
+
+
                     const scaleFactor = 1;
                     model.scale.set(scaleFactor, scaleFactor, scaleFactor);
         
