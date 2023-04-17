@@ -25,7 +25,8 @@ export default class ThreeTest {
         this._myDIv.appendChild( this._renderer.domElement);
 
         this._initModel()
-        this._setupCamera()
+        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this._setupCamera(camera)
         this._setupControls()
 
         // resize
@@ -34,26 +35,14 @@ export default class ThreeTest {
 
         requestAnimationFrame(this.render.bind(this))
 
-        // book modeling
-        // const bookWidth = 8; 
-        // const bookHeight = 17;
-        // const bookDepth = 1;
-        // const geometry = new THREE.BoxGeometry(bookWidth, bookHeight, bookDepth);
-        // const texture = new THREE.TextureLoader().load('/book-cover-image.jpg');
-        // const material = new THREE.MeshBasicMaterial({ map: texture });
-        // const book = new THREE.Mesh(geometry, material);
-        // scene.add( book );
+        let raycaster = new THREE.Raycaster();
+        this._raycaster = raycaster;
+        
+        const mouse = new THREE.Vector2();
+        // this._SELECTED = SELECTED
+        this._mouse = mouse;
 
-        // renderer.render( scene, camera );
-
-        // function animate() {
-        //     requestAnimationFrame(animate);
-        //     controls.update()
-        //     this._renderer.render(scene, this.camera);
-        // }
-        // animate();
-
-        // document.addEventListener('mousedown', onDocumentMouseDown, false);
+        document.addEventListener('mousedown', onDocumentMouseDown.bind(this), false);
         // document.addEventListener('mousemove', onDocumentMouseMove, false);
         // document.addEventListener('mouseup', onDocumentMouseUp, false);
 
@@ -61,12 +50,128 @@ export default class ThreeTest {
         // var lastMouse = new THREE.Vector2();
         // var isDragging = false;
 
-        // function onDocumentMouseDown(event) {
-        //     event.preventDefault();
-        //     isDragging = true;
-        //     lastMouse.set(event.clientX, event.clientY);
-        // }	
+        function onDocumentMouseDown(event) {
+            console.log("down")
+              // 마우스 클릭 위치를 정규화(normalized)된 장치 좌표(device coordinates)로 변환합니다.
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
+            raycaster.setFromCamera(mouse, camera)
+
+            // 레이캐스팅 결과를 저장할 배열입니다.
+            var intersects = raycaster.intersectObjects(scene.children);
+            console.log(intersects)
+            // 가장 가까운 메쉬를 찾습니다.
+            if (intersects.length > 0) {
+                var clickedMesh = intersects[0].object;
+                // 특정 메쉬를 클릭한 경우, 이벤트를 발생시킵니다.
+                if (clickedMesh.name === 'Cube004') { // 표지 넘기기
+                    const mixer = new THREE.AnimationMixer(  this._book );
+                    const action = mixer.clipAction( this._animations[ 0 ] );
+                    action.setLoop(THREE.LoopOnce)
+                    action.clampWhenFinished = true;
+                    action.enabled = true;
+                    action.play();
+
+                    const action2 = mixer.clipAction( this._animations[ 1 ] );
+                    action2.setLoop(THREE.LoopOnce)
+                    action2.clampWhenFinished = true;
+                    action2.enabled = true;
+                    action2.play();
+
+                    const action3 = mixer.clipAction( this._animations[ 2 ] );
+                    action3.setLoop(THREE.LoopOnce)
+                    action3.clampWhenFinished = true;
+                    action3.enabled = true;
+                    action3.play();
+                    
+                    
+                    const action4 = mixer.clipAction( this._animations[ 3 ] );
+                    action4.setLoop(THREE.LoopOnce)
+                    action4.clampWhenFinished = true;
+                    action4.enabled = true;
+                    action4.play();
+
+                    let animate = () => {
+                        requestAnimationFrame( animate );
+                        mixer.update( 0.01 );
+                    }
+                    animate();
+                }
+                else if (clickedMesh.name === 'P1front') { // 책장 넘기기기
+                    const mixer = new THREE.AnimationMixer(  this._book );
+                    const action = mixer.clipAction( this._animations[ 5 ] );
+                    action.setLoop(THREE.LoopOnce)
+                    action.clampWhenFinished = true;
+                    action.enabled = true;
+                    action.play();
+                    const newTexture = new THREE.TextureLoader().load('samplePdf/output-2.jpg');
+                    // Assign the new texture to the existing material
+                    clickedMesh.material.map = newTexture;
+                    console.log(clickedMesh.material)
+                    clickedMesh.material.needsUpdate = true;
+                    console.log("이벤트 발생")
+                    let animate = () => {
+                        requestAnimationFrame( animate );
+                        mixer.update( 0.01 );
+                    }
+                    animate();
+                } else if(clickedMesh.name === 'P2front') { // 책장 넘기기기2
+                    const mixer = new THREE.AnimationMixer(  this._book );
+                    const action = mixer.clipAction( this._animations[ 7 ] );
+                    action.setLoop(THREE.LoopOnce)
+                    action.clampWhenFinished = true;
+                    action.enabled = true;
+                    action.play();
+                    const newTexture = new THREE.TextureLoader().load('samplePdf/output-3.jpg');
+                    // Assign the new texture to the existing material
+                    clickedMesh.material.map = newTexture;
+                    clickedMesh.material.needsUpdate = true;
+
+                    let animate = () => {
+                        requestAnimationFrame( animate );
+                        mixer.update( 0.01 );
+                    }
+                    animate();
+                // } else if(clickedMesh.name === 'P2front') { // 책장 넘기기기 3.. 넘기기 2로 무한 반복
+
+                } else if(clickedMesh.name === 'P1back') { // 책 뒤로가기 1 
+                    // const newTexture = new THREE.TextureLoader().load('/book-cover-image.jpg');
+                    // // Assign the new texture to the existing material
+                    // clickedMesh.material.map = newTexture;
+                    // clickedMesh.material.needsUpdate = true;
+                    const mixer = new THREE.AnimationMixer(  this._book );
+                    const action = mixer.clipAction( this._animations[ 3 ] );
+                    action.setLoop(THREE.LoopOnce)
+                    action.clampWhenFinished = true;
+                    action.enabled = true;
+                    action.play();
+
+                    let animate = () => {
+                        requestAnimationFrame( animate );
+                        mixer.update( 0.01 );
+                    }
+                    animate();
+                }
+ 
+                // } else if(clickedMesh.name === 'P2back') { // 책 뒤로가기 2 .. 뒤로가기 무한 반복 마지막이 아닐 경우 텍스쳐 입혀 원복
+                     
+                // }
+            }
+        }
+
+        // function onDocumentMouseMove( event ) {
+
+        //     event.preventDefault();
+        //     if ( SELECTED )
+        //     {
+        //         SELECTED.currentHex = 0x00ff00 * Math.random();
+        //         SELECTED.material.emissive.setHex( SELECTED.currentHex );
+        //     }
+    
+        // }
+
+        
         // 사물 회전
         // function onDocumentMouseMove(event) {
         // event.preventDefault();
@@ -109,55 +214,9 @@ export default class ThreeTest {
         // 	renderer.render( scene, camera );
         // }
         // animate();
-
-        // 책장 
-        // loader.load(
-        //     // path to the glTF file
-        //     '/simple_book_shelf/scene.gltf',
-        //     // called when the resource is loaded
-        //     function ( gltf ) {
-        //         // add the loaded glTF model to the scene
-        //         const model = gltf.scene 
-
-        //         const scaleFactor = 5;
-        //         model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
-        //         //model.normalize()
-                
-        //         scene.add( model );
-
-        //         // Optional: Set the model's initial position and rotation
-        //         model.position.set(10, 0, 0);
-                
-        //         model.rotation.y = -Math.PI / 4;
-        //         // Optional: Set the model's scale
-        //     },
-        //     // called while loading is progressing
-        //     function ( xhr ) {
-        //         console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-        //     },
-        //     // called when loading has errors
-        //     function ( error ) {
-        //         console.log( 'An error happened', error );
-        //     }
-        // );
-    
-
-        //// 벽 생성
-        // var wallWidth = 60; // 벽의 너비
-        // var wallHeight = 50; // 벽의 높이
-        // var wallDepth = 0.5; // 벽의 깊이
-
-        // // 벽을 만듭니다.
-        // var wallGeometry = new THREE.BoxGeometry( wallWidth, wallHeight, wallDepth );
-        // var wallMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff } );
-        // var wall = new THREE.Mesh( wallGeometry, wallMaterial );
-        // wall.position.set(0,0,-10)
-        // scene.add( wall );
      }
 
-     _setupCamera() {
-        const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+     _setupCamera(camera) {
         camera.position.set(0, 0, 20);
         // camera.lookAt(0,0,20)
         this._camera = camera
@@ -265,6 +324,7 @@ export default class ThreeTest {
         // obj.add(window)
 
         const book = await this._loadBook()
+        this._book = book;
         obj.add(book)
 
         this._scene.add(obj)
@@ -436,37 +496,64 @@ export default class ThreeTest {
                 function ( gltf ) {
                     // 텍스쳐 입히기
                     // coverL의 cover-front에만 texture를 입힘
-                    gltf.scene.children[2].children[0].traverse(function (child) {
-                        if (child.isMesh) {
-                          // Create a new texture to replace the UV-mapped texture
-                          const newTexture = new THREE.TextureLoader().load('/book-cover2-image.jpeg');
-                          // Assign the new texture to the existing material
-                          child.material.map = newTexture;
-                          child.material.needsUpdate = true;
-                        }
-                        console.log(child)
-                      });
+                    // gltf.scene.children[2].children[0].traverse(function (child) {
+                    // gltf.scene.traverse(function (child) {
+                    //     if (child.isMesh) {
+                    //       // Create a new texture to replace the UV-mapped texture
+                    //       const newTexture = new THREE.TextureLoader().load('/book-cover-image.jpg');
+                    //       // Assign the new texture to the existing material
+                    //       child.material.map = newTexture;
+                    //       child.material.needsUpdate = true;
+
+                    //     }
+                    //   });
+                    // const mixer = new THREE.AnimationMixer( gltf.scene.children[0] );
 
                     const model = gltf.scene 
-
                     const animations = gltf.animations;
-                    console.log(animations)
-                    const mixer = new THREE.AnimationMixer( model );
-                    const action = mixer.clipAction( animations[ 0 ] );
-                    action.play();
-                    const action2 = mixer.clipAction( animations[ 1 ] );
-                    action2.play();
-                    function animate() {
-                        requestAnimationFrame( animate );
-                        mixer.update( 0.01 );
-                    }
-                    animate();
+                    this._animations = animations;
+                    console.log(this._animations)
+                    // const mixer = new THREE.AnimationMixer( model );
+                    // for(let anime of animations) {
+                    //     const action = mixer.clipAction(anime);
+                    //     action.setLoop(THREE.LoopOnce)
+                    //     action.clampWhenFinished = true;
+                    //     action.enabled = true;
+                    //     action.play()
+                    // }
 
+                    // const action = mixer.clipAction( animations[ 0 ] );
+                    // action.setLoop(THREE.LoopOnce)
+                    // action.clampWhenFinished = true;
+                    // action.enabled = true;
+                    // action.play();
+
+                    // const action2 = mixer.clipAction( animations[ 1 ] );
+                    // action2.setLoop(THREE.LoopOnce)
+                    // action2.clampWhenFinished = true;
+                    // action2.enabled = true;
+                    // action2.play();
+
+                    // const action3 = mixer.clipAction( animations[ 2 ] );
+                    // action3.setLoop(THREE.LoopOnce)
+                    // action3.clampWhenFinished = true;
+                    // action3.enabled = true;
+                    // action3.play();
+
+                    // function animate() {
+                    //     requestAnimationFrame( animate );
+                    //     mixer.update( 0.001 );
+                    // }
+                    // animate();
 
                     const scaleFactor = 1;
                     model.scale.set(scaleFactor, scaleFactor, scaleFactor);
         
                     model.position.set(0, 7, 0);
+
+                    model.rotation.y -= Math.PI;
+                    
+                    this._scene.add(model)
                     resolve(model)
                 }.bind(this),
                 // called while loading is progressing
@@ -679,8 +766,34 @@ export default class ThreeTest {
 	}
 
 	render() {
+        // this._raycaster.setFromCamera( this._mouse, this._camera );
+        // let intersects = this._raycaster.intersectObjects( this._scene.children );
+        // if ( intersects.length > 0 ) {
+        //     if (  this._SELECTED != intersects[0].object ) 
+        // {
+        //     console.log(this._SELECTED)
+        //     if ( this._SELECTED )  this._SELECTED.material.emissive.setHex(  this._SELECTED.currentHex );
+
+        //     this._SELECTED = intersects[0].object;
+        //     this._SELECTED.currentHex =  this._SELECTED.material.emissive.getHex();
+        //     this._SELECTED.material.emissive.setHex( 0xff0000 );
+        //    console.log('pointer');
+
+        // }
+        // } 
+        // else 
+        // {
+        //     if (  this._SELECTED ) 
+        //     {
+        //         this._SELECTED.material.emissive.setHex(  this._SELECTED.currentHex );
+        //         this._SELECTED = null;
+        //         console.log('auto');
+        //     }
+        // }
+
 		this._renderer.render(this._scene, this._camera);
 		// this.update(time);
+
 		requestAnimationFrame(this.render.bind(this));
 	}
 
