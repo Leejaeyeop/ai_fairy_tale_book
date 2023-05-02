@@ -18,11 +18,10 @@ export default class Intro {
         loadOverlay.position.set(-0.2, 1, 3);
         loadOverlay.rotation.set(0, Math.PI / 4, 0);
         loadOverlay.scale.set(0.004, 0.004, 0.006);
-        console.log(loadOverlay);
 
         const loadPonter = document.getElementById("arrow-load");
         const loadPonterOverlay = new CSS3DObject(loadPonter);
-        this._loadPonterOverlay = loadOverlay;
+        this._loadPonterOverlay = loadPonterOverlay;
         loadPonterOverlay.position.set(-0.5, 1.9, 3.4);
         loadPonterOverlay.rotation.set(-Math.PI / 3, Math.PI / 3, 0);
         loadPonterOverlay.scale.set(0.01, 0.01, 0.01);
@@ -220,12 +219,16 @@ export default class Intro {
         this._deskFrameTop.addEventListener("click", () => {
             // Usage example
             const startPosition = this._camera.position;
-            const endPosition = new THREE.Vector3(5, 5, 5);
-            const startRotaion = this._camera.rotation;
-            const endRotation = this._camera.rotation;
+            const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
+            const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
+            const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
+
+            // const endRotation = new THREE.Quaternion(-1.561, 0, 0.00038)
+
             const duration = 2000; // in milliseconds
-            this.animateCamera(startPosition, endPosition, startRotaion, endRotation, duration, this.easeInOutQuad);
-            this.removeScene();
+            this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
+
+            pubSub.publish("beginScene2");
         });
     }
 }

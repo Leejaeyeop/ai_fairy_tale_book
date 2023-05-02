@@ -2,6 +2,9 @@ import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 
 export default class Book {
+    meshes = {};
+    _currentPage = 0;
+
     constructor(scene, camera, cssRenderer, gltfLoader) {
         this._scene = scene;
         this._camera = camera;
@@ -12,7 +15,7 @@ export default class Book {
     async loadBook() {
         return new Promise((resolve) => {
             this._gltfLoader.load(
-                "bookColor/bookColor.glb",
+                "bookColor/book.glb",
                 function (gltf) {
                     // 텍스쳐 입히기
                     // coverL의 cover-front에만 texture를 입힘
@@ -29,6 +32,15 @@ export default class Book {
                     //   });
 
                     const book = gltf.scene;
+
+                    // mesh를 배열로 만든다.
+                    book.traverse((object) => {
+                        if (object instanceof THREE.Mesh) {
+                            this.meshes[object.name] = object;
+                            // meshes.push(object);
+                        }
+                    });
+
                     const animations = gltf.animations;
                     this._animations = animations;
                     console.log(this._animations);
@@ -94,6 +106,126 @@ export default class Book {
 
         animate();
     }
+    /**
+     * 표지 넘기기
+     */
+    turnBackCover() {
+        this._mixer;
+        const action = this._mixer.clipAction(this._animations[0]);
+        action.setLoop(THREE.LoopOnce);
+        action.clampWhenFinished = true;
+        action.enabled = true;
+
+        action.paused = false;
+        action.time = action.getClip().duration;
+        action.timeScale = -1;
+        action.play();
+
+        const action2 = this._mixer.clipAction(this._animations[1]);
+        action2.setLoop(THREE.LoopOnce);
+        action2.clampWhenFinished = true;
+        action2.enabled = true;
+
+        action2.paused = false;
+        action2.time = action2.getClip().duration;
+        action2.timeScale = -1;
+        action2.play();
+
+        const action3 = this._mixer.clipAction(this._animations[2]);
+        action3.setLoop(THREE.LoopOnce);
+        action3.clampWhenFinished = true;
+        action3.enabled = true;
+
+        action3.paused = false;
+        action3.time = action3.getClip().duration;
+        action3.timeScale = -1;
+        action3.play();
+
+        const action4 = this._mixer.clipAction(this._animations[3]);
+        action4.setLoop(THREE.LoopOnce);
+        action4.clampWhenFinished = true;
+        action4.enabled = true;
+
+        action4.paused = false;
+        action4.time = action4.getClip().duration;
+        action4.timeScale = -1;
+        action4.play();
+
+        let animate = () => {
+            requestAnimationFrame(animate);
+            this._mixer.update(0.01);
+        };
+
+        animate();
+    }
+
+    // animateP1Turn(reverse) {}
+
+    // animateP2Turn(reverse) {}
+
+    clickCoverFront(images) {
+        this.turnCover();
+        this.insertImg(this.meshes.P1front, images[++this._currentPage]);
+    }
+
+    // if: 만들어진 책을 확인하는 상황
+    async clickP1Front(images) {
+        this.turnPageFirst();
+        await this.insertImg(this.meshes.P1back, images[++this._currentPage]);
+        await this.insertImg(this.meshes.P2front, images[++this._currentPage]);
+    }
+
+    async clickP2Front(images) {
+        this.tunPageSecond();
+        await this.insertImg(this.meshes.P2back, images[++this._currentPage]);
+        await this.insertImg(this.meshes.P3front, images[++this._currentPage]);
+    }
+
+    async clickP3Front(images) {
+        // page limit 홀 짝도 계산
+        if (images.length < this._currentPage + 1) {
+            return;
+        }
+        await this.insertImg(this.meshes.P1back, images[this._currentPage - 1]);
+        await this.insertImg(this.meshes.P2front, images[this._currentPage]);
+        this.tunPageSecond();
+        await this.insertImg(this.meshes.P2back, images[++this._currentPage]);
+        await this.insertImg(this.meshes.P3front, images[++this._currentPage]);
+    }
+
+    // clickCoverBack(images) {
+
+    // }
+
+    clickP1Back(images) {
+        if (this._currentPage > 3) {
+            this.clickP2Back(images);
+            return;
+        }
+        this.turnBackPageFirst();
+        this._currentPage -= 2;
+        this.insertImg(this.meshes.P1front, images[this._currentPage]);
+    }
+
+    // todo
+    async clickP2Back(images) {
+        await this.insertImg(this.meshes.P2back, images[this._currentPage - 1]);
+        await this.insertImg(this.meshes.P3front, images[this._currentPage]);
+
+        this._currentPage -= 2;
+        let clampWhenFinished = true;
+
+        // if (this._currentPage > 3) {
+        //     // 원복
+        //     clampWhenFinished = true;
+        //     // todo 에니메이션 종료후 바뀜
+        //     this.insertImg(this.meshes.P2back, images[this._currentPage - 1]);
+        //     this.insertImg(this.meshes.P3front, images[this._currentPage]);
+        // }
+        this.turnBackPageSecond(clampWhenFinished);
+        this.insertImg(this.meshes.P1back, images[this._currentPage - 1]);
+        this.insertImg(this.meshes.P2front, images[this._currentPage]);
+    }
 
     /**
      * 첫 번째 페이지 넘기기
@@ -101,20 +233,42 @@ export default class Book {
      * clickedMesh
      */
     turnPageFirst() {
-        const action = this._mixer.clipAction(this._animations[5]);
+        let action = this._mixer.clipAction(this._animations[5]);
         action.setLoop(THREE.LoopOnce);
         action.clampWhenFinished = true;
         action.enabled = true;
+        action.paused = false;
+        action.timeScale = 1;
+        // reset시 필요
+        action.reset();
         action.play();
-
-        // const newTexture = new THREE.TextureLoader().load("samplePdf/output-2.jpg");
-        // // Assign the new texture to the existing material
-        // clickedMesh.material.map = newTexture;
-        // clickedMesh.material.needsUpdate = true;
 
         let animate = () => {
             requestAnimationFrame(animate);
-            this._mixer.update(0.01);
+            this._mixer.update(0.001);
+        };
+
+        animate();
+    }
+
+    /**
+     * 이전 페이지로 이동
+     */
+    turnBackPageFirst() {
+        let action = this._mixer.clipAction(this._animations[5]);
+        action.paused = false;
+        action.time = action.getClip().duration;
+        action.timeScale = -1;
+        action.setLoop(THREE.LoopOnce);
+        action.clampWhenFinished = true;
+        action.enabled = true;
+        // reset시 필요
+        // action.reset();
+        action.play();
+
+        let animate = () => {
+            requestAnimationFrame(animate);
+            this._mixer.update(0.001);
         };
 
         animate();
@@ -128,98 +282,82 @@ export default class Book {
         action.setLoop(THREE.LoopOnce);
         action.clampWhenFinished = true;
         action.enabled = true;
+        action.paused = false;
+        action.timeScale = 1;
+        // reset시 필요
+        action.reset();
         action.play();
 
         let animate = () => {
             requestAnimationFrame(animate);
-            this._mixer.update(0.01);
+            this._mixer.update(0.001);
         };
+
         animate();
     }
 
-    addAura() {
-        const auraTexture = this.createAuraTexture();
-        const auraMaterial = new THREE.SpriteMaterial({
-            map: auraTexture,
-            color: 0xffffff,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-        });
+    turnBackPageSecond() {
+        let action = this._mixer.clipAction(this._animations[7]);
+        action.paused = false;
+        action.time = action.getClip().duration;
+        action.timeScale = -1;
+        action.setLoop(THREE.LoopOnce);
+        action.clampWhenFinished = true;
+        action.enabled = true;
+        // reset시 필요
+        // action.reset();
+        action.play();
 
-        const auraSprite = new THREE.Sprite(auraMaterial);
-        auraSprite.scale.set(3.5, 3.5, 3.5); // 원하는 크기로 조절
-
-        this._book.add(auraSprite); // 메쉬에 스프라이트를 자식으로 추가
-        auraSprite.position.set(-1, 0, 0); // 원하는 위치에 스프라이트를 놓으세요.
-
-        const animate = (time) => {
+        let animate = () => {
             requestAnimationFrame(animate);
-
-            const delta = (Math.sin(time * 0.001) + 1) / 2;
-            auraMaterial.opacity = delta * 2;
-
-            this._renderer.render(this._scene, this._camera);
+            this._mixer.update(0.001);
         };
 
-        animate(2000);
+        animate();
     }
 
-    createAuraTexture() {
-        const canvas = document.createElement("canvas");
-        canvas.width = 128;
-        canvas.height = 128;
-        const context = canvas.getContext("2d");
-
-        const gradient = context.createRadialGradient(
-            canvas.width / 2,
-            canvas.height / 2,
-            0,
-            canvas.width / 2,
-            canvas.height / 2,
-            canvas.width / 2
-        );
-
-        gradient.addColorStop(0, "rgba(128, 0, 255, 1)");
-        gradient.addColorStop(0.4, "rgba(128, 0, 255, 0.6)");
-        gradient.addColorStop(1, "rgba(128, 0, 255, 0)");
-
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, canvas.width, canvas.height);
-
-        return new THREE.CanvasTexture(canvas);
+    removeAura() {
+        this._book.remove(this._auraSprite);
     }
 
     // make book page
     createMakeStoryLayoutOne() {
         const pageL = document.getElementById("pageL");
-        const overlay = new CSS3DObject(pageL);
+        const overlayL = new CSS3DObject(pageL);
 
         const globalPos = new THREE.Vector3();
         const pagePosL = this._book.children[7].getWorldPosition(globalPos);
 
-        overlay.position.copy(pagePosL);
-        overlay.rotation.set(-Math.PI / 2, 0, 0);
+        overlayL.position.copy(pagePosL);
+        overlayL.rotation.set(-Math.PI / 2, 0, 0);
 
-        this._overlay = overlay;
-        overlay.scale.set(0.0003, 0.0003, 0.0005);
+        this._overlayL = overlayL;
+        overlayL.scale.set(0.0003, 0.0003, 0.0005);
 
-        this._scene.add(overlay);
+        this._scene.add(overlayL);
 
         const pageR = document.getElementById("pageR");
-        const overlay2 = new CSS3DObject(pageR);
+        const overlayR = new CSS3DObject(pageR);
         const pagePosR = this._book.children[8].getWorldPosition(globalPos);
-        overlay2.position.copy(pagePosR);
-        overlay2.rotation.set(-Math.PI / 2, 0, 0);
-        this._overlay2 = overlay2;
-        overlay2.scale.set(0.0003, 0.0003, 0.0005);
-        this._scene.add(overlay2);
+        overlayR.position.copy(pagePosR);
+        overlayR.rotation.set(-Math.PI / 2, 0, 0);
+        this._overlayR = overlayR;
+        overlayR.scale.set(0.0003, 0.0003, 0.0005);
+        this._scene.add(overlayR);
     }
 
-    createImg(clickedMesh, image) {
-        console.log(image);
-        const newTexture = new THREE.TextureLoader().load(image);
-        // Assign the new texture to the existing material
-        clickedMesh.material.map = newTexture;
-        clickedMesh.material.needsUpdate = true;
+    removeMakeStoryLayoutOne() {
+        this._scene.remove(this._overlayL);
+        this._scene.remove(this._overlayR);
+    }
+
+    async insertImg(mesh, image) {
+        return new Promise((resolve) => {
+            const newTexture = new THREE.TextureLoader().load(image, async () => {
+                mesh.material.map = newTexture;
+                mesh.material.needsUpdate = true;
+                resolve();
+            });
+        });
     }
 }
