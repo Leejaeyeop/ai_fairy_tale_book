@@ -1,15 +1,15 @@
 import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
-
 export default class Book {
     meshes = {};
     _currentPage = 0;
 
-    constructor(scene, camera, cssRenderer, gltfLoader) {
+    constructor(scene, camera, cssRenderer, gltfLoader, renderer) {
         this._scene = scene;
         this._camera = camera;
         this._cssRenderer = cssRenderer;
         this._gltfLoader = gltfLoader;
+        this._renderer = renderer;
     }
 
     async loadBook() {
@@ -316,8 +316,10 @@ export default class Book {
         animate();
     }
 
-    removeAura() {
-        this._book.remove(this._auraSprite);
+    movePositionToLook() {
+        this._book.position.set(0.42, 1.5, 1.5);
+        this._book.rotation.x = -Math.PI / 2;
+        // this._book.rotation.z = -Math.PI;
     }
 
     // make book page
