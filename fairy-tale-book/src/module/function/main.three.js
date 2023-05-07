@@ -6,20 +6,24 @@ import { pubSub } from "./pubsub";
 import axios from "axios";
 import Intro from "./intro";
 import Book from "./book";
-// import * as pdfjsLib from "pdfjs-dist";
+
 export default class Main {
+    stage = "";
     constructor() {
+        this.stage = "INTRO";
         const scene = new THREE.Scene();
         this._scene = scene;
         const gltfLoader = new GLTFLoader();
         this._gltfLoader = gltfLoader;
 
+        // render 설정
         const renderer = new THREE.WebGLRenderer({
             antialias: true,
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor("skyblue");
         this._renderer = renderer;
 
         const myDiv = document.getElementById("three");
@@ -55,38 +59,23 @@ export default class Main {
 
         document.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
 
+        // 일단 event listner ...
+        let nextPageEl = document.querySelector("#next-page");
+        nextPageEl.addEventListener("click", async () => {
+            this.fetchGetTitles();
+            await this._book.transitToMakeStoryTwo();
+            // test 용 지워야 함
+            // this._book.createTitlesOnPage([]);
+        });
+
+        let nextPage2El = document.querySelector("#next-page2");
+        nextPage2El.addEventListener("click", async () => {
+            this.fetchGetBook();
+            this.beginLoadingMakingStory();
+            this._book.removeMakeStoryLayout();
+        });
+
         pubSub.subscribe("beginScene2", this.beginScene2.bind(this));
-        // document.addEventListener('mousemove', onDocumentMouseMove.bind(this), false);
-        // document.addEventListener('mouseup', onDocumentMouseUp, false);
-
-        // 사물 회전
-        // function onDocumentMouseMove(event) {
-        // event.preventDefault();
-        // if (isDragging) {
-        // 	mouse.set(event.clientX, event.clientY);
-        // 	var delta = new THREE.Vector2().subVectors(mouse, lastMouse);
-        // 	var angle = delta.length() * 0.01;
-        // 	var axis = new THREE.Vector3(delta.y, delta.x, 0).normalize();
-        // 	var quaternion = new THREE.Quaternion().setFromAxisAngle(axis, angle);
-        // 	book.quaternion.premultiply(quaternion);
-        // 	book.rotation.setFromQuaternion(book.quaternion, book.rotation.order);
-        // 	lastMouse.copy(mouse);
-        // }
-        // }
-
-        // 카메라 회전
-        // function onDocumentMouseMove(event) {
-        //     event.preventDefault();
-        //     if (isDragging) {
-        //         mouse.set(event.clientX, event.clientY);
-        //         var delta = new THREE.Vector2().subVectors(mouse, lastMouse);
-        //         // var angle = delta.length() * 0.01;
-        //         camera.position.x += delta.x * 0.1;
-        //         camera.rotation.y -= delta.x * 0.01; // 카메라 시선 방향 변경
-        //         camera.lookAt(scene.position);
-        //         lastMouse.copy(mouse);
-        //     }
-        // }
     }
 
     onDocumentMouseDown(event) {
@@ -99,62 +88,149 @@ export default class Main {
         // 레이캐스팅 결과를 저장할 배열입니다.
         var intersects = this._raycaster.intersectObjects(this._scene.children);
         console.log(intersects);
+        console.log(this._camera);
+        // console.log(images);
         // 가장 가까운 메쉬를 찾습니다.
         if (intersects.length > 0) {
+            console.log(this.stage);
             var clickedMesh = intersects[0].object;
             // 특정 메쉬를 클릭한 경우, 이벤트를 발생시킵니다.
-            if (clickedMesh.name === "Cube004") {
-                // 표지 넘기기
-                this._book.turnCover();
-            } else if (clickedMesh.name === "P1front") {
-                // 책장 넘기기기
-                this._book.turnPageFirst(clickedMesh);
-            } else if (clickedMesh.name === "P2front") {
-                // 책장 넘기기기2
-                // this._book.tunPageSecond();
-                this.fetchData(clickedMesh);
-                // const images = sessionStorage.getItem("book");
-                // this._book.createImg(clickedMesh, images);
-            } else if (clickedMesh.name === "P1back") {
-                // 책 뒤로가기 1
-                const newTexture = new THREE.TextureLoader().load("intro.png");
-                clickedMesh.material.map = newTexture;
-                clickedMesh.material.needsUpdate = true;
+            if (this.stage === "READ_BOOK") {
+                const images = JSON.parse(sessionStorage.getItem("book"));
 
-                // const mixer = new THREE.AnimationMixer(  this._book );
-                // const action = mixer.clipAction( this._animations[ 3 ] );
-                // action.setLoop(THREE.LoopOnce)
-                // action.clampWhenFinished = true;
-                // action.enabled = true;
-                // action.play();
-
-                // let animate = () => {
-                //     requestAnimationFrame( animate );
-                //     mixer.update( 0.01 );
-                // }
-                // animate();
+                if (clickedMesh.name === "Cube004") {
+                    // 표지 넘기기
+                    this._book.clickCoverFront(images);
+                } else if (clickedMesh.name === "Cube004_1") {
+                    this._book.turnBackCover();
+                } else if (clickedMesh.name === "P1front") {
+                    // 책장 넘기기기
+                    this._book.clickP1Front(images);
+                    // this._book.turnBackPage();
+                } else if (clickedMesh.name === "P2front") {
+                    // 책장 넘기기기2
+                    this._book.clickP2Front(images);
+                } else if (clickedMesh.name === "P3front") {
+                    this._book.clickP3Front(images);
+                } else if (clickedMesh.name === "P1back") {
+                    // 책 뒤로가기 1
+                    this._book.clickP1Back(images);
+                } else if (clickedMesh.name === "P2back") {
+                    this._book.clickP2Back(images);
+                }
             }
-            // } else if(clickedMesh.name === 'P2back') { // 책 뒤로가기 2 .. 뒤로가기 무한 반복 마지막이 아닐 경우 텍스쳐 입혀 원복
-
-            // }
         }
     }
 
     beginScene2() {
         this._intro.removeScene();
-        this._book.turnCover();
-        this._book.turnPageFirst();
-        // this._book.tunPageSecond();
-        this._book.createMakeStoryLayoutOne();
+
+        this.stage = "READ_BOOK";
+
+        // this._book.turnCover();
+        // this._book.turnPageFirst();
+        // this._book.createMakeStoryLayoutOne();
     }
 
-    async fetchData(clickedMesh) {
-        const pageR = document.getElementById("pageR");
-        console.log(pageR);
+    async beginLoadingMakingStory() {
+        // 책 덮기
+        this._book.turnBackPageFirst();
+        this._book.turnBackPageSecond();
+        this._book.turnBackCover();
+        // 아우라 추가
+        this.addAura();
+
+        // 카메라 이동
+        const startPosition = this._camera.position;
+        const endPosition = new THREE.Vector3(0.443, 3, 0.702);
+        const duration = 2000;
+        this.animateCamera(startPosition, endPosition, duration, this.easeInOutQuad);
+        // text 추가
+        let makingStoryEl = document.querySelector("#making_story_title");
+        makingStoryEl.style.display = "block";
+
+        let makingStoryTextEl = document.querySelector("#making_story_title_text");
+        makingStoryTextEl.textContent = "이야기를 만들고 있어요. 잠시만 기다려 주세요! . . .";
+        makingStoryTextEl.className = "dot";
+    }
+
+    async endLoadingMakingBook() {
+        // 아우라 제거
+        this.removeAura();
+
+        // text 변경
+        let makingStoryEl = document.querySelector("#making_story_title");
+        makingStoryEl.style.display = "none";
+
+        // 새로운 book 띄우기
+    }
+
+    easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    animateCamera(startPosition, endPosition, duration, easing) {
+        const startTime = performance.now();
+        const start = startPosition.clone();
+        const end = endPosition.clone();
+        const diffPosition = end.clone().sub(start);
+
+        const move = (timestamp) => {
+            const elapsedTime = timestamp - startTime;
+            const progress = elapsedTime / duration;
+
+            if (progress < 1) {
+                const easedProgress = easing(progress);
+                const currentPosition = start.clone().add(diffPosition.clone().multiplyScalar(easedProgress));
+                this._camera.position.copy(currentPosition);
+                this._renderer.render(this._scene, this._camera);
+                requestAnimationFrame(move);
+            } else {
+                this._camera.position.copy(end);
+                this._renderer.render(this._scene, this._camera);
+            }
+        };
+
+        requestAnimationFrame(move);
+    }
+
+    async fetchGetTitles() {
+        console.log(document.getElementById("mainCharacter"));
+        console.log(document.getElementById("genre"));
+        const mainCharacter = document.getElementById("mainCharacter").value;
+        const genre = document.getElementById("genre").value;
+        const pageCount = document.getElementById("pageCount").value;
+        const data = {
+            mainCharacter: mainCharacter,
+            genre: genre,
+            pageCount: pageCount,
+        };
+
         await axios
-            .get("http://localhost:3000/api/books", {
-                responseType: "arraybuffer",
+            .post("http://localhost:3000/api/title", {
+                data: data,
+                responseType: "json",
             })
+            .then(async (response) => {
+                console.log(response);
+                // 종료
+                this._book.createTitlesOnPage(response.data);
+            })
+            .catch((error) => {
+                console.error("Error fetching data:", error);
+            });
+    }
+
+    async fetchGetBook() {
+        const title = document.getElementById("titleSelected").innerText;
+        await axios
+            .post(
+                "http://localhost:3000/api/books",
+                { title: title },
+                {
+                    responseType: "arraybuffer",
+                }
+            )
             .then(async (response) => {
                 // const pdfBlob = new Blob([response.data], { type: "application/pdf" });
                 const arrayBuffer = response.data;
@@ -165,27 +241,16 @@ export default class Main {
                 // // Generate a Blob URL
                 const pdfUrl = URL.createObjectURL(pdfBlob);
 
-                console.log(pdfUrl);
-                // // Create an anchor element and set its download attribute
-                // const link = document.createElement("a");
-                // link.href = pdfUrl;
-                // link.download = "downloaded_pdf.pdf";
+                sessionStorage.setItem("pdfUrl", JSON.stringify(pdfUrl));
 
-                // // Append the link to the DOM, click it, and remove it
-                // document.body.appendChild(link);
-                // link.click();
-                // document.body.removeChild(link);
-
-                // // Revoke the Blob URL
-                // URL.revokeObjectURL(pdfUrl);
-
-                sessionStorage.setItem("arrayBuffer", arrayBuffer);
-                sessionStorage.setItem("pdfUrl", pdfUrl);
                 const images = await this.convertPdfToImages(pdfUrl);
-                console.log(images);
-                sessionStorage.setItem("book", images);
 
-                this._book.createImg(clickedMesh, images[1]);
+                sessionStorage.setItem("book", JSON.stringify(images));
+
+                this.endLoadingMakingBook();
+                // stage 변경
+                this.stage = "READ_BOOK";
+                // 종료
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
@@ -205,10 +270,9 @@ export default class Main {
         console.log(pdf);
         const numPages = pdf.numPages;
         const images = [];
-        console.log(pdf);
         for (let i = 1; i <= numPages; i++) {
             const page = await pdf.getPage(i);
-            const scale = 1.0;
+            const scale = 3.0;
             const viewport = page.getViewport({ scale });
 
             const canvas = document.createElement("canvas");
@@ -223,6 +287,75 @@ export default class Main {
         }
 
         return images;
+    }
+
+    removeAura() {
+        this._bookObj.remove(this._auraSprite);
+    }
+
+    changeTobookLookStage() {
+        let makingStoryEl = document.querySelector("#making_story_title");
+        makingStoryEl.style.display = "block";
+
+        let makingStoryTextEl = document.querySelector("#making_story_title_text");
+        makingStoryTextEl.textContent = "이야기가 완성 되었어요! 클릭하시면 이야기를 읽을수 있어요!";
+        makingStoryTextEl.className = "";
+
+        // this._camera.position.set(0.58, 4.93, 1.28);
+        // this._camera.rotation.set(-0.017, -0.008, 0);
+    }
+
+    createAuraTexture() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 128;
+        canvas.height = 128;
+        const context = canvas.getContext("2d");
+
+        const gradient = context.createRadialGradient(
+            canvas.width / 2,
+            canvas.height / 2,
+            0,
+            canvas.width / 2,
+            canvas.height / 2,
+            canvas.width / 2
+        );
+
+        gradient.addColorStop(0, "rgba(128, 0, 255, 1)");
+        gradient.addColorStop(0.4, "rgba(128, 0, 255, 0.6)");
+        gradient.addColorStop(1, "rgba(128, 0, 255, 0)");
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, canvas.width, canvas.height);
+
+        return new THREE.CanvasTexture(canvas);
+    }
+
+    addAura() {
+        const auraTexture = this.createAuraTexture();
+        const auraMaterial = new THREE.SpriteMaterial({
+            map: auraTexture,
+            color: 0xffffff,
+            transparent: true,
+            blending: THREE.AdditiveBlending,
+        });
+
+        const auraSprite = new THREE.Sprite(auraMaterial);
+        this._auraSprite = auraSprite;
+        auraSprite.scale.set(5, 5, 5); // 원하는 크기로 조절
+
+        this._bookObj.add(auraSprite); // 메쉬에 스프라이트를 자식으로 추가
+        auraSprite.position.set(-1, 0, 0); // 원하는 위치에 스프라이트를 놓으세요.
+
+        const animate = (time) => {
+            requestAnimationFrame(animate);
+
+            const delta = (Math.sin(time * 0.001) + 1) / 2;
+            auraMaterial.opacity = delta * 2;
+
+            this._renderer.render(this._scene, this._camera);
+        };
+
+        animate(2000);
     }
 
     _setupCamera(camera) {
@@ -262,7 +395,6 @@ export default class Main {
         // 임시
         const AmbientLight = new THREE.AmbientLight(0x404040, 1); // soft white light
         this._AmbientLight = AmbientLight;
-
         this._scene.add(this._AmbientLight);
     }
 
@@ -278,7 +410,7 @@ export default class Main {
     async _initModel() {
         const obj = new THREE.Object3D();
 
-        const book = new Book(this._scene, this._camera, this._cssRenderer, this._gltfLoader);
+        const book = new Book(this._scene, this._camera, this._cssRenderer, this._gltfLoader, this._renderer);
         this._book = book;
         const bookObj = await book.loadBook();
         this._bookObj = bookObj;
@@ -341,8 +473,8 @@ export default class Main {
         this._camera.updateProjectionMatrix();
 
         this._renderer.setSize(width, height);
+        // console.log(document.body.clientWidth);
         this._cssRenderer?.setSize(width, height);
-        this._css2DRenderer?.setSize(width, height);
     }
 
     // Function to create a flashing light effect

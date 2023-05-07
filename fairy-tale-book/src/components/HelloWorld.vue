@@ -10,9 +10,36 @@
                 class="page"
                 id="pageL"
             >
-                <div>이야기 주인공의 이름은?</div>
-                <div>
-                    <input placeholder="test1" />
+                <div class="input">
+                    이야기 주인공의 이름은?
+                    <input
+                        id="mainCharacter"
+                        placeholder="test1"
+                    />
+                </div>
+                <div class="input">
+                    이야기의 장르를 선택해 주세요!
+                    <select id="genre">
+                        <option value="아무거나">아무거나</option>
+                        <option value="모험">모험</option>
+                        <option value="동물">동물</option>
+                        <option value="다양성">다양성</option>
+                        <option value="가족">가족</option>
+                        <option value="도전">도전</option>
+                        <option value="우정">우정</option>
+                    </select>
+                </div>
+                <div class="input">
+                    이야기의 페이지 수를 선택해 주세요!
+                    <select id="pageCount">
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                    </select>
                 </div>
                 <div
                     id="next-page"
@@ -21,12 +48,56 @@
                     <p>다음으로 이동 -></p>
                 </div>
             </div>
+            <div
+                class="page"
+                id="loading"
+            >
+                잠시만 기다려 주세요!
+            </div>
 
             <div
                 class="page"
                 id="pageR"
             >
                 <h1>당신의 이야기를 만들어 주세요!</h1>
+                <h2>이야기 주인공의 이름과 주제를 선택해 주세요.</h2>
+            </div>
+            <div
+                class="page"
+                id="pageR2"
+            >
+                <p>주제를 골라 주세요!</p>
+                <div id="titleDesc"></div>
+                <div>
+                    선택된 이야기
+                    <div
+                        id="titleSelected"
+                        class="card"
+                    ></div>
+                </div>
+            </div>
+
+            <div
+                class="page"
+                id="cards"
+            >
+                <div id="cardsTitles"></div>
+                <div
+                    id="next-page2"
+                    style="text-align: right; width: 100%"
+                >
+                    <p>다음으로 이동 -></p>
+                </div>
+            </div>
+            <div
+                id="card"
+                lass="card"
+            >
+                <p class="mt-2 text-gray-600">
+                    <!-- 1. 장난감 소년 : 장난감 소년은 자신의 친구들과 함께 장난감 마을에 방문하여 여러 장난감들과 놀이를
+                    하며 즐거운 시간을 보냈습니다. 그러던 중 장난감 마 을의 왕자가 되기 위해 장난감 소년은 여러
+                    장난감들과 함께 모험을 떠나게 됩니다. -->
+                </p>
             </div>
 
             <div
@@ -82,18 +153,13 @@
     </div>
 </template>
 
-<script>
+<script setup>
 import Main from "@/module/function/main.three";
-// import { Configuration, OpenAIApi } from "openai";
-export default {
-    name: "HelloWorld",
-    props: {
-        msg: String,
-    },
-    mounted() {
-        new Main();
-    },
-};
+import { onMounted } from "vue";
+
+onMounted(() => {
+    new Main();
+});
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -114,8 +180,8 @@ a {
 }
 .page {
     position: absolute;
-    width: 60%;
-    height: 100%;
+    width: 800px;
+    height: 1000px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -145,6 +211,7 @@ a {
 
 h1,
 input,
+select,
 #making_story_title {
     font-family: "InkLipquid";
     font-weight: 700;
@@ -253,11 +320,18 @@ input,
     left: 0;
 }
 
-#next-page p {
+#next-page,
+#next-page2 {
     cursor: pointer;
 }
 
 #three {
     position: relative;
+}
+.input {
+    text-align: center;
+}
+.card {
+    border: 2px solid black;
 }
 </style>
