@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 export default class Book {
     meshes = {};
-    _currentPage = 0;
+    _currentPage = 1;
 
     constructor(scene, camera, cssRenderer, gltfLoader, renderer) {
         this._scene = scene;
@@ -173,8 +173,13 @@ export default class Book {
 
     // animateP2Turn(reverse) {}
 
+    // 책 겉면에 이미지를 삽입한다.
+    async createBookCover(images) {
+        await this.insertImg(this.meshes.Cube004, images[1]);
+    }
+
     async clickCoverFront(images) {
-        this._currentPage = 0;
+        this._currentPage = 1;
         this.turnCover();
         await this.insertImg(this.meshes.P1front, images[++this._currentPage]);
     }
@@ -196,7 +201,7 @@ export default class Book {
         console.log(images.length);
         console.log(this._currentPage + 1);
         // page limit 홀 짝도 계산
-        if (images.length < this._currentPage + 1) {
+        if (images.length < this._currentPage) {
             return;
         }
         await this.insertImg(this.meshes.P1back, images[this._currentPage - 1]);
@@ -211,7 +216,7 @@ export default class Book {
     // }
 
     clickP1Back(images) {
-        if (this._currentPage > 3) {
+        if (this._currentPage > 4) {
             this.clickP2Back(images);
             return;
         }
@@ -437,6 +442,7 @@ export default class Book {
             if (image) {
                 const newTexture = new THREE.TextureLoader().load(image, async () => {
                     mesh.material.map = newTexture;
+                    // mesh.material.color = new THREE.Color("skyblue");
                     mesh.material.needsUpdate = true;
                     resolve();
                 });

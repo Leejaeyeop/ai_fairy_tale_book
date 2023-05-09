@@ -97,6 +97,7 @@ export default class Main {
             // 특정 메쉬를 클릭한 경우, 이벤트를 발생시킵니다.
             if (this.stage === "READ_BOOK") {
                 const images = JSON.parse(sessionStorage.getItem("book"));
+                localStorage.getItem("book", JSON.stringify(images));
 
                 if (clickedMesh.name === "Cube004") {
                     // 표지 넘기기
@@ -126,6 +127,8 @@ export default class Main {
         this._intro.removeScene();
 
         this.stage = "READ_BOOK";
+        const images = JSON.parse(sessionStorage.getItem("book"));
+        this._book.createBookCover(images);
 
         // this._book.turnCover();
         // this._book.turnPageFirst();
@@ -199,11 +202,11 @@ export default class Main {
         console.log(document.getElementById("genre"));
         const mainCharacter = document.getElementById("mainCharacter").value;
         const genre = document.getElementById("genre").value;
-        const pageCount = document.getElementById("pageCount").value;
+        // const pageCount = document.getElementById("pageCount")?.value;
         const data = {
             mainCharacter: mainCharacter,
             genre: genre,
-            pageCount: pageCount,
+            // pageCount: pageCount,
         };
 
         await axios
@@ -251,6 +254,7 @@ export default class Main {
                 // stage 변경
                 this.stage = "READ_BOOK";
                 // 종료
+                this._book.createBookCover(images);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
