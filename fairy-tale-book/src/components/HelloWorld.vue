@@ -14,7 +14,7 @@
                     이야기 주인공의 이름은?
                     <input
                         id="mainCharacter"
-                        placeholder="test1"
+                        placeholder="이름을 입력해주세요!"
                     />
                 </div>
                 <div class="input">
@@ -29,7 +29,7 @@
                         <option value="우정">우정</option>
                     </select>
                 </div>
-                <div class="input">
+                <!-- <div class="input">
                     이야기의 페이지 수를 선택해 주세요!
                     <select id="pageCount">
                         <option value="8">8</option>
@@ -40,7 +40,7 @@
                         <option value="13">13</option>
                         <option value="14">14</option>
                     </select>
-                </div>
+                </div> -->
                 <div
                     id="next-page"
                     style="text-align: right; width: 100%"
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div
-                class="page"
+                class="page dot center"
                 id="loading"
             >
                 잠시만 기다려 주세요!
@@ -59,8 +59,10 @@
                 class="page"
                 id="pageR"
             >
-                <h1>당신의 이야기를 만들어 주세요!</h1>
-                <h2>이야기 주인공의 이름과 주제를 선택해 주세요.</h2>
+                <div>
+                    <h1>당신의 이야기를 만들어 주세요!</h1>
+                    <h2>이야기 주인공의 이름과 주제를 선택해 주세요.</h2>
+                </div>
             </div>
             <div
                 class="page"
@@ -72,7 +74,7 @@
                     선택된 이야기
                     <div
                         id="titleSelected"
-                        class="card"
+                        class="title-card"
                     ></div>
                 </div>
             </div>
@@ -91,7 +93,7 @@
             </div>
             <div
                 id="card"
-                lass="card"
+                class="card"
             >
                 <p class="mt-2 text-gray-600">
                     <!-- 1. 장난감 소년 : 장난감 소년은 자신의 친구들과 함께 장난감 마을에 방문하여 여러 장난감들과 놀이를
@@ -217,6 +219,10 @@ select,
     font-weight: 700;
     font-size: 3rem;
 }
+
+h2 {
+    font-size: 2rem;
+}
 @font-face {
     font-family: "InkLipquid";
     src: url("@/assets/fonts/InkLipquidFonts.ttf") format("truetype");
@@ -331,7 +337,14 @@ select,
 .input {
     text-align: center;
 }
-.card {
+.title-card {
     border: 2px solid black;
+}
+.card {
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+.center {
+    justify-content: center;
 }
 </style>

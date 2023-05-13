@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 export default class Book {
     meshes = {};
-    _currentPage = 1;
+    _currentPage = 0;
 
     constructor(scene, camera, cssRenderer, gltfLoader, renderer) {
         this._scene = scene;
@@ -175,7 +175,7 @@ export default class Book {
 
     // 책 겉면에 이미지를 삽입한다.
     async createBookCover(images) {
-        await this.insertImg(this.meshes.Cube004, images[1]);
+        await this.insertImg(this.meshes.coverL, images[1]);
     }
 
     async clickCoverFront(images) {
@@ -442,7 +442,6 @@ export default class Book {
             if (image) {
                 const newTexture = new THREE.TextureLoader().load(image, async () => {
                     mesh.material.map = newTexture;
-                    // mesh.material.color = new THREE.Color("skyblue");
                     mesh.material.needsUpdate = true;
                     resolve();
                 });

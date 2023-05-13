@@ -94,15 +94,16 @@ export default class Main {
         if (intersects.length > 0) {
             console.log(this.stage);
             var clickedMesh = intersects[0].object;
+            console.log(clickedMesh);
             // 특정 메쉬를 클릭한 경우, 이벤트를 발생시킵니다.
             if (this.stage === "READ_BOOK") {
                 const images = JSON.parse(sessionStorage.getItem("book"));
                 localStorage.getItem("book", JSON.stringify(images));
 
-                if (clickedMesh.name === "Cube004") {
+                if (clickedMesh.name === "coverL") {
                     // 표지 넘기기
                     this._book.clickCoverFront(images);
-                } else if (clickedMesh.name === "Cube004_1") {
+                } else if (clickedMesh.name === "coverL_1") {
                     this._book.turnBackCover();
                 } else if (clickedMesh.name === "P1front") {
                     // 책장 넘기기기
@@ -126,13 +127,13 @@ export default class Main {
     beginScene2() {
         this._intro.removeScene();
 
-        this.stage = "READ_BOOK";
-        const images = JSON.parse(sessionStorage.getItem("book"));
-        this._book.createBookCover(images);
+        // this.stage = "READ_BOOK";
+        // const images = JSON.parse(sessionStorage.getItem("book"));
+        // this._book.createBookCover(images);
 
-        // this._book.turnCover();
-        // this._book.turnPageFirst();
-        // this._book.createMakeStoryLayoutOne();
+        this._book.turnCover();
+        this._book.turnPageFirst();
+        this._book.createMakeStoryLayoutOne();
     }
 
     async beginLoadingMakingStory() {
