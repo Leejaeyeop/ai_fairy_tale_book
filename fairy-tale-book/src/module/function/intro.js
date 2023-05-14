@@ -230,5 +230,58 @@ export default class Intro {
 
             pubSub.publish("beginScene2");
         });
+
+        // 이야기 불러오기
+        this._bookshelfFrameFront.addEventListener("click", () => {
+            // Usage example
+            this.fileUpload();
+        });
+
+        this._bookshelfFrameSide.addEventListener("click", () => {
+            // Usage example
+            const startPosition = this._camera.position;
+            const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
+            const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
+            const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
+
+            // const endRotation = new THREE.Quaternion(-1.561, 0, 0.00038)
+
+            const duration = 2000; // in milliseconds
+            this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
+
+            pubSub.publish("beginScene2");
+        });
+    }
+
+    // TODO 나중에 모듈화
+    fileUpload() {
+        let fileInput = document.getElementById("pdfUpload");
+        fileInput.click();
+
+        fileInput.addEventListener("change", () => {
+            if (fileInput.files.length > 0) {
+                console.log(fileInput.files);
+                let file = fileInput.files[0];
+
+                const startPosition = this._camera.position;
+                const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
+                const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
+                const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
+
+                // const endRotation = new THREE.Quaternion(-1.561, 0, 0.00038)
+
+                const duration = 2000; // in milliseconds
+                this.animateCamera(
+                    startPosition,
+                    endPosition,
+                    startRotation,
+                    endRotation,
+                    duration,
+                    this.easeInOutQuad
+                );
+                this.removeScene();
+                pubSub.publish("beginScene3", file);
+            }
+        });
     }
 }

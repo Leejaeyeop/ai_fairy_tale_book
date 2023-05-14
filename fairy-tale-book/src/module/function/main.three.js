@@ -76,6 +76,7 @@ export default class Main {
         });
 
         pubSub.subscribe("beginScene2", this.beginScene2.bind(this));
+        pubSub.subscribe("beginScene3", this.prepareBook.bind(this));
     }
 
     onDocumentMouseDown(event) {
@@ -97,7 +98,8 @@ export default class Main {
             console.log(clickedMesh);
             // 특정 메쉬를 클릭한 경우, 이벤트를 발생시킵니다.
             if (this.stage === "READ_BOOK") {
-                const images = JSON.parse(sessionStorage.getItem("book"));
+                // const images = JSON.parse(sessionStorage.getItem("book"));
+                const images = this._images;
                 localStorage.getItem("book", JSON.stringify(images));
 
                 if (clickedMesh.name === "coverL") {
@@ -237,29 +239,43 @@ export default class Main {
             )
             .then(async (response) => {
                 // const pdfBlob = new Blob([response.data], { type: "application/pdf" });
+
                 const arrayBuffer = response.data;
-
-                // // Create a Blob from the ArrayBuffer
-                const pdfBlob = new Blob([arrayBuffer], { type: "application/pdf" });
-
-                // // Generate a Blob URL
-                const pdfUrl = URL.createObjectURL(pdfBlob);
-
-                sessionStorage.setItem("pdfUrl", JSON.stringify(pdfUrl));
-
-                const images = await this.convertPdfToImages(pdfUrl);
-
-                sessionStorage.setItem("book", JSON.stringify(images));
-
-                this.endLoadingMakingBook();
-                // stage 변경
-                this.stage = "READ_BOOK";
-                // 종료
-                this._book.createBookCover(images);
+                this.prepareBook(arrayBuffer, true);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
             });
+    }
+
+    async prepareBook(arrayBuffer, download) {
+        console.log(arrayBuffer);
+        // // Create a Blob from the ArrayBuffer
+        const pdfBlob = new Blob([arrayBuffer], { type: "application/pdf" });
+
+        // // Generate a Blob URL
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        if (download) {
+            // Open the URL on new Window
+            const link = document.createElement("a");
+            link.href = pdfUrl;
+            link.setAttribute("download", "book.pdf"); // or any other extension
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        // sessionStorage.setItem("pdfUrl", JSON.stringify(pdfUrl));
+
+        const images = await this.convertPdfToImages(pdfUrl);
+
+        // sessionStorage.setItem("book", JSON.stringify(images));
+        this._images = images;
+        this.endLoadingMakingBook();
+        // stage 변경
+        this.stage = "READ_BOOK";
+        // 종료
+        this._book.createBookCover(images);
     }
 
     async convertPdfToImages(arrayBuffer) {

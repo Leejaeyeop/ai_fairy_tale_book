@@ -141,6 +141,12 @@
             <div id="load">
                 <div id="circle"></div>
                 <h1 class="intro_text">이야기 불러오기</h1>
+                <input
+                    type="file"
+                    id="pdfUpload"
+                    accept=".pdf"
+                    style="display: none; !important"
+                />
             </div>
             <div id="making_story_title">
                 <h1

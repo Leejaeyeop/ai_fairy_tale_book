@@ -20,16 +20,16 @@ export default class Book {
                     // 텍스쳐 입히기
                     // coverL의 cover-front에만 texture를 입힘
                     // gltf.scene.children[2].children[0].traverse(function (child) {
-                    // gltf.scene.traverse(function (child) {
-                    //     if (child.isMesh) {
-                    //       // Create a new texture to replace the UV-mapped texture
-                    //       const newTexture = new THREE.TextureLoader().load('/book-cover-image.jpg');
-                    //       // Assign the new texture to the existing material
-                    //       child.material.map = newTexture;
-                    //       child.material.needsUpdate = true;
-
-                    //     }
-                    //   });
+                    gltf.scene.traverse(function (child) {
+                        if (child.isMesh) {
+                            console.log(child);
+                            // Create a new texture to replace the UV-mapped texture
+                            const newTexture = new THREE.TextureLoader().load("/cover.jpg");
+                            // Assign the new texture to the existing material
+                            child.material.map = newTexture;
+                            child.material.needsUpdate = true;
+                        }
+                    });
 
                     const book = gltf.scene;
 
@@ -169,17 +169,13 @@ export default class Book {
         animate();
     }
 
-    // animateP1Turn(reverse) {}
-
-    // animateP2Turn(reverse) {}
-
     // 책 겉면에 이미지를 삽입한다.
     async createBookCover(images) {
-        await this.insertImg(this.meshes.coverL, images[1]);
+        await this.insertImg(this.meshes.coverL, images[0]);
     }
 
     async clickCoverFront(images) {
-        this._currentPage = 1;
+        this._currentPage = 0;
         this.turnCover();
         await this.insertImg(this.meshes.P1front, images[++this._currentPage]);
     }
@@ -201,7 +197,7 @@ export default class Book {
         console.log(images.length);
         console.log(this._currentPage + 1);
         // page limit 홀 짝도 계산
-        if (images.length < this._currentPage) {
+        if (images.length < this._currentPage + 1) {
             return;
         }
         await this.insertImg(this.meshes.P1back, images[this._currentPage - 1]);
