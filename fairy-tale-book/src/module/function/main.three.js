@@ -107,19 +107,19 @@ export default class Main {
                     this._book.clickCoverFront(images);
                 } else if (clickedMesh.name === "coverL_1") {
                     this._book.turnBackCover();
-                } else if (clickedMesh.name === "P1front") {
+                } else if (clickedMesh.name === "Page1Front") {
                     // 책장 넘기기기
                     this._book.clickP1Front(images);
                     // this._book.turnBackPage();
-                } else if (clickedMesh.name === "P2front") {
+                } else if (clickedMesh.name === "Page2Front") {
                     // 책장 넘기기기2
                     this._book.clickP2Front(images);
-                } else if (clickedMesh.name === "P3front") {
+                } else if (clickedMesh.name === "Pages") {
                     this._book.clickP3Front(images);
-                } else if (clickedMesh.name === "P1back") {
+                } else if (clickedMesh.name === "Page1Back") {
                     // 책 뒤로가기 1
                     this._book.clickP1Back(images);
-                } else if (clickedMesh.name === "P2back") {
+                } else if (clickedMesh.name === "Page2Back") {
                     this._book.clickP2Back(images);
                 }
             }
@@ -380,8 +380,8 @@ export default class Main {
     }
 
     _setupCamera(camera) {
-        camera.position.set(0, 0, 5);
-
+        camera.position.set(2.06, 2.55, 5.98);
+        camera.rotation.set(-0.404, 0.307, 0.128);
         // camera.position.set(0.45, 1.37, 0.578)
         // camera.rotation.set(-1.53, 0.001037, 0.0264)
 
