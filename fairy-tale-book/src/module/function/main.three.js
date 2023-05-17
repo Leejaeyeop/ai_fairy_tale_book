@@ -249,7 +249,6 @@ export default class Main {
     }
 
     async prepareBook(arrayBuffer, download) {
-        console.log(arrayBuffer);
         // // Create a Blob from the ArrayBuffer
         const pdfBlob = new Blob([arrayBuffer], { type: "application/pdf" });
 
@@ -278,9 +277,8 @@ export default class Main {
         this._book.createBookCover(images);
     }
 
+    extractedTexts = [];
     async convertPdfToImages(arrayBuffer) {
-        // console.log(arrayBuffer);
-        // console.log(typeof arrayBuffer);
         const pdfjsWorker = await import("pdfjs-dist/build/pdf.worker.entry");
         const _pdfjs = await import("pdfjs-dist/build/pdf");
         _pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
@@ -288,9 +286,9 @@ export default class Main {
         const pdf = await _pdfjs.getDocument(
             arrayBuffer // Try to export JPEG images directly if they don't need any further processing.
         ).promise;
-        console.log(pdf);
         const numPages = pdf.numPages;
         const images = [];
+
         for (let i = 1; i <= numPages; i++) {
             const page = await pdf.getPage(i);
             const scale = 3.0;
@@ -305,8 +303,18 @@ export default class Main {
 
             const dataUrl = canvas.toDataURL("image/jpeg");
             images.push(dataUrl);
+
+            // text 추출
+            let extractedText = "";
+            const textContent = await page.getTextContent();
+            // Concatenate the extracted text
+            textContent.items.forEach((item) => {
+                extractedText += item.str + " ";
+            });
+            this.extractedTexts.push(extractedText);
         }
 
+        console.log(this.extractedTexts);
         return images;
     }
 
