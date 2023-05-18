@@ -68,6 +68,7 @@ export default class Main {
             // this._book.createTitlesOnPage([]);
         });
 
+        // 이야기를 만들기 시작!
         let nextPage2El = document.querySelector("#next-page2");
         nextPage2El.addEventListener("click", async () => {
             this.fetchGetBook();
@@ -315,6 +316,7 @@ export default class Main {
         }
 
         console.log(this.extractedTexts);
+        this._book.extractedTexts = this.extractedTexts;
         return images;
     }
 
