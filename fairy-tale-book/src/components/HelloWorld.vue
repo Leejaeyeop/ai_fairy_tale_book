@@ -102,6 +102,18 @@
                 </p>
             </div>
 
+            <div id="ttsR">
+                <button id="ttsBtnR">
+                    <i class="fas fa-volume-up fa-4x"></i>
+                </button>
+            </div>
+
+            <div id="ttsL">
+                <button id="ttsBtnL">
+                    <i class="fas fa-volume-up fa-4x"></i>
+                </button>
+            </div>
+
             <div
                 id="arrow-start"
                 class="arrow"

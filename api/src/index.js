@@ -55,14 +55,29 @@ async function createTitles(data) {
 
 async function createStory(title) {
     console.log("createStory!");
-    let prompt =
-        title +
-        "\n 다음 내용으로 동화 이야기를 만들어 주세요. \n 이야기는 8개의 단락 으로 만들어 주세요. \n 영어와 한글로 각각 만들어 주세요.";
-    const response = await openai.createCompletion({
+    let texts = { kor: [], eng: [], titleEng: "" };
+    let prompt = "다음을 영어로 번역해 주세요. " + title;
+    let response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
         temperature: 0,
         max_tokens: 2048,
+        top_p: 1,
+        frequency_penalty: 0.0,
+        presence_penalty: 0.0,
+        // stop: [" "],
+    });
+    texts.titleEng = response.data.choices[0].text;
+
+    prompt =
+        title +
+        "Please make a fairy tale story with the following content. Please make the story into 8 paragraphs. And please do it in the form of 'Number: Contents', liek '1: content~ 2.content~'. Please make it in English and Korean respectively.";
+    // "\n 다음 내용으로 동화 이야기를 만들어 주세요. \n 이야기는 8개의 단락 으로 만들어 주세요. 그리고 '숫자 : 내용' 형식으로 해주세요. \n 영어와 한글로 각각 만들어 주세요.";
+    response = await openai.createCompletion({
+        model: "text-davinci-003",
+        prompt: prompt,
+        temperature: 0,
+        max_tokens: 3048,
         top_p: 1,
         frequency_penalty: 0.0,
         presence_penalty: 0.0,
@@ -74,7 +89,6 @@ async function createStory(title) {
     textSplited = text.split("\n");
     textSplited = textSplited.filter((text) => text !== "");
 
-    let texts = { kor: [], eng: [] };
     for (let text of textSplited) {
         console.log(text);
         if (text.length < 10) continue;
@@ -103,8 +117,9 @@ function checkLanguage(str) {
     }
 }
 
-async function createImg(texts) {
+async function createImg(title, texts) {
     imgs = [];
+    texts.unshift(title);
     for (let text of texts) {
         const response = await openai.createImage({
             prompt: text,
@@ -153,10 +168,26 @@ async function createPdf(doc, texts, imgs) {
         );
     }
 
+    let i = 0;
+    // 1페이지 에는 cover를 넣는다!
     // 순서를 보장한다... 즉, 여기서 buffer로 보내도 되고, pdf를 생성 해도 된다.
     for await (const { buffer, text } of imgPromises) {
-        doc.addPage();
-        doc.image(buffer).text(text);
+        if (i === 0) {
+            // 표지 만들기
+            doc.image(buffer, 0, 0, {
+                width: doc.page.width,
+                height: doc.page.height,
+            }).text(text, doc.page.width / 2, doc.page.height / 2);
+        } else {
+            doc.addPage();
+            // 기본
+            doc.image(buffer, {
+                fit: [500, 500],
+                align: "center",
+                valign: "center",
+            }).text(text);
+        }
+        i++;
     }
 
     doc.addPage();
@@ -190,10 +221,12 @@ app.post("/api/books", async (req, res) => {
     const doc = initPdf();
     // story를 만든다.
     let texts = await createStory(title);
-    // Todo texts 를 영어로 변환
+    // img를 만든다. cover 용 title(eng) + eng
+    let imgs = await createImg(texts.titleEng, texts.eng);
+    // cover 를 생성하기 위해 title text를 집어 넣는다.
+    let coverTitle = title.split(":")[0].split(".")[1];
+    texts.kor.unshift(coverTitle);
 
-    // img를 만든다.
-    let imgs = await createImg(texts.eng);
     // pdf를 만든다.
     await createPdf(doc, texts.kor, imgs);
 
@@ -211,8 +244,14 @@ app.post("/api/title", async (req, res) => {
         console.log(data);
         // title를 만든다.
         let texts = await createTitles(data);
+        console.log("끝!");
         res.json(texts);
     } catch (error) {
+        console.log("error!");
         res.send(error);
     }
 });
+
+// createStory(
+//     " 황금의 여왕: 이재엽은 자신의 모험을 시작하기 위해 작은 마을에서 멀리 떠납니다. 그는 자신의 모험을 위해 가는 길에 황금의 여왕을 만나게 됩니다. 여왕은 이재엽에게 그녀가 지키고 있는 황금의 보물을 찾아야 한다고 말합니다. 이재엽은 여왕의 부탁을 받고 모험을 시작합니다."
+// );

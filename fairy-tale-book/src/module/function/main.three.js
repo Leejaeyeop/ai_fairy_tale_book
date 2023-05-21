@@ -57,7 +57,7 @@ export default class Main {
         // this._SELECTED = SELECTED
         this._mouse = mouse;
 
-        document.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
+        myDiv.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
 
         // 일단 event listner ...
         let nextPageEl = document.querySelector("#next-page");
@@ -91,10 +91,9 @@ export default class Main {
         var intersects = this._raycaster.intersectObjects(this._scene.children);
         console.log(intersects);
         console.log(this._camera);
-        // console.log(images);
+        console.log("main!");
         // 가장 가까운 메쉬를 찾습니다.
         if (intersects.length > 0) {
-            console.log(this.stage);
             var clickedMesh = intersects[0].object;
             console.log(clickedMesh);
             // 특정 메쉬를 클릭한 경우, 이벤트를 발생시킵니다.
@@ -107,7 +106,7 @@ export default class Main {
                     // 표지 넘기기
                     this._book.clickCoverFront(images);
                 } else if (clickedMesh.name === "coverL_1") {
-                    this._book.turnBackCover();
+                    this._book.clickCoverBack();
                 } else if (clickedMesh.name === "Page1Front") {
                     // 책장 넘기기기
                     this._book.clickP1Front(images);
