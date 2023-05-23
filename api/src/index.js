@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import express from "express";
 import { Configuration, OpenAIApi } from "openai";
-import pdfDocumnet from "PDFKit";
 import fs from "fs";
 import https from "https";
 import cors from "cors";
@@ -248,6 +247,7 @@ app.post("/api/title", async (req, res) => {
         res.json(texts);
     } catch (error) {
         console.log("error!");
+        console.log(error);
         res.send(error);
     }
 });
