@@ -213,7 +213,7 @@ export default class Main {
         };
 
         await axios
-            .post("http://localhost:3000/api/title", {
+            .post(process.env.VUE_APP_API_URL + "api/title", {
                 data: data,
                 responseType: "json",
             })
@@ -231,7 +231,7 @@ export default class Main {
         const title = document.getElementById("titleSelected").innerText;
         await axios
             .post(
-                "http://localhost:3000/api/books",
+                process.env.VUE_APP_API_URL + "api/books",
                 { title: title },
                 {
                     responseType: "arraybuffer",
