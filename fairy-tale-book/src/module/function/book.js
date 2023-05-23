@@ -17,7 +17,7 @@ export default class Book {
     async loadBook() {
         return new Promise((resolve) => {
             this._gltfLoader.load(
-                "bookColor/newBook2.glb",
+                "bookColor/book.glb",
                 function (gltf) {
                     console.log(gltf.scene);
                     // 텍스쳐 입히기
