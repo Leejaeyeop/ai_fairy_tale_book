@@ -30,7 +30,7 @@ jobs:
                       options:
                         docbase: /dist
                         nodeversion: "18"
-                        build: npm run production
+                        build: cd fairy-tale-book npm run production
                         spa: true
                       context:
                         git:
