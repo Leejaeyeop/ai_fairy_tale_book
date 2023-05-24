@@ -471,14 +471,9 @@ export default class Main {
                     this._bookshelf = bookshelf;
                     this._desk = desk;
 
-                    // const scaleFactor = 0.1;
-                    // model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-
                     model.position.set(0.2, 0, 0);
-                    // model.rotation.y += Math.PI;
-                    resolve(model);
 
-                    // Optional: Set the model's scale
+                    resolve(model);
                 },
                 // called whrenderile loading is progressing
                 function (xhr) {
