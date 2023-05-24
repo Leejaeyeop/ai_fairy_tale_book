@@ -6,6 +6,8 @@ on:
 jobs:
     deploy:
         runs-on: ubuntu-latest
+        env:
+            working-directory: ./fairy-tale-book
         steps:
             - name: Checkout
               uses: actions/checkout@v2
@@ -20,7 +22,6 @@ jobs:
                   ghtoken: ${{ secrets.GHP_TOKEN }}
             - name: Deploy
               uses: cloudtype-github-actions/deploy@v1
-              working-directory: ./fairy-tale-book
               with:
                   token: ${{ secrets.CLOUDTYPE_TOKEN }}
                   project: leejaeyeop/ai-fairy-tale-book
