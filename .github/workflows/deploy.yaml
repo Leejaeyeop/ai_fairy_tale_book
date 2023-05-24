@@ -20,6 +20,7 @@ jobs:
                   ghtoken: ${{ secrets.GHP_TOKEN }}
             - name: Deploy
               uses: cloudtype-github-actions/deploy@v1
+              working-directory: ./fairy-tale-book
               with:
                   token: ${{ secrets.CLOUDTYPE_TOKEN }}
                   project: leejaeyeop/ai-fairy-tale-book
@@ -30,7 +31,7 @@ jobs:
                       options:
                         docbase: /dist
                         nodeversion: "18"
-                        build: cd fairy-tale-book npm run production
+                        build: npm run production
                         spa: true
                       context:
                         git:
