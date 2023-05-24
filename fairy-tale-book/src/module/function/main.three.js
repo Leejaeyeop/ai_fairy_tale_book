@@ -455,8 +455,6 @@ export default class Main {
 
         const intro = new Intro(this._scene, this._camera, this._renderer, this._cssRenderer);
         this._intro = intro;
-        // this.createIntro()
-        // this.createIntroPointCss()
     }
 
     async _loadHouse() {
@@ -486,17 +484,13 @@ export default class Main {
     }
 
     resize() {
-        // this._camera.position.set(0.443, 1.103, 0.702)
-        // this._camera.rotation.set(-1.561, 0, 0.00038)
-
         const width = this._myDIv.clientWidth;
-        const height = window.innerHeight; // this._myDIv.clientHeight;
+        const height = window.innerHeight;
 
         this._camera.aspect = width / height;
         this._camera.updateProjectionMatrix();
 
         this._renderer.setSize(width, height);
-        // console.log(document.body.clientWidth);
         this._cssRenderer?.setSize(width, height);
     }
 
