@@ -1,7 +1,6 @@
 import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import axios from "axios";
-
 export default class Book {
     meshes = {};
     _currentPage = 0;
@@ -17,7 +16,7 @@ export default class Book {
     async loadBook() {
         return new Promise((resolve) => {
             this._gltfLoader.load(
-                "bookColor/book.glb",
+                "book.glb",
                 function (gltf) {
                     console.log(gltf.scene);
                     // 텍스쳐 입히기
