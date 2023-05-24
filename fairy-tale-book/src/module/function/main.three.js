@@ -475,11 +475,9 @@ export default class Main {
 
                     resolve(model);
                 },
-                // called whrenderile loading is progressing
                 function (xhr) {
                     console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
                 },
-                // called when loading has errors
                 function (error) {
                     console.log("An error happened", error);
                 }
