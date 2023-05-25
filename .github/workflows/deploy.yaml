@@ -2,7 +2,7 @@ name: Deploy to cloudtype
 on:
     push:
         branches:
-            - main
+            - test
 jobs:
     deploy:
         runs-on: ubuntu-latest
