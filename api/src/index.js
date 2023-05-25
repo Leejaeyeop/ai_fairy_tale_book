@@ -199,7 +199,7 @@ async function createPdf(doc, texts, imgs) {
 
 app.use(
     cors({
-        origin: "*", //["http://localhost:8080", "http://121.172.250.125:8080", "https://leejaeyeop.github.io"], // Replace with your desired origin
+        origin: ["http://localhost:8080", "https://leejaeyeop.github.io"], // Replace with your desired origin
         optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
     })
 );
@@ -210,7 +210,7 @@ app.listen(PORT, function () {
     // main();
 });
 
-app.post("/api/books", async (req, res) => {
+app.post("/api/books", cors(), async (req, res) => {
     console.log("init making a book!");
 
     let title = req.body.title;
@@ -237,7 +237,7 @@ app.post("/api/books", async (req, res) => {
     doc.end();
 });
 
-app.post("/api/title", async (req, res) => {
+app.post("/api/title", cors(), async (req, res) => {
     try {
         let data = req.body.data;
         console.log(data);
@@ -248,6 +248,7 @@ app.post("/api/title", async (req, res) => {
     } catch (error) {
         console.log("error!");
         console.log(error);
+        res;
         res.send(error);
     }
 });
