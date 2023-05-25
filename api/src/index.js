@@ -197,14 +197,19 @@ async function createPdf(doc, texts, imgs) {
     console.log("종료");
 }
 
-app.use(
+const corsOptions = {
+  origin: "*",
+};
+app.use(cors(corsOptions));
+
+// app.use(
     // cors({
     //     origin: ["http://localhost:8080", "https://leejaeyeop.github.io"], // Replace with your desired origin
     //     credentials: true,
     //     optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
     // })
-    cors()
-);
+    // cors()
+// );
 
 // server open
 app.listen(PORT, function () {
