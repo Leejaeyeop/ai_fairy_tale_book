@@ -198,11 +198,12 @@ async function createPdf(doc, texts, imgs) {
 }
 
 app.use(
-    cors({
-        origin: ["http://localhost:8080", "https://leejaeyeop.github.io"], // Replace with your desired origin
-        credentials: true,
-        optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
-    })
+    // cors({
+    //     origin: ["http://localhost:8080", "https://leejaeyeop.github.io"], // Replace with your desired origin
+    //     credentials: true,
+    //     optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
+    // })
+    cors()
 );
 
 // server open
@@ -249,7 +250,6 @@ app.post("/api/title", cors(), async (req, res) => {
     } catch (error) {
         console.log("error!");
         console.log(error);
-        res;
         res.send(error);
     }
 });
