@@ -11,15 +11,11 @@ jobs:
               uses: actions/checkout@v2
               with:
                   lfs: true
-            - name: Checkout LFS objects
-              run: git lfs checkout
             - name: Connect deploy key
               uses: cloudtype-github-actions/connect@v1
               with:
                   token: ${{ secrets.CLOUDTYPE_TOKEN }}
                   ghtoken: ${{ secrets.GHP_TOKEN }}
-            - name: move subDir
-              run: cd fairy-tale-book
             - name: Deploy
               uses: cloudtype-github-actions/deploy@v1
               with:
