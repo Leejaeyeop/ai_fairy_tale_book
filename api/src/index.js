@@ -217,7 +217,7 @@ app.listen(PORT, function () {
     // main();
 });
 
-app.post("/api/books", cors(), async (req, res) => {
+app.post("/api/books", cors(corsOptions), async (req, res) => {
     console.log("init making a book!");
 
     let title = req.body.title;
@@ -244,7 +244,7 @@ app.post("/api/books", cors(), async (req, res) => {
     doc.end();
 });
 
-app.post("/api/title", cors(), async (req, res) => {
+app.post("/api/title", cors(corsOptions), async (req, res) => {
     try {
         let data = req.body.data;
         console.log(data);
