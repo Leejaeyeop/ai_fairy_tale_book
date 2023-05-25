@@ -200,6 +200,7 @@ async function createPdf(doc, texts, imgs) {
 app.use(
     cors({
         origin: ["http://localhost:8080", "https://leejaeyeop.github.io"], // Replace with your desired origin
+        credentials: true,
         optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
     })
 );
