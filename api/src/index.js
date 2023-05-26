@@ -6,6 +6,8 @@ import https from "https";
 import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
+import pdfDocumnet from "PDFKit";
+
 dotenv.config();
 const configuration = new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
@@ -197,19 +199,13 @@ async function createPdf(doc, texts, imgs) {
     console.log("종료");
 }
 
-const corsOptions = {
-  origin: "*",
-};
-app.use(cors(corsOptions));
-
-// app.use(
-    // cors({
-    //     origin: ["http://localhost:8080", "https://leejaeyeop.github.io"], // Replace with your desired origin
-    //     credentials: true,
-    //     optionsSuccessStatus: 200, // Some legacy browsers (IE11, various SmartTVs) choke on 204
-    // })
-    // cors()
-// );
+app.use(
+    cors({
+        origin: ["http://localhost:8080", "https://leejaeyeop.github.io", "https://web-fairytale-frontend-7e6o2cli06bdq9.sel4.cloudtype.app"], // Replace with your desired origin
+        credentials: true,
+        optionsSuccessStatus: 200,
+    })
+);
 
 // server open
 app.listen(PORT, function () {
@@ -217,7 +213,7 @@ app.listen(PORT, function () {
     // main();
 });
 
-app.post("/api/books", cors(corsOptions), async (req, res) => {
+app.post("/api/books", async (req, res) => {
     console.log("init making a book!");
 
     let title = req.body.title;
@@ -244,7 +240,7 @@ app.post("/api/books", cors(corsOptions), async (req, res) => {
     doc.end();
 });
 
-app.post("/api/title", cors(corsOptions), async (req, res) => {
+app.post("/api/title", async (req, res) => {
     try {
         let data = req.body.data;
         console.log(data);

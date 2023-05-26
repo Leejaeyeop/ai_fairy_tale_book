@@ -214,7 +214,7 @@ export default class Main {
 
         await axios
             .post(process.env.VUE_APP_API_URL + "api/title", {
-                timeout: 1000000,
+                timeout: 100000,
                 data: data,
                 responseType: "json",
             })
@@ -235,12 +235,11 @@ export default class Main {
                 process.env.VUE_APP_API_URL + "api/books",
                 { title: title },
                 {
+                timeout: 100000,
                     responseType: "arraybuffer",
                 }
             )
             .then(async (response) => {
-                // const pdfBlob = new Blob([response.data], { type: "application/pdf" });
-
                 const arrayBuffer = response.data;
                 this.prepareBook(arrayBuffer, true);
             })
@@ -264,12 +263,8 @@ export default class Main {
             document.body.appendChild(link);
             link.click();
         }
-
-        // sessionStorage.setItem("pdfUrl", JSON.stringify(pdfUrl));
-
         const images = await this.convertPdfToImages(pdfUrl);
 
-        // sessionStorage.setItem("book", JSON.stringify(images));
         this._images = images;
         this.endLoadingMakingBook();
         // stage 변경
