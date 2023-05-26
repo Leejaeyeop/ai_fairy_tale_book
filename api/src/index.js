@@ -40,7 +40,7 @@ async function createTitles(data) {
         model: "text-davinci-003",
         prompt: prompt,
         temperature: 0.7,
-        max_tokens: 100,
+        max_tokens: 512,
         top_p: 0.8,
         // frequency_penalty: 0.0,
         // presence_penalty: 0.0,

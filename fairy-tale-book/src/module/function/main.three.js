@@ -213,8 +213,7 @@ export default class Main {
         };
 
         await axios
-            .post(process.env.VUE_APP_API_URL + "api/title", {
-                timeout: 1000000,
+            .post(process.env.VUE_APP_API_URL + "api/title",{
                 data: data,
                 responseType: "json",
             })
@@ -235,7 +234,6 @@ export default class Main {
                 process.env.VUE_APP_API_URL + "api/books",
                 { title: title },
                 {
-                timeout: 1000000,
                     responseType: "arraybuffer",
                 }
             )
