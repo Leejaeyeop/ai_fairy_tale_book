@@ -39,11 +39,11 @@ async function createTitles(data) {
     const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
-        temperature: 0,
-        max_tokens: 2048,
-        top_p: 1,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
+        temperature: 0.7,
+        max_tokens: 100,
+        top_p: 0.8,
+        // frequency_penalty: 0.0,
+        // presence_penalty: 0.0,
         // stop: [" "],
     });
     let text = response.data.choices[0].text;
