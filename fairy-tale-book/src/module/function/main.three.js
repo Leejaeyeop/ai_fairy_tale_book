@@ -214,6 +214,7 @@ export default class Main {
 
         await axios
             .post(process.env.VUE_APP_API_URL + "api/title", {
+                timeout: 1000000,
                 data: data,
                 responseType: "json",
             })
