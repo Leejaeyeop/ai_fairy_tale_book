@@ -15,7 +15,6 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "openai": "^3.2.1",
-    "pdfjs-dist": "^3.6.172",
     "pdfkit": "^0.13.0"
   },
   "type": "module"

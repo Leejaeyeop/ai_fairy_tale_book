@@ -235,7 +235,7 @@ export default class Main {
                 process.env.VUE_APP_API_URL + "api/books",
                 { title: title },
                 {
-                timeout: 100000,
+                timeout: 300000,
                     responseType: "arraybuffer",
                 }
             )

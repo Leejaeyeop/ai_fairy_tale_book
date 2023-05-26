@@ -6,7 +6,7 @@ import https from "https";
 import cors from "cors";
 import bodyParser from "body-parser";
 import path from "path";
-import pdfDocumnet from "PDFKit";
+import PDFDocument from "pdfkit";
 
 dotenv.config();
 const configuration = new Configuration({
@@ -136,7 +136,7 @@ async function createImg(title, texts) {
 const __dirname = path.resolve();
 function initPdf() {
     const dir = path.join(__dirname, "/resources/fonts/InkLipquidFonts.ttf");
-    const doc = new pdfDocumnet();
+    const doc = new PDFDocument();
     const fontBytes = fs.readFileSync(dir);
     doc.registerFont("InkLipquid", fontBytes);
     doc.font("InkLipquid").fontSize(28);
