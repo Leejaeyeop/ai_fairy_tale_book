@@ -14,7 +14,7 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 const app = express();
-const PORT = 3000;
+const PORT = 3000; // 8080;
 
 // sample data
 let imgs = [];
@@ -40,7 +40,7 @@ async function createTitles(data) {
         model: "text-davinci-003",
         prompt: prompt,
         temperature: 0.7,
-        max_tokens: 512,
+        max_tokens: 1024,
         top_p: 0.8,
         // frequency_penalty: 0.0,
         // presence_penalty: 0.0,
@@ -201,7 +201,11 @@ async function createPdf(doc, texts, imgs) {
 
 app.use(
     cors({
-        origin: ["http://localhost:8080", "https://leejaeyeop.github.io", "https://web-fairytale-frontend-7e6o2cli06bdq9.sel4.cloudtype.app"], // Replace with your desired origin
+        origin: [
+            "http://localhost:8080",
+            "https://leejaeyeop.github.io",
+            "https://web-fairytale-frontend-7e6o2cli06bdq9.sel4.cloudtype.app",
+        ], // Replace with your desired origin
         credentials: true,
         optionsSuccessStatus: 200,
     })
