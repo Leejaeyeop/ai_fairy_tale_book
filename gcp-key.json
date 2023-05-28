@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "fairytale-388005",
+  "private_key_id": "6c52662f572b44f2676cf0e5d382fe981451c315",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCim9ilgoOjyY57\ndAeX+693rKz+e1mNzUIdrN7v1ivYjoP7JNfn4VB5orMvkz/1vkEr71rUx22teUOW\nYOPagSDdnh5i0fbt2Mj35w/iJy+uoa54BpCi1M9crP96g0emYqouaztTlbp5VAMp\nO+0Sl14wY0Gjznw0e3BflDU85FjKDvHl5iaSl0SI93PV3I1FhGL+YCeQwbz3tznB\nrkk0fHg6o6wqV3HyVgqEArPDef1BWE13I1aAlqzc9/fDSrQDwdB/BO5mPiBrNCko\nXXXG9rjoeL3XLEajph1kO9s5xdJzq3JPc1LqZS0Zszx7W4VSuWvgZtmyPvLmDGOF\nYqE9vjDvAgMBAAECggEAE2jp7oZf40RIYy5sR5/Yh+mkiV3nndhjQiU5Q+9QiDF+\nyegnHiZ+034bHccvCneIJ6U9tjS16qU/xD/9gr6zfHCxgiyQ6T7dbPtM9zr5OJhT\nuepYB8UXmXbhqgSTSrual8mJ/oYFXmfWVsIwoBhRuxHmAGvB11voA9NY8Cig++v6\n8owuBuDYrglInxSk/4NRm4lD68k97rV7HgWzuoA1QeGjo1ZN1TZmE+ue7s4Wmnwj\ndnHY3MvXOrhuym4st5HZ3PZaPqaItn9UFScIVGmkziesiRM4BmsPt2Jiku407iyC\n2WCFSALAqBPdCVsn+tCc8hqsImvxrvb8FlOYBhAnDQKBgQDaEjIV7kuwWGjrFZb/\nd+c2Ai/qsveRpiuDqk853jW6R1U7urn2KrCe8mlEKhmF8Jna9LfxObhwXEK3P03G\nSzbmdh0Ob6Eur5Evb7pv2Myz+1/yZCPJQZoMFvTYbWhYTt6/eFAogjXtIkLdE1iU\nYhkDk8+l83M9uDKcK5tyQhU9BQKBgQC+5CS03Qh6+qen+ZHFzQlPg7HZ0WBTKv5Q\nQHq/aqeuNlzb+F5CXohCJ/UdE0UuntmT6y10O5ffNULmjIT13eVKiQFLkUsuOqEF\nMR63vIWIQGdcTBJPMs/HX4BxtVm5Sj0UeQfiaVyOpdVx1ujESyET8xcSVI1oR2zN\nv8UF7Ly4YwKBgQCO6tPmaZkzRo3kW+7tGODwFXjf4VC9JOFp1gk8TLR7k9p5XcQY\nYBwG36o7oTe+/1NmG3Id5w1Inj6fKB7JsWuWmJwsZN6G4UtOgnP2b2ihIELeceC+\nOn9CIx1uZi23imETrT8jfUroUcbuaopoHO512L6C7U1+iqSoky+6LzMKHQKBgGQ0\nGlielm8H2K5CQZUVdke5F8kBMZE2xlyWHFkSwYafnssRa1lnihtAIljq3qwEUq5l\nC20yQxy2NrITHVB69HvVw0pJsK9Js3CoQjmsymOlexxmCk5sm8lKhoAp9DlhkQKI\nLe1Z5W4z+wFREMrJrUltl7TVkY0lwSWX/vKHPOGFAoGAKtYiUEI9te8matQCkJX9\nRmEeTTV2zaKAlyMlAsmJIVGO5CndUeVHiXLFTWZ/v6v8PxxNWWq0WlQhg6CTX/te\nv8y2azR+XkvUqOP6BI5b3lG1D57GcK0itjThXPTkuMnTSyinPHdCxBp8zXJB6qgw\nRRVwuiDXcdrMSgzZZ0lA+Qo=\n-----END PRIVATE KEY-----\n",
+  "client_email": "deploy@fairytale-388005.iam.gserviceaccount.com",
+  "client_id": "103333178129387629330",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/deploy%40fairytale-388005.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
