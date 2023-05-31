@@ -29,18 +29,6 @@
                         <option value="우정">우정</option>
                     </select>
                 </div>
-                <!-- <div class="input">
-                    이야기의 페이지 수를 선택해 주세요!
-                    <select id="pageCount">
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                    </select>
-                </div> -->
                 <div
                     id="next-page"
                     style="text-align: right; width: 100%"
@@ -178,12 +166,13 @@ import Main from "@/module/function/main.three";
 import { onMounted } from "vue";
 
 onMounted(() => {
-    new Main();
+    const main = new Main();
+    main.init();
 });
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
+<style>
 h3 {
     margin: 40px 0 0;
 }
@@ -249,8 +238,6 @@ h2 {
 .circle {
     width: 100%;
     height: 100%;
-    /* top: 80px;
-  left: 80px; */
     /* 추가된 부분 */
     animation: scale1 2s alternate;
     /* animation: scale1 2s alternate infinite; */

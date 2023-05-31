@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import store from "@/store/store";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js";
@@ -9,7 +10,10 @@ import Book from "./book";
 
 export default class Main {
     stage = "";
-    constructor() {
+    loadedPercent = 0;
+    constructor() {}
+
+    init() {
         this.stage = "INTRO";
         const scene = new THREE.Scene();
         this._scene = scene;
@@ -64,8 +68,6 @@ export default class Main {
         nextPageEl.addEventListener("click", async () => {
             this.fetchGetTitles();
             await this._book.transitToMakeStoryTwo();
-            // test 용 지워야 함
-            // this._book.createTitlesOnPage([]);
         });
 
         // 이야기를 만들기 시작!
@@ -213,7 +215,7 @@ export default class Main {
         };
 
         await axios
-            .post(process.env.VUE_APP_API_URL + "api/title",{
+            .post(process.env.VUE_APP_API_URL + "api/title", {
                 data: data,
                 responseType: "json",
             })
@@ -324,9 +326,6 @@ export default class Main {
         let makingStoryTextEl = document.querySelector("#making_story_title_text");
         makingStoryTextEl.textContent = "이야기가 완성 되었어요! 클릭하시면 이야기를 읽을수 있어요!";
         makingStoryTextEl.className = "";
-
-        // this._camera.position.set(0.58, 4.93, 1.28);
-        // this._camera.rotation.set(-0.017, -0.008, 0);
     }
 
     createAuraTexture() {
@@ -385,22 +384,9 @@ export default class Main {
     _setupCamera(camera) {
         camera.position.set(2.06, 2.55, 5.98);
         camera.rotation.set(-0.404, 0.307, 0.128);
-        // camera.position.set(0.45, 1.37, 0.578)
-        // camera.rotation.set(-1.53, 0.001037, 0.0264)
-
-        // book camera
-        // camera.position.x = 0.45
-        // camera.position.y = 1.37
-        // camera.position.z = 0.578
-
-        // camera.rotation.x = -1.53
-        // camera.rotation.y = 0.001037
-        // camera.rotation.z = 0.0264
-        // book camera
 
         camera.rotation.isEuler = true;
 
-        // camera.lookAt(0,0,20)
         camera.updateProjectionMatrix();
         this._camera = camera;
     }
@@ -413,8 +399,8 @@ export default class Main {
         this._light = light;
         this._scene.add(this._light);
 
-        const helper = new THREE.PointLightHelper(light);
-        this._scene.add(helper);
+        // const helper = new THREE.PointLightHelper(light);
+        // this._scene.add(helper);
 
         // 임시
         const AmbientLight = new THREE.AmbientLight(0x404040, 1); // soft white light
@@ -449,6 +435,7 @@ export default class Main {
 
         const intro = new Intro(this._scene, this._camera, this._renderer, this._cssRenderer);
         this._intro = intro;
+        store.dispatch("setInitCompleted", true);
     }
 
     async _loadHouse() {
@@ -468,7 +455,9 @@ export default class Main {
                     resolve(model);
                 },
                 function (xhr) {
-                    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
+                    this.loadedPercent = (xhr.loaded / xhr.total) * 100;
+                    store.dispatch("setLoadedPercent", this.loadedPercent);
+                    // console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
                 },
                 function (error) {
                     console.log("An error happened", error);

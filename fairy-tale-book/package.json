@@ -16,7 +16,8 @@
         "pdfjs-dist": "^3.6.172",
         "tailwindcss": "^3.3.2",
         "three": "^0.151.2",
-        "vue": "^3.2.13"
+        "vue": "^3.2.13",
+        "vuex": "^4.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.12.16",
@@ -40,7 +41,9 @@
         "parserOptions": {
             "parser": "@babel/eslint-parser"
         },
-        "rules": {}
+        "rules": {
+            "vue/multi-word-component-names": 0
+        }
     },
     "browserslist": [
         "> 1%",

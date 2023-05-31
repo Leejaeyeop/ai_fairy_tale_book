@@ -1,15 +1,29 @@
 <template>
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <Loading v-if="!isLoaded"></Loading>
+    <Main />
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import { computed } from "vue";
+import Main from "./components/Main.vue";
+import Loading from "./components/Loading.vue";
+import { useStore } from "vuex";
 
 export default {
     name: "App",
     components: {
-        HelloWorld,
+        Main,
+        Loading,
+    },
+    setup() {
+        const store = useStore();
+        const isLoaded = computed(() => {
+            return store.getters.initCompleted;
+        });
+        return {
+            isLoaded,
+        };
     },
 };
 </script>
