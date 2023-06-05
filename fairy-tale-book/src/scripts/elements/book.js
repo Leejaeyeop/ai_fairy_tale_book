@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import axios from "axios";
+import { playAction, playReverseAction } from "../animation/playAction";
 export default class Book {
   meshes = {};
   _currentPage = 0;
-
+  _animeSpeed = 0.01;
   constructor(scene, camera, cssRenderer, gltfLoader, renderer) {
     this._scene = scene;
     this._camera = camera;
@@ -69,7 +70,7 @@ export default class Book {
 
           let animate = () => {
             requestAnimationFrame(animate);
-            this._mixer.update(0.01);
+            this._mixer.update(this._animeSpeed);
           };
 
           animate();
@@ -93,19 +94,19 @@ export default class Book {
    * 표지 넘기기
    */
   turnCover() {
-    this.playAction(this._animations[0]);
-    this.playAction(this._animations[1]);
-    this.playAction(this._animations[2]);
-    this.playAction(this._animations[3]);
+    playAction(this._animations[0], this._mixer);
+    playAction(this._animations[1], this._mixer);
+    playAction(this._animations[2], this._mixer);
+    playAction(this._animations[3], this._mixer);
   }
   /**
    * 표지 뒤로 넘기기
    */
   turnBackCover() {
-    this.playReverseAction(this._animations[0]);
-    this.playReverseAction(this._animations[1]);
-    this.playReverseAction(this._animations[2]);
-    this.playReverseAction(this._animations[3]);
+    playReverseAction(this._animations[0], this._mixer);
+    playReverseAction(this._animations[1], this._mixer);
+    playReverseAction(this._animations[2], this._mixer);
+    playReverseAction(this._animations[3], this._mixer);
   }
 
   // 책 겉면에 이미지를 삽입한다.
@@ -205,50 +206,25 @@ export default class Book {
    * clickedMesh
    */
   turnPageFirst() {
-    this.playAction(this._animations.Page1Action);
+    playAction(this._animations.Page1Action, this._mixer);
   }
 
   /**
    * 이전 페이지로 이동
    */
   turnBackPageFirst() {
-    this.playReverseAction(this._animations.Page1Action);
+    playReverseAction(this._animations.Page1Action, this._mixer);
   }
 
   /**
    * 두 번째 페이지 넘기기
    */
   tunPageSecond() {
-    this.playAction(this._animations.Page2Action);
+    playAction(this._animations.Page2Action, this._mixer);
   }
 
   turnBackPageSecond() {
-    this.playReverseAction(this._animations.Page2Action);
-  }
-
-  playAction(clipAction) {
-    const action = this._mixer.clipAction(clipAction);
-    action.setLoop(THREE.LoopOnce);
-    action.clampWhenFinished = true;
-    action.enabled = true;
-    action.paused = false;
-    action.timeScale = 1;
-    // reset시 필요
-    action.reset();
-    action.play();
-  }
-
-  playReverseAction(clipAction) {
-    let action = this._mixer.clipAction(clipAction);
-    action.paused = false;
-    action.time = action.getClip().duration;
-    action.timeScale = -1;
-    action.setLoop(THREE.LoopOnce);
-    action.clampWhenFinished = true;
-    action.enabled = true;
-    // reset시 필요
-    // action.reset();
-    action.play();
+    playReverseAction(this._animations.Page2Action, this._mixer);
   }
 
   movePositionToLook() {
