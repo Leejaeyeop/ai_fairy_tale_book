@@ -93,19 +93,19 @@ export default class Book {
    * 표지 넘기기
    */
   turnCover() {
-    this.setAction(this._animations[0]);
-    this.setAction(this._animations[1]);
-    this.setAction(this._animations[2]);
-    this.setAction(this._animations[3]);
+    this.playAction(this._animations[0]);
+    this.playAction(this._animations[1]);
+    this.playAction(this._animations[2]);
+    this.playAction(this._animations[3]);
   }
   /**
    * 표지 뒤로 넘기기
    */
   turnBackCover() {
-    this.setReverseAction(this._animations[0]);
-    this.setReverseAction(this._animations[1]);
-    this.setReverseAction(this._animations[2]);
-    this.setReverseAction(this._animations[3]);
+    this.playReverseAction(this._animations[0]);
+    this.playReverseAction(this._animations[1]);
+    this.playReverseAction(this._animations[2]);
+    this.playReverseAction(this._animations[3]);
   }
 
   // 책 겉면에 이미지를 삽입한다.
@@ -205,28 +205,28 @@ export default class Book {
    * clickedMesh
    */
   turnPageFirst() {
-    this.setAction(this._animations.Page1Action);
+    this.playAction(this._animations.Page1Action);
   }
 
   /**
    * 이전 페이지로 이동
    */
   turnBackPageFirst() {
-    this.setReverseAction(this._animations.Page1Action);
+    this.playReverseAction(this._animations.Page1Action);
   }
 
   /**
    * 두 번째 페이지 넘기기
    */
   tunPageSecond() {
-    this.setAction(this._animations.Page2Action);
+    this.playAction(this._animations.Page2Action);
   }
 
   turnBackPageSecond() {
-    this.setReverseAction(this._animations.Page2Action);
+    this.playReverseAction(this._animations.Page2Action);
   }
 
-  setAction(clipAction) {
+  playAction(clipAction) {
     const action = this._mixer.clipAction(clipAction);
     action.setLoop(THREE.LoopOnce);
     action.clampWhenFinished = true;
@@ -238,7 +238,7 @@ export default class Book {
     action.play();
   }
 
-  setReverseAction(clipAction) {
+  playReverseAction(clipAction) {
     let action = this._mixer.clipAction(clipAction);
     action.paused = false;
     action.time = action.getClip().duration;
