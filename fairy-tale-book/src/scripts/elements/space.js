@@ -1,9 +1,10 @@
+import store from "@/store/store";
 export default class Space {
   constructor(gltfLoader) {
     this._gltfLoader = gltfLoader;
   }
 
-  async _loadSpace() {
+  async loadSpace() {
     return new Promise((resolve) => {
       this._gltfLoader.load(
         "workshop.glb",

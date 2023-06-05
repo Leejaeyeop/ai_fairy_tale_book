@@ -426,6 +426,7 @@ export default class Main {
   _setupControls() {
     // orbit controls
     const controls = new OrbitControls(this._camera, this._renderer.domElement);
+    controls.update();
   }
 
   async _initModel() {

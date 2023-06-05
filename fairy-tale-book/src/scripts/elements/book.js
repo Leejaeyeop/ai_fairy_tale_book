@@ -238,7 +238,7 @@ export default class Book {
     action.play();
   }
 
-  setReverseAction() {
+  setReverseAction(clipAction) {
     let action = this._mixer.clipAction(clipAction);
     action.paused = false;
     action.time = action.getClip().duration;
