@@ -1,5 +1,5 @@
 <template>
-  <div id="htmls">
+  <div id="cssObjects">
     <div class="page" id="pageL">
       <div class="input">
         이야기 주인공의 이름은?
@@ -242,7 +242,7 @@ h2 {
   animation: dotAnimation 1.5s infinite alternate;
 }
 
-#htmls div {
+#cssObjects div {
   display: none;
   position: absolute;
   top: 0;

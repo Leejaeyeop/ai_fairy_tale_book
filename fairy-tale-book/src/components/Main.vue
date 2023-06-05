@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import Main from "@/module/function/main.three";
+import Main from "@/scripts/main.three";
 import cssObject from "./cssObject.vue";
 import { onMounted } from "vue";
 
