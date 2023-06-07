@@ -1,0 +1,31 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "vuejs: chrome",
+      "url": "http://localhost:8080",
+      "webRoot": "${workspaceFolder}/fairy-tale-book",
+      "sourceMaps": true
+    },
+    {
+      "name": "frontend",
+      "type": "node",
+      "request": "launch",
+      "mode": "run",
+      "cwd": "${workspaceFolder}/fairy-tale-book/src",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "local"]
+    },
+    {
+      "name": "backend",
+      "type": "node",
+      "request": "launch",
+      "mode": "run",
+      "cwd": "${workspaceFolder}/api",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"]
+    }
+  ]
+}

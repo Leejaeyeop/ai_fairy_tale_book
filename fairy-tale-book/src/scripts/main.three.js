@@ -333,7 +333,7 @@ export default class Main {
     this._bookObj.remove(this._auraSprite);
   }
 
-  changeTobookLookStage() {
+  changeToBookLookStage() {
     let makingStoryEl = document.querySelector("#making_story_title");
     makingStoryEl.style.display = "block";
 
@@ -471,39 +471,6 @@ export default class Main {
 
     this._renderer.setSize(width, height);
     this._cssRenderer?.setSize(width, height);
-  }
-
-  // Function to create a flashing light effect
-  flashLight(minIntensity, maxIntensity, duration, pauseDuration) {
-    const pointLight = new THREE.PointLight(0xffffff, 0, 100);
-    pointLight.position.set(0.45, 1.5, 0.578);
-    pointLight.scale.set(0.5, 0.5, 0.5);
-    this._scene.add(pointLight);
-
-    const startTime = performance.now();
-    const initialIntensity = pointLight.intensity;
-
-    const helper = new THREE.PointLightHelper(pointLight);
-    this._scene.add(helper);
-
-    const update = () => {
-      const elapsed = performance.now() - startTime;
-      const progress = elapsed / duration;
-
-      if (progress < 1) {
-        const intensityDelta = maxIntensity - minIntensity;
-        pointLight.intensity =
-          minIntensity + intensityDelta * Math.sin(progress * Math.PI);
-        requestAnimationFrame(update);
-      } else {
-        pointLight.intensity = initialIntensity;
-        setTimeout(() => {
-          this.flashLight(minIntensity, maxIntensity, duration, pauseDuration);
-        }, pauseDuration);
-      }
-    };
-
-    update();
   }
 
   render() {
