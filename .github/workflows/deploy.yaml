@@ -68,4 +68,4 @@ jobs:
           echo "push api-server:$TAG"
           docker push $ARTIFACT/api-server:"$TAG"
           echo "deploy api-server:$TAG"
-          gcloud run deploy api-server --image $ARTIFACT/api-server:"$TAG" --project=fairytale-388005 --region=asia-northeast3 --platform managed --allow-unauthenticated --service-account fs-identity
+          gcloud run deploy api-server --image $ARTIFACT/api-server:"$TAG" --project=fairytale-388005 --region=asia-northeast3 --platform managed --allow-unauthenticated
