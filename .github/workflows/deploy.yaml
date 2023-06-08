@@ -29,7 +29,38 @@ jobs:
     #               docker push $ARTIFACT/dalgona-web:"$TAG"
     #               echo "deploy dalgona-web:$TAG"
     #               gcloud run deploy dalgona-web --image $ARTIFACT/dalgona-web:"$TAG" --project=industrial-balm-252203 --region=asia-northeast3
-
+    deploy-frontend:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v2
+            - name: Connect deploy key
+              uses: cloudtype-github-actions/connect@v1
+              with:
+                  token: ${{ secrets.CLOUDTYPE_TOKEN }}
+                  ghtoken: ${{ secrets.GHP_TOKEN }}
+            - name: move subDir
+              run: cd fairy-tale-book
+            - name: Deploy
+              uses: cloudtype-github-actions/deploy@v1
+              env:
+                  FOLDER: fairy-tale-book
+              with:
+                  token: ${{ secrets.CLOUDTYPE_TOKEN }}
+                  project: leejaeyeop/ai-fairy-tale-book
+                  stage: main
+                  yaml: |
+                      name: fairytale-frontend
+                      app: web
+                      options:
+                        docbase: /dist
+                        nodeversion: "18"
+                        build: npm run production
+                        spa: true
+                      context:
+                        git:
+                          url: git@github.com:${{ github.repository }}.git
+                          ref: ${{ github.ref }}
     deploy-backend:
         runs-on: ubuntu-latest
         steps:
