@@ -18,8 +18,17 @@ npm run start
 npm run start
 ```
 
+## Project tree
+
 ```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
+├── Dockerfile
+├── gcp-key.json
+├── package.json
+├── package-lock.json
+├── README.md
+├── resources
+│   └── fonts
+│       └── InkLipquidFonts.ttf
+└── src
+    └── index.js
+```
