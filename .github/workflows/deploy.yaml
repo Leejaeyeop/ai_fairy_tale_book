@@ -1,71 +1,39 @@
 name: GitHub CI/CD
 
 on:
-  push:
-    branches:
-      - main
+    push:
+        branches:
+            - main
 
 jobs:
-  # deploy-frontend:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v2
-  #     - name: Connect deploy key
-  #       uses: cloudtype-github-actions/connect@v1
-  #       with:
-  #         token: ${{ secrets.CLOUDTYPE_TOKEN }}
-  #         ghtoken: ${{ secrets.GHP_TOKEN }}
-  #     - name: move subDir
-  #       run: cd fairy-tale-book
-  #     - name: Deploy
-  #       uses: cloudtype-github-actions/deploy@v1
-  #       env:
-  #         FOLDER: fairy-tale-book
-  #       with:
-  #         token: ${{ secrets.CLOUDTYPE_TOKEN }}
-  #         project: leejaeyeop/ai-fairy-tale-book
-  #         stage: main
-  #         yaml: |
-  #           name: fairytale-frontend
-  #           app: web
-  #           options:
-  #             docbase: /dist
-  #             nodeversion: "18"
-  #             build: npm run production
-  #             spa: true
-  #           context:
-  #             git:
-  #               url: git@github.com:${{ github.repository }}.git
-  #               ref: ${{ github.ref }}
-  deploy-backend:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    deploy-backend:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
 
-      - name: Setup Docker
-        uses: docker/setup-buildx-action@v1
+            - name: Setup Docker
+              uses: docker/setup-buildx-action@v1
 
-      - name: Set up environment
-        run: echo "$GC_KEY" > key.json
+            - name: Set up environment
+              run: echo "$GC_KEY" > key.json
 
-      - name: Authenticate with gcloud
-        run: |
-          gcloud auth activate-service-account deploy@fairytale-388005.iam.gserviceaccount.com --key-file=gcp-key.json
-        env:
-          GC_KEY: ${{ secrets.GC_KEY }}
-      - name: Login to Docker
-        run: echo ${{ secrets.GC_KEY }} | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev < gcp-key.json
+            - name: Authenticate with gcloud
+              run: |
+                  gcloud auth activate-service-account deploy@fairytale-388005.iam.gserviceaccount.com --key-file=gcp-key.json
+              env:
+                  GC_KEY: ${{ secrets.GC_KEY }}
+            - name: Login to Docker
+              run: echo ${{ secrets.GC_KEY }} | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev < gcp-key.json
 
-      - name: Build and deploy backend
-        run: |
-          cd api
-          ARTIFACT="asia-northeast3-docker.pkg.dev/fairytale-388005/fairytale"
-          TAG="$GITHUB_SHA"
-          echo "build api-server:$TAG"
-          docker build --build-arg VERSION="$TAG" . -t $ARTIFACT/api-server:"$TAG"
-          echo "push api-server:$TAG"
-          docker push $ARTIFACT/api-server:"$TAG"
-          echo "deploy api-server:$TAG"
-          gcloud run deploy api-server --image $ARTIFACT/api-server:"$TAG" --project=fairytale-388005 --region=asia-northeast3 --platform managed --allow-unauthenticated
+            - name: Build and deploy backend
+              run: |
+                  cd api
+                  ARTIFACT="asia-northeast3-docker.pkg.dev/fairytale-388005/fairytale"
+                  TAG="$GITHUB_SHA"
+                  echo "build api-server:$TAG"
+                  docker build --build-arg VERSION="$TAG" . -t $ARTIFACT/api-server:"$TAG"
+                  echo "push api-server:$TAG"
+                  docker push $ARTIFACT/api-server:"$TAG"
+                  echo "deploy api-server:$TAG"
+                  gcloud run deploy api-server --image $ARTIFACT/api-server:"$TAG" --project=fairytale-388005 --region=asia-northeast3 --platform managed --allow-unauthenticated
