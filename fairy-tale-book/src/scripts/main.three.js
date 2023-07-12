@@ -10,6 +10,8 @@ import Book from "./elements/book";
 import Space from "./elements/space";
 
 export default class Main {
+    // private define
+    #controls;
     stage = "";
     loadedPercent = 0;
     minDistance = 2;
@@ -132,6 +134,7 @@ export default class Main {
 
     beginScene2() {
         this._intro.removeScene();
+        this.#limitControls();
 
         this._book.turnCover();
         this._book.turnPageFirst();
@@ -264,9 +267,13 @@ export default class Main {
         const images = await this.convertPdfToImages(pdfUrl);
 
         this._images = images;
+        this.#unlimitControl();
+
         this.endLoadingMakingBook();
+        this._intro.zoomCameraToLook();
         // stage 변경
         this.stage = "READ_BOOK";
+        //
         // 종료
         this._book.createBookCover(images);
     }
@@ -408,14 +415,24 @@ export default class Main {
 
     _setupControls() {
         // orbit controls
-        const controls = new OrbitControls(this._camera, this._renderer.domElement);
+        this.#controls = new OrbitControls(this._camera, this._renderer.domElement);
         // Set the constraints
-        controls.maxPolarAngle = this.maxPolarAngle; // Minimum polar angle (45 degrees)
-        controls.minDistance = this.minDistance;
-        controls.maxDistance = this.maxDistance;
-        controls.minAzimuthAngle = this.minAzimuthAngle; // Minimum horizontal rotation (left)
-        controls.maxAzimuthAngle = this.maxAzimuthAngle;
-        controls.update();
+        this.#controls.maxPolarAngle = this.maxPolarAngle; // Minimum polar angle (45 degrees)
+        this.#controls.minDistance = this.minDistance;
+        this.#controls.maxDistance = this.maxDistance;
+        this.#controls.minAzimuthAngle = this.minAzimuthAngle; // Minimum horizontal rotation (left)
+        this.#controls.maxAzimuthAngle = this.maxAzimuthAngle;
+        this.#controls.update();
+    }
+
+    // control 기능을 제한 한다.
+    #limitControls() {
+        this.#controls.enabled = false;
+    }
+
+    // control 기능을 제한을 해제 한다.
+    #unlimitControl() {
+        this.#controls.enabled = true;
     }
 
     async _initModel() {

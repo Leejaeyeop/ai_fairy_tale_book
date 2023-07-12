@@ -199,27 +199,13 @@ export default class Intro {
 
         // 이야기 만들기
         this._deskFrameFront.addEventListener("click", () => {
-            // Usage example
-            const startPosition = this._camera.position;
-            const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
-            const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
-            const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
-
-            const duration = 2000; // in milliseconds
-            this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
+            this.zoomCameraToLook();
 
             pubSub.publish("beginScene2");
         });
 
         this._deskFrameTop.addEventListener("click", () => {
-            // Usage example
-            const startPosition = this._camera.position;
-            const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
-            const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
-            const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
-
-            const duration = 2000; // in milliseconds
-            this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
+            pubSub.publish("beginScene2");
 
             pubSub.publish("beginScene2");
         });
@@ -242,6 +228,17 @@ export default class Intro {
 
             pubSub.publish("beginScene2");
         });
+    }
+
+    zoomCameraToLook() {
+        // Usage example
+        const startPosition = this._camera.position;
+        const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
+        const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
+        const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
+
+        const duration = 2000; // in milliseconds
+        this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
     }
 
     // TODO 나중에 모듈화

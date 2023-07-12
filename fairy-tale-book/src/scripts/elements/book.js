@@ -249,8 +249,6 @@ export default class Book {
         this._overlayR.rotation.set(-Math.PI / 2, 0, 0);
         this._overlayR.scale.set(0.0003, 0.0003, 0.0005);
         this._scene.add(this._overlayR);
-
-        console.log(this._overlayR.element);
     }
 
     removeMakeStoryLayout() {
