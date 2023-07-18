@@ -41,7 +41,10 @@ async function createTitles(data) {
     }
 
     let prompt =
-        "주인공이 " + data.mainCharacter + genre + ", 동화 이야기를 제목과 간략한 줄거리 5개 정도 추천해 주세요.";
+        "주인공이 " +
+        data.mainCharacter +
+        genre +
+        ", 동화 이야기를 제목과 간략한 줄거리 5개 정도 추천해 주세요. 제목과 이야기는 ':'로 구분 해 주세요.";
 
     console.log(prompt);
 
@@ -51,9 +54,6 @@ async function createTitles(data) {
         temperature: 0.7,
         max_tokens: 1024,
         top_p: 0.8,
-        // frequency_penalty: 0.0,
-        // presence_penalty: 0.0,
-        // stop: [" "],
     });
     let text = response.data.choices[0].text;
     texts = text.split("\n");
@@ -82,7 +82,6 @@ async function createStory(title) {
     prompt =
         title +
         "Please make a fairy tale story with the following content. Please make the story into 8 paragraphs. And please do it in the form of 'Number: Contents', liek '1: content~ 2.content~'. Please make it in English and Korean respectively.";
-    // "\n 다음 내용으로 동화 이야기를 만들어 주세요. \n 이야기는 8개의 단락 으로 만들어 주세요. 그리고 '숫자 : 내용' 형식으로 해주세요. \n 영어와 한글로 각각 만들어 주세요.";
     response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: prompt,
@@ -91,7 +90,6 @@ async function createStory(title) {
         top_p: 1,
         frequency_penalty: 0.0,
         presence_penalty: 0.0,
-        // stop: [" "],
     });
     let text = response.data.choices[0].text;
 
@@ -255,10 +253,8 @@ app.post("/api/books", async (req, res) => {
 app.post("/api/title", async (req, res) => {
     try {
         let data = req.body.data;
-        console.log(data);
         // title를 만든다.
         let texts = await createTitles(data);
-        console.log("끝!");
         res.json(texts);
     } catch (error) {
         console.log("error!");
@@ -266,7 +262,3 @@ app.post("/api/title", async (req, res) => {
         res.send(error);
     }
 });
-
-// createStory(
-//     " 황금의 여왕: 이재엽은 자신의 모험을 시작하기 위해 작은 마을에서 멀리 떠납니다. 그는 자신의 모험을 위해 가는 길에 황금의 여왕을 만나게 됩니다. 여왕은 이재엽에게 그녀가 지키고 있는 황금의 보물을 찾아야 한다고 말합니다. 이재엽은 여왕의 부탁을 받고 모험을 시작합니다."
-// );

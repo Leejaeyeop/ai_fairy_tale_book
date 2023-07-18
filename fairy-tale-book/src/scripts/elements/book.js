@@ -296,7 +296,15 @@ export default class Book {
         for (let datum of data) {
             const card = document.getElementById("card");
             const clonedElement = card.cloneNode(true);
-            clonedElement.innerText = datum.split(":")[0];
+
+            let splitedDatum = datum.split(":");
+            // 예외 처리
+            if (splitedDatum.length === 1) {
+                splitedDatum = datum.split("-");
+            }
+            let title = splitedDatum[0];
+
+            clonedElement.innerText = title;
             cardsTitles.appendChild(clonedElement);
 
             clonedElement.addEventListener("mouseenter", () => {
