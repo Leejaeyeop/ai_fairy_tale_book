@@ -2,16 +2,22 @@ import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import axios from "axios";
 import { playAction, playReverseAction } from "../animation/playAction";
+import { pubSub } from "../utils/pubsub";
+
 export default class Book {
     meshes = {};
     _currentPage = 0;
     _animeSpeed = 0.01;
+    #audioFile = null;
+    #pageR = null;
+
     constructor(scene, camera, cssRenderer, gltfLoader, renderer) {
         this._scene = scene;
         this._camera = camera;
         this._cssRenderer = cssRenderer;
         this._gltfLoader = gltfLoader;
         this._renderer = renderer;
+        this.#audioFile = new Audio();
     }
 
     async loadBook() {
@@ -64,6 +70,7 @@ export default class Book {
 
                     book.rotation.y -= Math.PI;
 
+                    book.name = "book";
                     this._scene.add(book);
 
                     this._mixer = new THREE.AnimationMixer(book);
@@ -218,7 +225,6 @@ export default class Book {
     movePositionToLook() {
         this._book.position.set(0.45, 5, 0.7);
         this._book.rotation.x = -Math.PI / 2;
-        // this._book.rotation.z = -Math.PI;
     }
 
     // make book page
@@ -226,7 +232,12 @@ export default class Book {
         const xOffsetL = 0.004;
         const xOffsetR = 0.013;
 
-        const pageL = document.getElementById("pageL");
+        this.removeMakeStoryLayout();
+        const pageL = document.getElementById("pageL").cloneNode(true);
+        pageL.querySelector(".next-page").addEventListener("click", async () => {
+            pubSub.publish("getTitles");
+        });
+
         this._overlayL = new CSS3DObject(pageL);
 
         const globalPos = new THREE.Vector3();
@@ -238,9 +249,11 @@ export default class Book {
 
         this._overlayL.scale.set(0.0003, 0.0003, 0.0005);
 
+        this._overlayL.name = "overlayL";
         this._scene.add(this._overlayL);
 
-        const pageR = document.getElementById("pageR");
+        const pageR = document.getElementById("pageR").cloneNode(true);
+
         this._overlayR = new CSS3DObject(pageR);
         const pagePosR = this._book.children[8].getWorldPosition(globalPos);
         pagePosR.x += xOffsetR;
@@ -248,6 +261,8 @@ export default class Book {
         this._overlayR.position.copy(pagePosR);
         this._overlayR.rotation.set(-Math.PI / 2, 0, 0);
         this._overlayR.scale.set(0.0003, 0.0003, 0.0005);
+
+        this._overlayR.name = "overlayR";
         this._scene.add(this._overlayR);
     }
 
@@ -261,7 +276,7 @@ export default class Book {
         const xOffsetR = 0.013;
 
         const globalPos = new THREE.Vector3();
-        const pageL = document.getElementById("loading");
+        const pageL = document.getElementById("loading").cloneNode(true);
         this._overlayL = new CSS3DObject(pageL);
         const pagePosL = this._book.children[7].getWorldPosition(globalPos);
         pagePosL.x += xOffsetL;
@@ -270,7 +285,8 @@ export default class Book {
         this._overlayL.scale.set(0.0003, 0.0003, 0.0005);
         this._scene.add(this._overlayL);
 
-        const pageR = document.getElementById("pageR2");
+        const pageR = document.getElementById("pageR2").cloneNode(true);
+        this.#pageR = pageR;
         this._overlayR = new CSS3DObject(pageR);
         const pagePosR = this._book.children[8].getWorldPosition(globalPos);
         pagePosR.x += xOffsetR;
@@ -284,7 +300,11 @@ export default class Book {
         this._scene.remove(this._overlayL);
 
         const globalPos = new THREE.Vector3();
-        const pageL = document.getElementById("cards");
+        const pageL = document.getElementById("cards").cloneNode(true);
+        pageL.querySelector(".next-page2").addEventListener("click", async () => {
+            pubSub.publish("makeStory");
+        });
+
         this._overlayL = new CSS3DObject(pageL);
         const pagePosL = this._book.children[7].getWorldPosition(globalPos);
         this._overlayL.position.copy(pagePosL);
@@ -292,7 +312,7 @@ export default class Book {
         this._overlayL.scale.set(0.0003, 0.0003, 0.0005);
         this._scene.add(this._overlayL);
 
-        const cardsTitles = document.getElementById("cardsTitles");
+        const cardsTitles = pageL.querySelector("#cardsTitles");
         for (let datum of data) {
             const card = document.getElementById("card");
             const clonedElement = card.cloneNode(true);
@@ -308,11 +328,11 @@ export default class Book {
             cardsTitles.appendChild(clonedElement);
 
             clonedElement.addEventListener("mouseenter", () => {
-                let titleDesc = document.getElementById("titleDesc");
+                let titleDesc = this.#pageR.querySelector("#titleDesc");
                 titleDesc.innerText = datum;
             });
             clonedElement.addEventListener("click", () => {
-                let titleSelected = document.getElementById("titleSelected");
+                let titleSelected = this.#pageR.querySelector("#titleSelected");
                 titleSelected.innerText = datum;
             });
         }
@@ -404,11 +424,11 @@ export default class Book {
             .request(config)
             .then((response) => {
                 let audioBase64 = response.data.audioContent;
-                var audioFile = new Audio();
+
                 let audioBlob = this.base64ToBlob(audioBase64, "mp3");
-                audioFile.src = window.URL.createObjectURL(audioBlob);
-                audioFile.playbackRate = 1; //재생속도
-                audioFile.play();
+                this.#audioFile.src = window.URL.createObjectURL(audioBlob);
+                this.#audioFile.playbackRate = 1; //재생속도
+                this.#audioFile.play();
             })
             .catch((error) => {
                 console.log(error);

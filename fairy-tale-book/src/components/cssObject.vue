@@ -1,273 +1,335 @@
 <template>
-  <div id="cssObjects">
-    <div class="page" id="pageL">
-      <div class="input">
-        이야기 주인공의 이름은?
-        <input id="mainCharacter" placeholder="이름을 입력해주세요!" />
-      </div>
-      <div class="input">
-        이야기의 장르를 선택해 주세요!
-        <select id="genre">
-          <option v-for="genre of genres" :key="genre" :value="genre">
-            {{ genre }}
-          </option>
-        </select>
-      </div>
-      <div id="next-page" style="text-align: right; width: 100%">
-        <p>다음으로 이동 -></p>
-      </div>
-    </div>
-    <div class="page dot center" id="loading">잠시만 기다려 주세요!</div>
+    <div id="cssObjects">
+        <div
+            class="page"
+            id="pageL"
+        >
+            <div class="input">
+                이야기 주인공의 이름은?
+                <input
+                    id="mainCharacter"
+                    placeholder="이름을 입력해주세요!"
+                />
+            </div>
+            <div class="input">
+                이야기의 장르를 선택해 주세요!
+                <select id="genre">
+                    <option
+                        v-for="genre of genres"
+                        :key="genre"
+                        :value="genre"
+                    >
+                        {{ genre }}
+                    </option>
+                </select>
+            </div>
+            <div
+                class="next-page"
+                style="text-align: right; width: 100%"
+            >
+                <p>다음으로 이동 -></p>
+            </div>
+        </div>
+        <div
+            class="page dot center"
+            id="loading"
+        >
+            잠시만 기다려 주세요!
+        </div>
 
-    <div class="page" id="pageR">
-      <div>
-        <h1>당신의 이야기를 만들어 주세요!</h1>
-        <h2>이야기 주인공의 이름과 주제를 선택해 주세요.</h2>
-      </div>
-    </div>
-    <div class="page" id="pageR2">
-      <p>주제를 골라 주세요!</p>
-      <div id="titleDesc"></div>
-      <div>
-        선택된 이야기
-        <div id="titleSelected" class="title-card"></div>
-      </div>
-    </div>
+        <div
+            class="page"
+            id="pageR"
+        >
+            <div>
+                <h1>당신의 이야기를 만들어 주세요!</h1>
+                <h2>이야기 주인공의 이름과 주제를 선택해 주세요.</h2>
+            </div>
+        </div>
+        <div
+            class="page"
+            id="pageR2"
+        >
+            <p>주제를 골라 주세요!</p>
+            <div id="titleDesc"></div>
+            <div>
+                선택된 이야기
+                <div
+                    id="titleSelected"
+                    class="title-card"
+                ></div>
+            </div>
+        </div>
 
-    <div class="page" id="cards">
-      <div id="cardsTitles"></div>
-      <div id="next-page2" style="text-align: right; width: 100%">
-        <p>다음으로 이동 -></p>
-      </div>
-    </div>
-    <div id="card" class="card">
-      <p class="mt-2 text-gray-600"></p>
-    </div>
+        <div
+            class="page"
+            id="cards"
+        >
+            <div id="cardsTitles"></div>
+            <div
+                class="next-page2"
+                style="text-align: right; width: 100%"
+            >
+                <p>다음으로 이동 -></p>
+            </div>
+        </div>
+        <div
+            id="card"
+            class="card"
+        >
+            <p class="mt-2 text-gray-600"></p>
+        </div>
 
-    <div id="ttsR">
-      <button id="ttsBtnR">
-        <i class="fas fa-volume-up fa-4x"></i>
-      </button>
-    </div>
+        <div id="ttsR">
+            <button id="ttsBtnR">
+                <i class="fas fa-volume-up fa-4x"></i>
+            </button>
+        </div>
 
-    <div id="ttsL">
-      <button id="ttsBtnL">
-        <i class="fas fa-volume-up fa-4x"></i>
-      </button>
-    </div>
+        <div id="ttsL">
+            <button id="ttsBtnL">
+                <i class="fas fa-volume-up fa-4x"></i>
+            </button>
+        </div>
 
-    <div id="arrow-start" class="arrow">
-      <div class="arrow-tail"></div>
-      <div class="arrow-head"></div>
-    </div>
+        <div
+            id="arrow-start"
+            class="arrow"
+        >
+            <div class="arrow-tail"></div>
+            <div class="arrow-head"></div>
+        </div>
 
-    <div id="arrow-load" class="arrow">
-      <div class="arrow-tail"></div>
-      <div class="arrow-head"></div>
-    </div>
+        <div
+            id="arrow-load"
+            class="arrow"
+        >
+            <div class="arrow-tail"></div>
+            <div class="arrow-head"></div>
+        </div>
 
-    <div class="hover_frame" id="desk_frame_front"></div>
-    <div class="hover_frame" id="desk_frame_top"></div>
+        <div
+            class="hover_frame"
+            id="desk_frame_front"
+        ></div>
+        <div
+            class="hover_frame"
+            id="desk_frame_top"
+        ></div>
 
-    <div id="start">
-      <div id="circle"></div>
-      <h1 class="intro_text">이야기 만들기</h1>
+        <div id="start">
+            <div id="circle"></div>
+            <h1 class="intro_text">이야기 만들기</h1>
+        </div>
+        <div
+            class="hover_frame"
+            id="bookshelf_frame_front"
+        ></div>
+        <div
+            class="hover_frame"
+            id="bookshelf_frame_side"
+        ></div>
+        <div id="load">
+            <div id="circle"></div>
+            <h1 class="intro_text">이야기 불러오기</h1>
+            <input
+                type="file"
+                id="pdfUpload"
+                accept=".pdf"
+                style="display: none; !important"
+            />
+        </div>
+        <div id="making_story_title">
+            <h1
+                id="making_story_title_text"
+                class="dot"
+                style="display: inline"
+            >
+                이야기를 만들고 있어요. 잠시만 기다려 주세요! . . .
+            </h1>
+        </div>
     </div>
-    <div class="hover_frame" id="bookshelf_frame_front"></div>
-    <div class="hover_frame" id="bookshelf_frame_side"></div>
-    <div id="load">
-      <div id="circle"></div>
-      <h1 class="intro_text">이야기 불러오기</h1>
-      <input
-        type="file"
-        id="pdfUpload"
-        accept=".pdf"
-        style="display: none; !important"
-      />
-    </div>
-    <div id="making_story_title">
-      <h1 id="making_story_title_text" class="dot" style="display: inline">
-        이야기를 만들고 있어요. 잠시만 기다려 주세요! . . .
-      </h1>
-    </div>
-  </div>
 </template>
 <script setup>
-const genres = ["아무거나", "모험", "동물", "다양성", "가족", "도전", "우정"];
+const genres = ["전래동화", "아무거나", "모험", "동물", "다양성", "가족", "도전", "우정"];
 </script>
 <style>
 h3 {
-  margin: 40px 0 0;
+    margin: 40px 0 0;
 }
 ul {
-  list-style-type: none;
-  padding: 0;
+    list-style-type: none;
+    padding: 0;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+    display: inline-block;
+    margin: 0 10px;
 }
 a {
-  color: #42b983;
+    color: #42b983;
 }
 .page {
-  position: absolute;
-  width: 800px;
-  height: 1000px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  font-family: "InkLipquid";
-  font-weight: 700;
-  font-size: 3rem;
+    position: absolute;
+    width: 800px;
+    height: 1000px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-family: "InkLipquid";
+    font-weight: 700;
+    font-size: 3rem;
 }
 
 option {
-  font-family: "InkLipquid";
+    font-family: "InkLipquid";
 }
 .intro_text {
-  color: beige;
-  z-index: 1;
-  position: relative;
+    color: beige;
+    z-index: 1;
+    position: relative;
 }
 
 #making_story_title {
-  color: white;
-  margin-top: 10%;
-  width: 100%;
-  text-align: center;
-  position: absolute;
+    color: white;
+    margin-top: 10%;
+    width: 100%;
+    text-align: center;
+    position: absolute;
 }
 
 h1,
 input,
 select,
 #making_story_title {
-  font-family: "InkLipquid";
-  font-weight: 700;
-  font-size: 3rem;
+    font-family: "InkLipquid";
+    font-weight: 700;
+    font-size: 3rem;
 }
 
 h2 {
-  font-size: 2rem;
+    font-size: 2rem;
 }
 @font-face {
-  font-family: "InkLipquid";
-  src: url("@/assets/fonts/InkLipquidFonts.ttf") format("truetype");
+    font-family: "InkLipquid";
+    src: url("@/assets/fonts/InkLipquidFonts.ttf") format("truetype");
 }
 
 .circle {
-  width: 100%;
-  height: 100%;
-  /* 추가된 부분 */
-  animation: scale1 2s alternate;
-  position: absolute;
-  background: #000000;
-  border-radius: 50%;
-  box-shadow: 7px 7px 10px 1px rgba(0, 0, 0, 0.5);
-  z-index: 0;
-  cursor: pointer;
+    width: 100%;
+    height: 100%;
+    /* 추가된 부분 */
+    animation: scale1 2s alternate;
+    position: absolute;
+    background: #000000;
+    border-radius: 50%;
+    box-shadow: 7px 7px 10px 1px rgba(0, 0, 0, 0.5);
+    z-index: 0;
+    cursor: pointer;
 }
 
 @keyframes scale1 {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
-  }
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 #start,
 #load {
-  width: 15rem;
-  height: 15rem;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    width: 15rem;
+    height: 15rem;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .arrow {
-  display: inline-flex;
-  align-items: center;
+    display: inline-flex;
+    align-items: center;
 }
 
 .arrow-tail {
-  width: 1rem;
-  height: 0.2rem;
-  background-color: white;
+    width: 1rem;
+    height: 0.2rem;
+    background-color: white;
 }
 
 .arrow-head {
-  width: 0;
-  height: 0;
-  border-top: 5px solid transparent;
-  border-bottom: 5px solid transparent;
-  border-left: 7px solid white;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid white;
 }
 
 @keyframes moveLeftAndBack {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-2rem);
-  }
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-2rem);
+    }
 }
 
 .hover_frame {
-  width: 1rem;
-  height: 1rem;
-  cursor: pointer;
+    width: 1rem;
+    height: 1rem;
+    cursor: pointer;
 }
 
 @keyframes dotAnimation {
-  0%,
-  25% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  75%,
-  100% {
-    opacity: 1;
-  }
+    0%,
+    25% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    75%,
+    100% {
+        opacity: 1;
+    }
 }
 
 .dot {
-  animation: dotAnimation 1.5s infinite alternate;
+    animation: dotAnimation 1.5s infinite alternate;
 }
 
 #cssObjects div {
-  display: none;
-  position: absolute;
-  top: 0;
-  left: 0;
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
-#next-page,
-#next-page2 {
-  cursor: pointer;
+.next-page,
+.next-page2 {
+    cursor: pointer;
 }
 
 #three {
-  position: relative;
+    position: relative;
 }
 .input {
-  text-align: center;
+    text-align: center;
 }
 .title-card {
-  border: 2px solid black;
+    border: 2px solid black;
 }
 .card {
-  padding: 2rem;
-  margin-bottom: 2rem;
+    padding: 2rem;
+    margin-bottom: 2rem;
 }
 .center {
-  justify-content: center;
+    justify-content: center;
+}
+#mainCharacter,
+#genre {
+    border: 1px solid;
 }
 </style>

@@ -70,21 +70,8 @@ export default class Main {
 
         myDiv.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
 
-        // 일단 event listner ...
-        let nextPageEl = document.querySelector("#next-page");
-        nextPageEl.addEventListener("click", async () => {
-            this.fetchGetTitles();
-            await this._book.transitToMakeStoryTwo();
-        });
-
-        // 이야기를 만들기 시작!
-        let nextPage2El = document.querySelector("#next-page2");
-        nextPage2El.addEventListener("click", async () => {
-            this.fetchGetBook();
-            this.beginLoadingMakingStory();
-            this._book.removeMakeStoryLayout();
-        });
-
+        pubSub.subscribe("getTitles", this.getTitles.bind(this));
+        pubSub.subscribe("makeStory", this.makeStory.bind(this));
         pubSub.subscribe("beginScene2", this.beginScene2.bind(this));
         pubSub.subscribe("beginScene3", this.prepareBook.bind(this));
     }
@@ -130,6 +117,20 @@ export default class Main {
                 }
             }
         }
+    }
+
+    async goHome() {
+        this._intro.addScene();
+        this.#unlimitControl();
+        this._setupCamera(this._camera);
+
+        this._book.removeMakeStoryLayout();
+
+        let selectedObject = this._scene.getObjectByName("book");
+        this._scene.remove(selectedObject);
+
+        const bookObj = await this._book.loadBook();
+        this._bookObj = bookObj;
     }
 
     beginScene2() {
@@ -230,8 +231,7 @@ export default class Main {
             });
     }
 
-    async fetchGetBook() {
-        const title = document.getElementById("titleSelected").innerText;
+    async fetchGetBook(title) {
         await axios
             .post(
                 process.env.VUE_APP_API_URL + "api/books",
@@ -318,6 +318,20 @@ export default class Main {
         console.log(this.extractedTexts);
         this._book.extractedTexts = this.extractedTexts;
         return images;
+    }
+
+    async getTitles() {
+        this.fetchGetTitles();
+        await this._book.transitToMakeStoryTwo();
+    }
+
+    async makeStory() {
+        const title = document.querySelectorAll("#titleSelected")[1].innerText;
+        if (title) {
+            this.fetchGetBook(title);
+            this.beginLoadingMakingStory();
+            this._book.removeMakeStoryLayout();
+        }
     }
 
     removeAura() {
