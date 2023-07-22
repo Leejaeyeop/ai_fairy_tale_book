@@ -40,58 +40,69 @@ async function createTitles(data) {
         genre = "";
     }
 
-    let prompt =
+    let content =
         "주인공이 " +
         data.mainCharacter +
         genre +
         ", 동화 이야기를 제목과 간략한 줄거리 5개 정도 추천해 주세요. 제목과 이야기는 ':'로 구분 해 주세요.";
 
-    console.log(prompt);
+    console.log(content);
 
-    const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt,
-        temperature: 0.7,
-        max_tokens: 1024,
-        top_p: 0.8,
-    });
-    let text = response.data.choices[0].text;
-    texts = text.split("\n");
-    texts = texts.filter((text) => text !== "");
-    console.log(texts);
-
-    return texts;
+    try {
+        // const response = await openai.createChatCompletion({
+        //     model: "gpt-3.5-turbo",
+        //     message: [{ role: "user", content: prompt }],
+        // });
+        // "주인공이 이재엽, 주제가 전래동화, 동화 이야기를 제목과 간략한 줄거리를 5개 정도 추천해 주세요. 제목과 이야기는 ':'로 구분 해 주세요."
+        const response = await openai.createChatCompletion({
+            model: "gpt-4",
+            messages: [
+                {
+                    role: "user",
+                    content: content,
+                },
+            ],
+        });
+        let text = response.data.choices[0].message.content;
+        console.log(text);
+        texts = text.split("\n");
+        texts = texts.filter((text) => text !== "");
+        console.log(texts);
+        return texts;
+    } catch (e) {
+        console.log(e);
+        return e;
+    }
 }
 
 async function createStory(title) {
     console.log("createStory!");
     let texts = { kor: [], eng: [], titleEng: "" };
-    let prompt = "다음을 영어로 번역해 주세요. " + title;
-    let response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt,
-        temperature: 0,
-        max_tokens: 2048,
-        top_p: 1,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
-        // stop: [" "],
+    let content = "다음을 영어로 번역해 주세요. " + title;
+    let response = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: [
+            {
+                role: "user",
+                content: content,
+            },
+        ],
     });
-    texts.titleEng = response.data.choices[0].text;
+    texts.titleEng = response.data.choices[0].message.content;
 
-    prompt =
+    content =
         title +
-        "Please make a fairy tale story with the following content. Please make the story into 8 paragraphs. And please do it in the form of 'Number: Contents', liek '1: content~ 2.content~'. Please make it in English and Korean respectively.";
-    response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: prompt,
-        temperature: 0,
-        max_tokens: 3048,
-        top_p: 1,
-        frequency_penalty: 0.0,
-        presence_penalty: 0.0,
+        "Please make a fairy tale story with the following content. Please make the story into 5 paragraphs. And please do it in the form of 'Number: Contents', like '1: content~ 2.content~'. Please make it in English and Korean respectively with separted paragraphs";
+    response = await openai.createChatCompletion({
+        model: "gpt-4",
+        messages: [
+            {
+                role: "user",
+                content: content,
+            },
+        ],
     });
-    let text = response.data.choices[0].text;
+    let text = response.data.choices[0].message.content;
 
     let textSplited = [];
     textSplited = text.split("\n");
@@ -125,7 +136,7 @@ function checkLanguage(str) {
     }
 }
 
-async function createImg(title, texts) {
+async function createImgByDalleApi(title, texts) {
     imgs = [];
     texts.unshift(title);
     for (let text of texts) {
@@ -151,45 +162,31 @@ function initPdf() {
 }
 
 async function createPdf(doc, texts, imgs) {
-    const imgPromises = [];
+    const textAndImgs = [];
+    // stability api
     for (let i = 0; i < imgs.length; i++) {
         let text = texts[i];
-        let imgUrl = imgs[i];
-        imgPromises.push(
-            new Promise((resolve, reject) => {
-                https
-                    .get(imgUrl, (response) => {
-                        const chunks = [];
-                        response.on("data", (chunk) => {
-                            chunks.push(chunk);
-                        });
-                        response.on("end", () => {
-                            const buffer = Buffer.concat(chunks);
-                            resolve({ buffer, text });
-                        });
-                    })
-                    .on("error", (error) => {
-                        reject(error);
-                    });
-            })
-        );
+        let img = imgs[i];
+        textAndImgs.push({
+            text: text,
+            img: img,
+        });
     }
-
     let i = 0;
-    // 1페이지 에는 cover를 넣는다!
-    // 순서를 보장한다... 즉, 여기서 buffer로 보내도 되고, pdf를 생성 해도 된다.
-    for await (const { buffer, text } of imgPromises) {
+    for await (const { img, text } of textAndImgs) {
         if (i === 0) {
             // 표지 만들기
-            doc.image(buffer, 0, 0, {
+            doc.font("InkLipquid").fontSize(46);
+            doc.image(img, 0, 0, {
                 width: doc.page.width,
                 height: doc.page.height,
             }).text(text, doc.page.width / 2, doc.page.height / 2);
         } else {
             doc.addPage();
+            doc.font("InkLipquid").fontSize(28);
             // 기본
-            doc.image(buffer, {
-                fit: [500, 500],
+            doc.image(img, {
+                fit: [450, 450],
                 align: "center",
                 valign: "center",
             }).text(text);
@@ -234,7 +231,8 @@ app.post("/api/books", async (req, res) => {
     // story를 만든다.
     let texts = await createStory(title);
     // img를 만든다. cover 용 title(eng) + eng
-    let imgs = await createImg(texts.titleEng, texts.eng);
+    // let imgs = await createImgByDalleApi(texts.titleEng, texts.eng);
+    let imgs = await createImgByStabilityApi(texts.titleEng, texts.eng);
     // cover 를 생성하기 위해 title text를 집어 넣는다.
     let coverTitle = title.split(":")[0].split(".")[1];
     texts.kor.unshift(coverTitle);
@@ -262,3 +260,53 @@ app.post("/api/title", async (req, res) => {
         res.send(error);
     }
 });
+
+import fetch from "node-fetch";
+
+export async function createImgByStabilityApi(title, texts) {
+    console.log("시작");
+    texts.unshift(title);
+
+    const engineId = "stable-diffusion-v1-5";
+    const apiHost = process.env.API_HOST ?? "https://api.stability.ai";
+    const apiKey = process.env.STABILITY_API_KEY;
+
+    if (!apiKey) throw new Error("Missing Stability API key.");
+    let images = [];
+    for (let text of texts) {
+        const response = await fetch(`${apiHost}/v1/generation/${engineId}/text-to-image`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Accept: "application/json",
+                Authorization: `Bearer ${apiKey}`,
+            },
+
+            body: JSON.stringify({
+                text_prompts: [{ text: text }],
+                cfg_scale: 7,
+                clip_guidance_preset: "FAST_BLUE",
+                height: 512,
+                width: 512,
+                samples: 1,
+                steps: 30,
+                style_preset: "fantasy-art",
+                // comic-book //anime
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Non-200 response: ${await response.text()}`);
+        }
+
+        const responseJSON = await response.json();
+
+        responseJSON.artifacts.forEach((image) => {
+            const buffer = Buffer.from(image.base64, "base64");
+            images.push(buffer);
+            // fs.writeFileSync(`v1_txt2img_${index}.png`, Buffer.from(image.base64, "base64"));
+        });
+    }
+
+    return images;
+}
