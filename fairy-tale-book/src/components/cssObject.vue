@@ -34,7 +34,8 @@
             class="page dot center"
             id="loading"
         >
-            잠시만 기다려 주세요!
+            <p>잠시만 기다려 주세요!</p>
+            <img src="loading.gif" />
         </div>
 
         <div
