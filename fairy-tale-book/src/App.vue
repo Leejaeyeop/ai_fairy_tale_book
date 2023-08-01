@@ -29,6 +29,22 @@ export default {
 </script>
 
 <style>
+html {
+    width: 100%;
+    height: 100%;
+
+    background: #11e8bb; /* Old browsers */
+    background: -moz-linear-gradient(top, #11e8bb 0%, #8200c9 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, #11e8bb 0%, #8200c9 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, #ffffff 0%, #63a1ff 100%);
+    /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    /* background-image: url("../public/background.jpg");
+    background-size: 100%; */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#11e8bb', 
+    endColorstr='#8200c9',GradientType=0 ); /* IE6-9 */
+    overflow: hidden;
+}
+
 #app {
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

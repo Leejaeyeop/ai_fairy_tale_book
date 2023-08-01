@@ -34,7 +34,9 @@ export default class Main {
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setPixelRatio(window.devicePixelRatio);
-        renderer.setClearColor("skyblue");
+        renderer.autoClear = false;
+        renderer.setClearColor(0x000000, 0.0);
+
         this._renderer = renderer;
 
         const myDiv = document.getElementById("three");
