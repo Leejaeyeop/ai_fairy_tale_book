@@ -6,23 +6,33 @@ import { pubSub } from "../utils/pubsub";
 
 export default class Book {
     meshes = {};
-    _currentPage = 0;
-    _animeSpeed = 0.01;
+    #currentPage = 0;
+    #animeSpeed = 0.01;
     #audioFile = null;
     #pageR = null;
+    #scene;
+    #camera;
+    #cssRenderer;
+    #renderer;
+    #gltfLoader;
+    #animations;
+    #mixer;
+    #book;
+    #overlayL;
+    #overlayR;
 
     constructor(scene, camera, cssRenderer, gltfLoader, renderer) {
-        this._scene = scene;
-        this._camera = camera;
-        this._cssRenderer = cssRenderer;
-        this._gltfLoader = gltfLoader;
-        this._renderer = renderer;
+        this.#scene = scene;
+        this.#camera = camera;
+        this.#cssRenderer = cssRenderer;
+        this.#gltfLoader = gltfLoader;
+        this.#renderer = renderer;
         this.#audioFile = new Audio();
     }
 
     async loadBook() {
         return new Promise((resolve) => {
-            this._gltfLoader.load(
+            this.#gltfLoader.load(
                 "book.glb",
                 function (gltf) {
                     console.log(gltf.scene);
@@ -57,10 +67,10 @@ export default class Book {
                     });
 
                     const animations = gltf.animations;
-                    this._animations = animations;
+                    this.#animations = animations;
 
                     animations.forEach((element) => {
-                        this._animations[element.name] = element;
+                        this.#animations[element.name] = element;
                     });
 
                     const scaleFactor = 0.2;
@@ -71,18 +81,18 @@ export default class Book {
                     book.rotation.y -= Math.PI;
 
                     book.name = "book";
-                    this._scene.add(book);
+                    this.#scene.add(book);
 
-                    this._mixer = new THREE.AnimationMixer(book);
+                    this.#mixer = new THREE.AnimationMixer(book);
 
                     let animate = () => {
                         requestAnimationFrame(animate);
-                        this._mixer.update(this._animeSpeed);
+                        this.#mixer.update(this.#animeSpeed);
                     };
 
                     animate();
 
-                    this._book = book;
+                    this.#book = book;
                     resolve(book);
                 }.bind(this),
                 // called while loading is progressing
@@ -101,19 +111,19 @@ export default class Book {
      * 표지 넘기기
      */
     turnCover() {
-        playAction(this._animations[0], this._mixer);
-        playAction(this._animations[1], this._mixer);
-        playAction(this._animations[2], this._mixer);
-        playAction(this._animations[3], this._mixer);
+        playAction(this.#animations[0], this.#mixer);
+        playAction(this.#animations[1], this.#mixer);
+        playAction(this.#animations[2], this.#mixer);
+        playAction(this.#animations[3], this.#mixer);
     }
     /**
      * 표지 뒤로 넘기기
      */
     turnBackCover() {
-        playReverseAction(this._animations[0], this._mixer);
-        playReverseAction(this._animations[1], this._mixer);
-        playReverseAction(this._animations[2], this._mixer);
-        playReverseAction(this._animations[3], this._mixer);
+        playReverseAction(this.#animations[0], this.#mixer);
+        playReverseAction(this.#animations[1], this.#mixer);
+        playReverseAction(this.#animations[2], this.#mixer);
+        playReverseAction(this.#animations[3], this.#mixer);
     }
 
     // 책 겉면에 이미지를 삽입한다.
@@ -122,9 +132,9 @@ export default class Book {
     }
 
     async clickCoverFront(images) {
-        this._currentPage = 0;
+        this.#currentPage = 0;
         this.turnCover();
-        await this.insertImg(this.meshes.Page1Front, images[++this._currentPage], true);
+        await this.insertImg(this.meshes.Page1Front, images[++this.#currentPage], true);
 
         this.createTtsBtnR();
     }
@@ -138,59 +148,59 @@ export default class Book {
     // if: 만들어진 책을 확인하는 상황
     async clickP1Front(images) {
         this.turnPageFirst();
-        await this.insertImg(this.meshes.Page1Back, images[++this._currentPage]);
-        await this.insertImg(this.meshes.Page2Front, images[++this._currentPage], true);
+        await this.insertImg(this.meshes.Page1Back, images[++this.#currentPage]);
+        await this.insertImg(this.meshes.Page2Front, images[++this.#currentPage], true);
         this.createTtsBtnL();
         this.createTtsBtnR();
     }
 
     async clickP2Front(images) {
         this.tunPageSecond();
-        await this.insertImg(this.meshes.Page2Back, images[++this._currentPage]);
-        await this.insertImg(this.meshes.Pages, images[++this._currentPage], true);
+        await this.insertImg(this.meshes.Page2Back, images[++this.#currentPage]);
+        await this.insertImg(this.meshes.Pages, images[++this.#currentPage], true);
         this.createTtsBtnL();
         this.createTtsBtnR();
     }
 
     async clickP3Front(images) {
         console.log(images.length);
-        console.log(this._currentPage + 1);
+        console.log(this.#currentPage + 1);
         // page limit 홀 짝도 계산
-        if (images.length < this._currentPage + 2) {
+        if (images.length < this.#currentPage + 2) {
             return;
         }
-        await this.insertImg(this.meshes.Page1Back, images[this._currentPage - 1]);
-        await this.insertImg(this.meshes.Page2Front, images[this._currentPage], true);
+        await this.insertImg(this.meshes.Page1Back, images[this.#currentPage - 1]);
+        await this.insertImg(this.meshes.Page2Front, images[this.#currentPage], true);
         this.tunPageSecond();
-        await this.insertImg(this.meshes.Page2Back, images[++this._currentPage]);
-        await this.insertImg(this.meshes.Pages, images[++this._currentPage], true);
+        await this.insertImg(this.meshes.Page2Back, images[++this.#currentPage]);
+        await this.insertImg(this.meshes.Pages, images[++this.#currentPage], true);
         this.createTtsBtnL();
         this.createTtsBtnR();
     }
 
     clickP1Back(images) {
-        if (this._currentPage > 4) {
+        if (this.#currentPage > 4) {
             this.clickP2Back(images);
             return;
         }
         this.turnBackPageFirst();
-        this._currentPage -= 2;
-        this.insertImg(this.meshes.Page1Front, images[this._currentPage], true);
+        this.#currentPage -= 2;
+        this.insertImg(this.meshes.Page1Front, images[this.#currentPage], true);
         this.createTtsBtnR();
         this.deleteOverlayR();
     }
 
     // todo
     async clickP2Back(images) {
-        await this.insertImg(this.meshes.Page2Back, images[this._currentPage - 1]);
-        await this.insertImg(this.meshes.Pages, images[this._currentPage], true);
+        await this.insertImg(this.meshes.Page2Back, images[this.#currentPage - 1]);
+        await this.insertImg(this.meshes.Pages, images[this.#currentPage], true);
 
-        this._currentPage -= 2;
+        this.#currentPage -= 2;
         let clampWhenFinished = true;
 
         this.turnBackPageSecond(clampWhenFinished);
-        this.insertImg(this.meshes.Page1Back, images[this._currentPage - 1]);
-        this.insertImg(this.meshes.Page2Front, images[this._currentPage], true);
+        this.insertImg(this.meshes.Page1Back, images[this.#currentPage - 1]);
+        this.insertImg(this.meshes.Page2Front, images[this.#currentPage], true);
         this.createTtsBtnL();
         this.createTtsBtnR();
     }
@@ -201,30 +211,30 @@ export default class Book {
      * clickedMesh
      */
     turnPageFirst() {
-        playAction(this._animations.Page1Action, this._mixer);
+        playAction(this.#animations.Page1Action, this.#mixer);
     }
 
     /**
      * 이전 페이지로 이동
      */
     turnBackPageFirst() {
-        playReverseAction(this._animations.Page1Action, this._mixer);
+        playReverseAction(this.#animations.Page1Action, this.#mixer);
     }
 
     /**
      * 두 번째 페이지 넘기기
      */
     tunPageSecond() {
-        playAction(this._animations.Page2Action, this._mixer);
+        playAction(this.#animations.Page2Action, this.#mixer);
     }
 
     turnBackPageSecond() {
-        playReverseAction(this._animations.Page2Action, this._mixer);
+        playReverseAction(this.#animations.Page2Action, this.#mixer);
     }
 
     movePositionToLook() {
-        this._book.position.set(0.45, 5, 0.7);
-        this._book.rotation.x = -Math.PI / 2;
+        this.#book.position.set(0.45, 5, 0.7);
+        this.#book.rotation.x = -Math.PI / 2;
     }
 
     // make book page
@@ -238,32 +248,32 @@ export default class Book {
             pubSub.publish("getTitles");
         });
 
-        this._overlayL = new CSS3DObject(pageL);
+        this.#overlayL = new CSS3DObject(pageL);
 
         const globalPos = new THREE.Vector3();
-        const pagePosL = this._book.children[7].getWorldPosition(globalPos);
+        const pagePosL = this.#book.children[7].getWorldPosition(globalPos);
         pagePosL.x += xOffsetL;
 
-        this._overlayL.position.copy(pagePosL);
-        this._overlayL.rotation.set(-Math.PI / 2, 0, 0);
+        this.#overlayL.position.copy(pagePosL);
+        this.#overlayL.rotation.set(-Math.PI / 2, 0, 0);
 
-        this._overlayL.scale.set(0.0003, 0.0003, 0.0005);
+        this.#overlayL.scale.set(0.0003, 0.0003, 0.0005);
 
-        this._overlayL.name = "overlayL";
-        this._scene.add(this._overlayL);
+        this.#overlayL.name = "overlayL";
+        this.#scene.add(this.#overlayL);
 
         const pageR = document.getElementById("pageR").cloneNode(true);
 
-        this._overlayR = new CSS3DObject(pageR);
-        const pagePosR = this._book.children[8].getWorldPosition(globalPos);
+        this.#overlayR = new CSS3DObject(pageR);
+        const pagePosR = this.#book.children[8].getWorldPosition(globalPos);
         pagePosR.x += xOffsetR;
 
-        this._overlayR.position.copy(pagePosR);
-        this._overlayR.rotation.set(-Math.PI / 2, 0, 0);
-        this._overlayR.scale.set(0.0003, 0.0003, 0.0005);
+        this.#overlayR.position.copy(pagePosR);
+        this.#overlayR.rotation.set(-Math.PI / 2, 0, 0);
+        this.#overlayR.scale.set(0.0003, 0.0003, 0.0005);
 
-        this._overlayR.name = "overlayR";
-        this._scene.add(this._overlayR);
+        this.#overlayR.name = "overlayR";
+        this.#scene.add(this.#overlayR);
     }
 
     removeMakeStoryLayout() {
@@ -277,27 +287,27 @@ export default class Book {
 
         const globalPos = new THREE.Vector3();
         const pageL = document.getElementById("loading").cloneNode(true);
-        this._overlayL = new CSS3DObject(pageL);
-        const pagePosL = this._book.children[7].getWorldPosition(globalPos);
+        this.#overlayL = new CSS3DObject(pageL);
+        const pagePosL = this.#book.children[7].getWorldPosition(globalPos);
         pagePosL.x += xOffsetL;
-        this._overlayL.position.copy(pagePosL);
-        this._overlayL.rotation.set(-Math.PI / 2, 0, 0);
-        this._overlayL.scale.set(0.0003, 0.0003, 0.0005);
-        this._scene.add(this._overlayL);
+        this.#overlayL.position.copy(pagePosL);
+        this.#overlayL.rotation.set(-Math.PI / 2, 0, 0);
+        this.#overlayL.scale.set(0.0003, 0.0003, 0.0005);
+        this.#scene.add(this.#overlayL);
 
         const pageR = document.getElementById("pageR2").cloneNode(true);
         this.#pageR = pageR;
-        this._overlayR = new CSS3DObject(pageR);
-        const pagePosR = this._book.children[8].getWorldPosition(globalPos);
+        this.#overlayR = new CSS3DObject(pageR);
+        const pagePosR = this.#book.children[8].getWorldPosition(globalPos);
         pagePosR.x += xOffsetR;
-        this._overlayR.position.copy(pagePosR);
-        this._overlayR.rotation.set(-Math.PI / 2, 0, 0);
-        this._overlayR.scale.set(0.0003, 0.0003, 0.0005);
-        this._scene.add(this._overlayR);
+        this.#overlayR.position.copy(pagePosR);
+        this.#overlayR.rotation.set(-Math.PI / 2, 0, 0);
+        this.#overlayR.scale.set(0.0003, 0.0003, 0.0005);
+        this.#scene.add(this.#overlayR);
     }
 
     async createTitlesOnPage(data) {
-        this._scene.remove(this._overlayL);
+        this.#scene.remove(this.#overlayL);
 
         const globalPos = new THREE.Vector3();
         const pageL = document.getElementById("cards").cloneNode(true);
@@ -305,12 +315,12 @@ export default class Book {
             pubSub.publish("makeStory");
         });
 
-        this._overlayL = new CSS3DObject(pageL);
-        const pagePosL = this._book.children[7].getWorldPosition(globalPos);
-        this._overlayL.position.copy(pagePosL);
-        this._overlayL.rotation.set(-Math.PI / 2, 0, 0);
-        this._overlayL.scale.set(0.0003, 0.0003, 0.0005);
-        this._scene.add(this._overlayL);
+        this.#overlayL = new CSS3DObject(pageL);
+        const pagePosL = this.#book.children[7].getWorldPosition(globalPos);
+        this.#overlayL.position.copy(pagePosL);
+        this.#overlayL.rotation.set(-Math.PI / 2, 0, 0);
+        this.#overlayL.scale.set(0.0003, 0.0003, 0.0005);
+        this.#scene.add(this.#overlayL);
 
         const cardsTitles = pageL.querySelector("#cardsTitles");
         for (let datum of data) {
@@ -339,8 +349,8 @@ export default class Book {
     }
 
     async transitToMakeStoryTwo() {
-        this._scene.remove(this._overlayR);
-        this._scene.remove(this._overlayL);
+        this.#scene.remove(this.#overlayR);
+        this.#scene.remove(this.#overlayL);
 
         this.tunPageSecond();
 
@@ -353,16 +363,16 @@ export default class Book {
         console.log(ttsL);
         const ttsBtnL = ttsL.querySelector("#ttsBtnL");
 
-        this._overlayL = new CSS3DObject(ttsL);
-        const pagePosL = this._book.children[8].getWorldPosition(globalPos);
-        this._overlayL.position.copy(pagePosL);
-        this._overlayL.position.z = 0.87;
-        this._overlayL.rotation.set(-Math.PI / 2, 0, 0);
-        this._overlayL.scale.set(0.0003, 0.0003, 0.0005);
-        this._scene.add(this._overlayL);
+        this.#overlayL = new CSS3DObject(ttsL);
+        const pagePosL = this.#book.children[8].getWorldPosition(globalPos);
+        this.#overlayL.position.copy(pagePosL);
+        this.#overlayL.position.z = 0.87;
+        this.#overlayL.rotation.set(-Math.PI / 2, 0, 0);
+        this.#overlayL.scale.set(0.0003, 0.0003, 0.0005);
+        this.#scene.add(this.#overlayL);
 
         ttsBtnL.addEventListener("click", () => {
-            this.fetchTts(this.extractedTexts[this._currentPage - 1]);
+            this.fetchTts(this.extractedTexts[this.#currentPage - 1]);
         });
     }
 
@@ -371,28 +381,28 @@ export default class Book {
 
         const ttsR = document.getElementById("ttsR").cloneNode(true);
         const ttsBtnR = ttsR.querySelector("#ttsBtnR");
-        this._overlayR = new CSS3DObject(ttsR);
-        const pagePosR = this._book.children[7].getWorldPosition(globalPos);
-        this._overlayR.position.copy(pagePosR);
-        this._overlayR.position.z = 0.87;
+        this.#overlayR = new CSS3DObject(ttsR);
+        const pagePosR = this.#book.children[7].getWorldPosition(globalPos);
+        this.#overlayR.position.copy(pagePosR);
+        this.#overlayR.position.z = 0.87;
 
-        this._overlayR.rotation.set(-Math.PI / 2, 0, 0);
-        this._overlayR.scale.set(0.0003, 0.0003, 0.0005);
-        this._scene.add(this._overlayR);
+        this.#overlayR.rotation.set(-Math.PI / 2, 0, 0);
+        this.#overlayR.scale.set(0.0003, 0.0003, 0.0005);
+        this.#scene.add(this.#overlayR);
 
         ttsBtnR.addEventListener("click", () => {
             console.log("book!");
 
-            this.fetchTts(this.extractedTexts[this._currentPage]);
+            this.fetchTts(this.extractedTexts[this.#currentPage]);
         });
     }
 
     deleteOverlayR() {
-        this._scene.remove(this._overlayL);
+        this.#scene.remove(this.#overlayL);
     }
 
     deleteOverlayL() {
-        this._scene.remove(this._overlayR);
+        this.#scene.remove(this.#overlayR);
     }
 
     fetchTts(text) {

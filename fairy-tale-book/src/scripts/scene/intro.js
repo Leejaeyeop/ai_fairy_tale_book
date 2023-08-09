@@ -2,73 +2,90 @@ import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { pubSub } from "../utils/pubsub";
 export default class Intro {
+    #scene;
+    #camera;
+    #renderer;
+    #cssRenderer;
+    #loadOverlay;
+    #loadPonterOverlay;
+    #startOverlay;
+    #startPonterOverlay;
+    #deskFrameFront;
+    #deskFrameOverlay;
+    #deskFrameTop;
+    #deskFrameTopOverlay;
+    #bookshelfFrameFront;
+    #bookshelfFrameFrontOverlay;
+    #bookshelfFrameSide;
+    #bookshelfFrameSideOverlay;
+
     constructor(scene, camera, renderer, cssRenderer) {
-        this._scene = scene;
-        this._camera = camera;
-        this._renderer = renderer;
-        this._cssRenderer = cssRenderer;
+        this.#scene = scene;
+        this.#camera = camera;
+        this.#renderer = renderer;
+        this.#cssRenderer = cssRenderer;
         this.init();
     }
 
     init() {
         const load = document.getElementById("load");
         const loadOverlay = new CSS3DObject(load);
-        this._loadOverlay = loadOverlay;
+        this.#loadOverlay = loadOverlay;
         loadOverlay.position.set(-0.2, 1, 3);
         loadOverlay.rotation.set(0, Math.PI / 4, 0);
         loadOverlay.scale.set(0.004, 0.004, 0.006);
 
         const loadPonter = document.getElementById("arrow-load");
         const loadPonterOverlay = new CSS3DObject(loadPonter);
-        this._loadPonterOverlay = loadPonterOverlay;
+        this.#loadPonterOverlay = loadPonterOverlay;
         loadPonterOverlay.position.set(-0.5, 1.9, 3.4);
         loadPonterOverlay.rotation.set(-Math.PI / 3, Math.PI / 3, 0);
         loadPonterOverlay.scale.set(0.01, 0.01, 0.01);
 
         const start = document.getElementById("start");
         const startOverlay = new CSS3DObject(start);
-        this._startOverlay = startOverlay;
+        this.#startOverlay = startOverlay;
         startOverlay.position.set(0.45, 0.8, 0.7);
         startOverlay.scale.set(0.004, 0.004, 0.006);
 
-        startOverlay.lookAt(this._camera.position);
+        startOverlay.lookAt(this.#camera.position);
 
         const startPonter = document.getElementById("arrow-start");
         const startPonterOverlay = new CSS3DObject(startPonter);
-        this._startPonterOverlay = startPonterOverlay;
+        this.#startPonterOverlay = startPonterOverlay;
         startPonterOverlay.position.set(0.45, 1.1, 0.7);
         startPonterOverlay.rotation.set(0, 0, -Math.PI / 2);
         startPonterOverlay.scale.set(0.008, 0.008, 0.008);
 
-        this._cssRenderer.render(this._scene, this._camera);
+        this.#cssRenderer.render(this.#scene, this.#camera);
 
         const deskFrameFront = document.getElementById("desk_frame_front");
-        this._deskFrameFront = deskFrameFront;
+        this.#deskFrameFront = deskFrameFront;
         const deskFrameOverlay = new CSS3DObject(deskFrameFront);
-        this._deskFrameOverlay = deskFrameOverlay;
+        this.#deskFrameOverlay = deskFrameOverlay;
         deskFrameOverlay.position.set(0.35, 0.45, 1);
         deskFrameOverlay.scale.set(0.13, 0.07, 0.1);
 
         const deskFrameTop = document.getElementById("desk_frame_top");
-        this._deskFrameTop = deskFrameTop;
+        this.#deskFrameTop = deskFrameTop;
         const deskFrameTopOverlay = new CSS3DObject(deskFrameTop);
-        this._deskFrameTopOverlay = deskFrameTopOverlay;
+        this.#deskFrameTopOverlay = deskFrameTopOverlay;
         deskFrameTopOverlay.position.set(0.35, 0.6, 0.7);
         deskFrameTopOverlay.rotation.set(Math.PI / 2, 0, 0);
         deskFrameTopOverlay.scale.set(0.13, 0.06, 0.1);
 
         const bookshelfFrameFront = document.getElementById("bookshelf_frame_front");
-        this._bookshelfFrameFront = bookshelfFrameFront;
+        this.#bookshelfFrameFront = bookshelfFrameFront;
         const bookshelfFrameFrontOverlay = new CSS3DObject(bookshelfFrameFront);
-        this._bookshelfFrameFrontOverlay = bookshelfFrameFrontOverlay;
+        this.#bookshelfFrameFrontOverlay = bookshelfFrameFrontOverlay;
         bookshelfFrameFrontOverlay.position.set(-0.18, 1, 3);
         bookshelfFrameFrontOverlay.rotation.set(0, Math.PI / 4, 0);
         bookshelfFrameFrontOverlay.scale.set(0.05, 0.15, 0.1);
 
         const bookshelfFrameSide = document.getElementById("bookshelf_frame_side");
-        this._bookshelfFrameSide = bookshelfFrameSide;
+        this.#bookshelfFrameSide = bookshelfFrameSide;
         const bookshelfFrameSideOverlay = new CSS3DObject(bookshelfFrameSide);
-        this._bookshelfFrameSideOverlay = bookshelfFrameSideOverlay;
+        this.#bookshelfFrameSideOverlay = bookshelfFrameSideOverlay;
         bookshelfFrameSideOverlay.position.set(-0.44, 1, 3);
         bookshelfFrameSideOverlay.rotation.set(0, -Math.PI / 4, 0);
         bookshelfFrameSideOverlay.scale.set(0.03, 0.15, 0.1);
@@ -94,7 +111,7 @@ export default class Intro {
             loadPonterOverlay.position.y = 1.9 - zPos;
 
             startPonterOverlay.position.y = 1.1 - zPos;
-            this._cssRenderer.render(this._scene, this._camera);
+            this.#cssRenderer.render(this.#scene, this.#camera);
         };
         animate();
     }
@@ -117,14 +134,14 @@ export default class Intro {
                 const easedProgress = easing(progress);
                 const currentPosition = start.clone().add(diffPosition.clone().multiplyScalar(easedProgress));
                 quaternion.slerpQuaternions(startQuaternion, endQuaternion, easedProgress);
-                this._camera.position.copy(currentPosition);
-                this._camera.setRotationFromQuaternion(quaternion);
-                this._renderer.render(this._scene, this._camera);
+                this.#camera.position.copy(currentPosition);
+                this.#camera.setRotationFromQuaternion(quaternion);
+                this.#renderer.render(this.#scene, this.#camera);
                 requestAnimationFrame(move);
             } else {
-                this._camera.position.copy(end);
-                this._camera.setRotationFromQuaternion(endQuaternion);
-                this._renderer.render(this._scene, this._camera);
+                this.#camera.position.copy(end);
+                this.#camera.setRotationFromQuaternion(endQuaternion);
+                this.#renderer.render(this.#scene, this.#camera);
             }
         };
 
@@ -136,91 +153,91 @@ export default class Intro {
     }
 
     addScene() {
-        this._scene.add(this._loadOverlay);
-        this._scene.add(this._loadPonterOverlay);
-        this._scene.add(this._bookshelfFrameFrontOverlay);
-        this._scene.add(this._bookshelfFrameSideOverlay);
-        this._scene.add(this._startOverlay);
-        this._scene.add(this._startPonterOverlay);
-        this._scene.add(this._deskFrameOverlay);
-        this._scene.add(this._deskFrameTopOverlay);
+        this.#scene.add(this.#loadOverlay);
+        this.#scene.add(this.#loadPonterOverlay);
+        this.#scene.add(this.#bookshelfFrameFrontOverlay);
+        this.#scene.add(this.#bookshelfFrameSideOverlay);
+        this.#scene.add(this.#startOverlay);
+        this.#scene.add(this.#startPonterOverlay);
+        this.#scene.add(this.#deskFrameOverlay);
+        this.#scene.add(this.#deskFrameTopOverlay);
     }
 
     removeScene() {
-        this._scene.remove(this._loadOverlay);
-        this._scene.remove(this._loadPonterOverlay);
-        this._scene.remove(this._bookshelfFrameFrontOverlay);
-        this._scene.remove(this._bookshelfFrameSideOverlay);
-        this._scene.remove(this._startOverlay);
-        this._scene.remove(this._startPonterOverlay);
-        this._scene.remove(this._deskFrameOverlay);
-        this._scene.remove(this._deskFrameTopOverlay);
+        this.#scene.remove(this.#loadOverlay);
+        this.#scene.remove(this.#loadPonterOverlay);
+        this.#scene.remove(this.#bookshelfFrameFrontOverlay);
+        this.#scene.remove(this.#bookshelfFrameSideOverlay);
+        this.#scene.remove(this.#startOverlay);
+        this.#scene.remove(this.#startPonterOverlay);
+        this.#scene.remove(this.#deskFrameOverlay);
+        this.#scene.remove(this.#deskFrameTopOverlay);
     }
 
     setHoveringListener() {
-        this._bookshelfFrameFront.addEventListener("mouseenter", () => {
-            let el = this._loadOverlay.element.querySelector("#circle");
+        this.#bookshelfFrameFront.addEventListener("mouseenter", () => {
+            let el = this.#loadOverlay.element.querySelector("#circle");
             el.className = "circle";
         });
 
-        this._bookshelfFrameFront.addEventListener("mouseleave", () => {
-            let el = this._loadOverlay.element.querySelector("#circle");
+        this.#bookshelfFrameFront.addEventListener("mouseleave", () => {
+            let el = this.#loadOverlay.element.querySelector("#circle");
             el.className = "";
         });
 
-        this._bookshelfFrameSide.addEventListener("mouseenter", () => {
-            let el = this._loadOverlay.element.querySelector("#circle");
+        this.#bookshelfFrameSide.addEventListener("mouseenter", () => {
+            let el = this.#loadOverlay.element.querySelector("#circle");
             el.className = "circle";
         });
 
-        this._bookshelfFrameSide.addEventListener("mouseleave", () => {
-            let el = this._loadOverlay.element.querySelector("#circle");
+        this.#bookshelfFrameSide.addEventListener("mouseleave", () => {
+            let el = this.#loadOverlay.element.querySelector("#circle");
             el.className = "";
         });
 
-        this._deskFrameFront.addEventListener("mouseenter", () => {
-            let el = this._startOverlay.element.querySelector("#circle");
+        this.#deskFrameFront.addEventListener("mouseenter", () => {
+            let el = this.#startOverlay.element.querySelector("#circle");
             el.className = "circle";
         });
 
-        this._deskFrameFront.addEventListener("mouseleave", () => {
-            let el = this._startOverlay.element.querySelector("#circle");
+        this.#deskFrameFront.addEventListener("mouseleave", () => {
+            let el = this.#startOverlay.element.querySelector("#circle");
             el.className = "";
         });
-        this._deskFrameTop.addEventListener("mouseenter", () => {
-            let el = this._startOverlay.element.querySelector("#circle");
+        this.#deskFrameTop.addEventListener("mouseenter", () => {
+            let el = this.#startOverlay.element.querySelector("#circle");
             el.className = "circle";
         });
 
-        this._deskFrameTop.addEventListener("mouseleave", () => {
-            let el = this._startOverlay.element.querySelector("#circle");
+        this.#deskFrameTop.addEventListener("mouseleave", () => {
+            let el = this.#startOverlay.element.querySelector("#circle");
             el.className = "";
         });
 
         // 이야기 만들기
-        this._deskFrameFront.addEventListener("click", () => {
+        this.#deskFrameFront.addEventListener("click", () => {
             this.zoomCameraToLook();
 
             pubSub.publish("beginScene2");
         });
 
-        this._deskFrameTop.addEventListener("click", () => {
+        this.#deskFrameTop.addEventListener("click", () => {
             pubSub.publish("beginScene2");
 
             pubSub.publish("beginScene2");
         });
 
         // 이야기 불러오기
-        this._bookshelfFrameFront.addEventListener("click", () => {
+        this.#bookshelfFrameFront.addEventListener("click", () => {
             // Usage example
             this.fileUpload();
         });
 
-        this._bookshelfFrameSide.addEventListener("click", () => {
+        this.#bookshelfFrameSide.addEventListener("click", () => {
             // Usage example
-            const startPosition = this._camera.position;
+            const startPosition = this.#camera.position;
             const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
-            const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
+            const startRotation = new THREE.Quaternion().setFromEuler(this.#camera.rotation);
             const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
 
             const duration = 2000; // in milliseconds
@@ -232,9 +249,9 @@ export default class Intro {
 
     zoomCameraToLook() {
         // Usage example
-        const startPosition = this._camera.position;
+        const startPosition = this.#camera.position;
         const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
-        const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
+        const startRotation = new THREE.Quaternion().setFromEuler(this.#camera.rotation);
         const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
 
         const duration = 2000; // in milliseconds
@@ -251,9 +268,9 @@ export default class Intro {
                 console.log(fileInput.files);
                 let file = fileInput.files[0];
 
-                const startPosition = this._camera.position;
+                const startPosition = this.#camera.position;
                 const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
-                const startRotation = new THREE.Quaternion().setFromEuler(this._camera.rotation);
+                const startRotation = new THREE.Quaternion().setFromEuler(this.#camera.rotation);
                 const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
 
                 const duration = 2000; // in milliseconds

@@ -12,6 +12,21 @@ import Space from "./elements/space";
 export default class Main {
     // private define
     #controls;
+    #scene;
+    #gltfLoader;
+    #renderer;
+    #myDIv;
+    #cssRenderer;
+    #raycaster;
+    #mouse;
+    #camera;
+    #images;
+    #book;
+    #intro;
+    #bookObj;
+    #auraSprite;
+    #light;
+    #AmbientLight;
     stage = "";
     loadedPercent = 0;
     minDistance = 2;
@@ -23,9 +38,9 @@ export default class Main {
     init() {
         this.stage = "INTRO";
         const scene = new THREE.Scene();
-        this._scene = scene;
+        this.#scene = scene;
         const gltfLoader = new GLTFLoader();
-        this._gltfLoader = gltfLoader;
+        this.#gltfLoader = gltfLoader;
 
         // render 설정
         const renderer = new THREE.WebGLRenderer({
@@ -37,25 +52,25 @@ export default class Main {
         renderer.autoClear = false;
         renderer.setClearColor(0x000000, 0.0);
 
-        this._renderer = renderer;
+        this.#renderer = renderer;
 
         const myDiv = document.getElementById("three");
-        this._myDIv = myDiv;
-        this._myDIv.appendChild(this._renderer.domElement);
+        this.#myDIv = myDiv;
+        this.#myDIv.appendChild(this.#renderer.domElement);
 
-        this._initModel();
+        this.#initModel();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        this._setupCamera(camera);
-        this._setupControls();
+        this.#setupCamera(camera);
+        this.#setupControls();
 
         const cssRenderer = new CSS3DRenderer({ antialias: true });
-        this._cssRenderer = cssRenderer;
-        this._cssRenderer.setSize(window.innerWidth, window.innerHeight);
-        this._cssRenderer.domElement.style.position = "absolute";
-        this._cssRenderer.domElement.style.top = "0px";
-        this._cssRenderer.domElement.style.pointerEvents = "none";
+        this.#cssRenderer = cssRenderer;
+        this.#cssRenderer.setSize(window.innerWidth, window.innerHeight);
+        this.#cssRenderer.domElement.style.position = "absolute";
+        this.#cssRenderer.domElement.style.top = "0px";
+        this.#cssRenderer.domElement.style.pointerEvents = "none";
 
-        document.body.appendChild(this._cssRenderer.domElement);
+        document.body.appendChild(this.#cssRenderer.domElement);
 
         // resize
         window.onresize = this.resize.bind(this);
@@ -64,11 +79,11 @@ export default class Main {
         requestAnimationFrame(this.render.bind(this));
 
         let raycaster = new THREE.Raycaster();
-        this._raycaster = raycaster;
+        this.#raycaster = raycaster;
 
         const mouse = new THREE.Vector2();
-        // this._SELECTED = SELECTED
-        this._mouse = mouse;
+        // this.#SELECTED = SELECTED
+        this.#mouse = mouse;
 
         myDiv.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
 
@@ -80,13 +95,13 @@ export default class Main {
 
     onDocumentMouseDown(event) {
         // 마우스 클릭 위치를 정규화(normalized)된 장치 좌표(device coordinates)로 변환합니다.
-        this._mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        this._mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        this.#mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.#mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-        this._raycaster.setFromCamera(this._mouse, this._camera);
+        this.#raycaster.setFromCamera(this.#mouse, this.#camera);
 
         // 레이캐스팅 결과를 저장할 배열입니다.
-        var intersects = this._raycaster.intersectObjects(this._scene.children);
+        var intersects = this.#raycaster.intersectObjects(this.#scene.children);
         // 가장 가까운 메쉬를 찾습니다.
         if (intersects.length > 0) {
             var clickedMesh = intersects[0].object;
@@ -94,66 +109,66 @@ export default class Main {
             // 특정 메쉬를 클릭한 경우, 이벤트를 발생시킵니다.
             if (this.stage === "READ_BOOK") {
                 // const images = JSON.parse(sessionStorage.getItem("book"));
-                const images = this._images;
+                const images = this.#images;
                 localStorage.getItem("book", JSON.stringify(images));
 
                 if (clickedMesh.name === "coverL") {
                     // 표지 넘기기
-                    this._book.clickCoverFront(images);
+                    this.#book.clickCoverFront(images);
                 } else if (clickedMesh.name === "coverL_1") {
-                    this._book.clickCoverBack();
+                    this.#book.clickCoverBack();
                 } else if (clickedMesh.name === "Page1Front") {
                     // 책장 넘기기기
-                    this._book.clickP1Front(images);
-                    // this._book.turnBackPage();
+                    this.#book.clickP1Front(images);
+                    // this.#book.turnBackPage();
                 } else if (clickedMesh.name === "Page2Front") {
                     // 책장 넘기기기2
-                    this._book.clickP2Front(images);
+                    this.#book.clickP2Front(images);
                 } else if (clickedMesh.name === "Pages") {
-                    this._book.clickP3Front(images);
+                    this.#book.clickP3Front(images);
                 } else if (clickedMesh.name === "Page1Back") {
                     // 책 뒤로가기 1
-                    this._book.clickP1Back(images);
+                    this.#book.clickP1Back(images);
                 } else if (clickedMesh.name === "Page2Back") {
-                    this._book.clickP2Back(images);
+                    this.#book.clickP2Back(images);
                 }
             }
         }
     }
 
     async goHome() {
-        this._intro.addScene();
+        this.#intro.addScene();
         this.#unlimitControl();
-        this._setupCamera(this._camera);
+        this.#setupCamera(this.#camera);
 
-        this._book.removeMakeStoryLayout();
+        this.#book.removeMakeStoryLayout();
 
-        let selectedObject = this._scene.getObjectByName("book");
-        this._scene.remove(selectedObject);
+        let selectedObject = this.#scene.getObjectByName("book");
+        this.#scene.remove(selectedObject);
 
-        const bookObj = await this._book.loadBook();
-        this._bookObj = bookObj;
+        const bookObj = await this.#book.loadBook();
+        this.#bookObj = bookObj;
     }
 
     beginScene2() {
-        this._intro.removeScene();
+        this.#intro.removeScene();
         this.#limitControls();
 
-        this._book.turnCover();
-        this._book.turnPageFirst();
-        this._book.createMakeStoryLayoutOne();
+        this.#book.turnCover();
+        this.#book.turnPageFirst();
+        this.#book.createMakeStoryLayoutOne();
     }
 
     async beginLoadingMakingStory() {
         // 책 덮기
-        this._book.turnBackPageFirst();
-        this._book.turnBackPageSecond();
-        this._book.turnBackCover();
+        this.#book.turnBackPageFirst();
+        this.#book.turnBackPageSecond();
+        this.#book.turnBackCover();
         // 아우라 추가
         this.addAura();
 
         // 카메라 이동
-        const startPosition = this._camera.position;
+        const startPosition = this.#camera.position;
         const endPosition = new THREE.Vector3(0.443, 3, 0.702);
         const duration = 2000;
         this.animateCamera(startPosition, endPosition, duration, this.easeInOutQuad);
@@ -194,12 +209,12 @@ export default class Main {
             if (progress < 1) {
                 const easedProgress = easing(progress);
                 const currentPosition = start.clone().add(diffPosition.clone().multiplyScalar(easedProgress));
-                this._camera.position.copy(currentPosition);
-                this._renderer.render(this._scene, this._camera);
+                this.#camera.position.copy(currentPosition);
+                this.#renderer.render(this.#scene, this.#camera);
                 requestAnimationFrame(move);
             } else {
-                this._camera.position.copy(end);
-                this._renderer.render(this._scene, this._camera);
+                this.#camera.position.copy(end);
+                this.#renderer.render(this.#scene, this.#camera);
             }
         };
 
@@ -226,7 +241,7 @@ export default class Main {
             .then(async (response) => {
                 console.log(response);
                 // 종료
-                this._book.createTitlesOnPage(response.data);
+                this.#book.createTitlesOnPage(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching data:", error);
@@ -268,25 +283,25 @@ export default class Main {
         }
         const images = await this.convertPdfToImages(pdfUrl);
 
-        this._images = images;
+        this.#images = images;
         this.#unlimitControl();
 
         this.endLoadingMakingBook();
-        this._intro.zoomCameraToLook();
+        this.#intro.zoomCameraToLook();
         // stage 변경
         this.stage = "READ_BOOK";
         //
         // 종료
-        this._book.createBookCover(images);
+        this.#book.createBookCover(images);
     }
 
     extractedTexts = [];
     async convertPdfToImages(arrayBuffer) {
         const pdfjsWorker = await import("pdfjs-dist/build/pdf.worker.entry");
-        const _pdfjs = await import("pdfjs-dist/build/pdf");
-        _pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+        const pdfjs = await import("pdfjs-dist/build/pdf");
+        pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
-        const pdf = await _pdfjs.getDocument(
+        const pdf = await pdfjs.getDocument(
             arrayBuffer // Try to export JPEG images directly if they don't need any further processing.
         ).promise;
         const numPages = pdf.numPages;
@@ -318,13 +333,13 @@ export default class Main {
         }
 
         console.log(this.extractedTexts);
-        this._book.extractedTexts = this.extractedTexts;
+        this.#book.extractedTexts = this.extractedTexts;
         return images;
     }
 
     async getTitles() {
         this.fetchGetTitles();
-        await this._book.transitToMakeStoryTwo();
+        await this.#book.transitToMakeStoryTwo();
     }
 
     async makeStory() {
@@ -332,12 +347,12 @@ export default class Main {
         if (title) {
             this.fetchGetBook(title);
             this.beginLoadingMakingStory();
-            this._book.removeMakeStoryLayout();
+            this.#book.removeMakeStoryLayout();
         }
     }
 
     removeAura() {
-        this._bookObj.remove(this._auraSprite);
+        this.#bookObj.remove(this.#auraSprite);
     }
 
     changeToBookLookStage() {
@@ -384,10 +399,10 @@ export default class Main {
         });
 
         const auraSprite = new THREE.Sprite(auraMaterial);
-        this._auraSprite = auraSprite;
+        this.#auraSprite = auraSprite;
         auraSprite.scale.set(5, 5, 5); // 원하는 크기로 조절
 
-        this._bookObj.add(auraSprite); // 메쉬에 스프라이트를 자식으로 추가
+        this.#bookObj.add(auraSprite); // 메쉬에 스프라이트를 자식으로 추가
         auraSprite.position.set(-1, 0, 0); // 원하는 위치에 스프라이트를 놓으세요.
 
         const animate = (time) => {
@@ -396,42 +411,42 @@ export default class Main {
             const delta = (Math.sin(time * 0.001) + 1) / 2;
             auraMaterial.opacity = delta * 2;
 
-            this._renderer.render(this._scene, this._camera);
+            this.#renderer.render(this.#scene, this.#camera);
         };
 
         animate(2000);
     }
 
-    _setupCamera(camera) {
+    #setupCamera(camera) {
         camera.position.set(2.06, 2.55, 5.98);
         camera.rotation.set(-0.404, 0.307, 0.128);
 
         camera.rotation.isEuler = true;
 
         camera.updateProjectionMatrix();
-        this._camera = camera;
+        this.#camera = camera;
     }
-    _setupLight() {
+    #setupLight() {
         const light = new THREE.PointLight(0xffe699);
         light.intensity = 1;
         light.distance = 15;
         light.decay = 1;
         light.position.set(1, 4, 0);
-        this._light = light;
-        this._scene.add(this._light);
+        this.#light = light;
+        this.#scene.add(this.#light);
 
         // const helper = new THREE.PointLightHelper(light);
-        // this._scene.add(helper);
+        // this.#scene.add(helper);
 
         // 임시
         const AmbientLight = new THREE.AmbientLight(0x404040, 1); // soft white light
-        this._AmbientLight = AmbientLight;
-        this._scene.add(this._AmbientLight);
+        this.#AmbientLight = AmbientLight;
+        this.#scene.add(this.#AmbientLight);
     }
 
-    _setupControls() {
+    #setupControls() {
         // orbit controls
-        this.#controls = new OrbitControls(this._camera, this._renderer.domElement);
+        this.#controls = new OrbitControls(this.#camera, this.#renderer.domElement);
         // Set the constraints
         this.#controls.maxPolarAngle = this.maxPolarAngle; // Minimum polar angle (45 degrees)
         this.#controls.minDistance = this.minDistance;
@@ -451,41 +466,39 @@ export default class Main {
         this.#controls.enabled = true;
     }
 
-    async _initModel() {
+    async #initModel() {
         const obj = new THREE.Object3D();
 
-        const book = new Book(this._scene, this._camera, this._cssRenderer, this._gltfLoader, this._renderer);
-        this._book = book;
+        const book = new Book(this.#scene, this.#camera, this.#cssRenderer, this.#gltfLoader, this.#renderer);
+        this.#book = book;
         const bookObj = await book.loadBook();
-        this._bookObj = bookObj;
+        this.#bookObj = bookObj;
 
-        const space = new Space(this._gltfLoader);
-        this._space = space;
+        const space = new Space(this.#gltfLoader);
         const spaceObj = await space.loadSpace();
-        this._spaceObj = spaceObj;
         obj.add(spaceObj);
 
-        this._scene.add(obj);
-        this._setupLight();
+        this.#scene.add(obj);
+        this.#setupLight();
 
-        const intro = new Intro(this._scene, this._camera, this._renderer, this._cssRenderer);
-        this._intro = intro;
+        const intro = new Intro(this.#scene, this.#camera, this.#renderer, this.#cssRenderer);
+        this.#intro = intro;
         store.dispatch("setInitCompleted", true);
     }
 
     resize() {
-        const width = this._myDIv.clientWidth;
+        const width = this.#myDIv.clientWidth;
         const height = window.innerHeight;
 
-        this._camera.aspect = width / height;
-        this._camera.updateProjectionMatrix();
+        this.#camera.aspect = width / height;
+        this.#camera.updateProjectionMatrix();
 
-        this._renderer.setSize(width, height);
-        this._cssRenderer?.setSize(width, height);
+        this.#renderer.setSize(width, height);
+        this.#cssRenderer?.setSize(width, height);
     }
 
     render() {
-        this._renderer.render(this._scene, this._camera);
+        this.#renderer.render(this.#scene, this.#camera);
 
         requestAnimationFrame(this.render.bind(this));
     }
