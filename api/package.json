@@ -6,7 +6,7 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node src/index.js",
-        "develop": "NODE_ENV=develop node src/index.js",
+        "dev": "NODE_ENV=develop node src/index.js",
         "production": "NODE_ENV=production node src/index.js "
     },
     "author": "",
