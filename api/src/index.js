@@ -49,11 +49,6 @@ async function createTitles(data) {
     console.log(content);
 
     try {
-        // const response = await openai.createChatCompletion({
-        //     model: "gpt-3.5-turbo",
-        //     message: [{ role: "user", content: prompt }],
-        // });
-        // "주인공이 이재엽, 주제가 전래동화, 동화 이야기를 제목과 간략한 줄거리를 5개 정도 추천해 주세요. 제목과 이야기는 ':'로 구분 해 주세요."
         const response = await openai.createChatCompletion({
             model: "gpt-4",
             messages: [
