@@ -1,8 +1,6 @@
 import store from "@/store/store";
 export default class Space {
     #gltfLoader;
-    #bookshelf;
-    #desk;
 
     constructor(gltfLoader) {
         this.#gltfLoader = gltfLoader;
@@ -15,10 +13,6 @@ export default class Space {
                 (gltf) => {
                     // add the loaded glTF model to the scene
                     const model = gltf.scene;
-                    const bookshelf = model.children[0].children[0].children[0].children[1];
-                    const desk = model.children[0].children[0].children[0].children[2];
-                    this.#bookshelf = bookshelf;
-                    this.#desk = desk;
 
                     model.position.set(0.2, 0, 0);
 
