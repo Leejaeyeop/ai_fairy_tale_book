@@ -9,7 +9,7 @@ npm install
 ### Compiles and hot-reloads for development
 
 ```
-npm run serve || npm run local
+npm run npm run dev
 ```
 
 ### Compiles and minifies for production
@@ -29,6 +29,7 @@ npm run lint
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Project tree
+
 ```
 ├── babel.config.js
 ├── Dockerfile
