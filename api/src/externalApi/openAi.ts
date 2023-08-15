@@ -1,7 +1,5 @@
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from "dotenv";
-import path from "path";
-const __dirname = path.resolve();
 
 type Texts = {
     kor: string[];
@@ -15,13 +13,7 @@ class OpenAi {
 
     constructor() {
         dotenv.config();
-        if (process.env.NODE_ENV === "production") {
-            dotenv.config({ path: path.join(__dirname, ".env.production") });
-        } else if (process.env.NODE_ENV === "develop") {
-            dotenv.config({ path: path.join(__dirname, ".env.develop") });
-        } else {
-            throw new Error("process.env.NODE_ENV를 설정하지 않았습니다!");
-        }
+
         const configuration = new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
         });
