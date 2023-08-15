@@ -2,3 +2,5 @@ fairy-tale-book/node_modules
 api/node_modules
 fairy-tale-book/dist
 api/output.pdf
+api/src/**/*.js
+api/dist
