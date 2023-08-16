@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import fs from "node:fs";
 
 export async function fetchStabilityApi() {
-    console.log("시작");
+    console.log("stability api start");
     const engineId = "stable-diffusion-v1-5";
     const apiHost = process.env.API_HOST ?? "https://api.stability.ai";
     const apiKey = process.env.STABILITY_API_KEY;
@@ -35,6 +35,8 @@ export async function fetchStabilityApi() {
         throw new Error(`Non-200 response: ${await response.text()}`);
     }
 
+    console.log("stability api end");
+
     interface GenerationResponse {
         artifacts: Array<{
             base64: string;
@@ -44,12 +46,10 @@ export async function fetchStabilityApi() {
     }
 
     const responseJSON = (await response.json()) as GenerationResponse;
-    console.log("끝");
 
     responseJSON.artifacts.forEach((image, index) => {
         fs.writeFileSync(`./out/v1_txt2img_${index}.png`, Buffer.from(image.base64, "base64"));
-    });
-    console.log("끝");
+    });    
 }
 
 export async function createImgByStabilityApi(title: string, texts: string[]) {
@@ -93,7 +93,6 @@ export async function createImgByStabilityApi(title: string, texts: string[]) {
         responseJSON.artifacts.forEach((image: any) => {
             const buffer = Buffer.from(image.base64, "base64");
             images.push(buffer);
-            // fs.writeFileSync(`v1_txt2img_${index}.png`, Buffer.from(image.base64, "base64"));
         });
     }
 
