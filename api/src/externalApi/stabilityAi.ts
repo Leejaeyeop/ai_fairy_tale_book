@@ -44,6 +44,6 @@ export async function createImgByStabilityApi(title: string, texts: string[]) {
         });
     }
 
-    console.log("이미지 생성 끝");
+    console.log("이미지 생성 끝!");
     return images;
 }
