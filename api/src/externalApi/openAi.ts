@@ -10,6 +10,8 @@ type Texts = {
 class OpenAi {
     #openai: OpenAIApi;
     imgs: string[] = [];
+    #titleCnt = 4;
+    #paraCnt = 5;
 
     constructor() {
         dotenv.config();
@@ -24,22 +26,19 @@ class OpenAi {
         let texts = [];
         let genre = data.genre;
         if (genre !== "아무거나") {
-            genre = ", 주제가 " + genre;
+            genre = "주제가 " + genre;
         } else {
             genre = "";
         }
 
-        let content =
-            "주인공이 " +
-            data.mainCharacter +
-            genre +
-            ", 동화 이야기를 제목과 간략한 줄거리 5개 정도 추천해 주세요. 제목과 이야기는 ':'로 구분 해 주세요.";
+        let content = `주인공의 이름이 ${data.mainCharacter}, ${genre}, 동화 이야기를 제목과 간략한 줄거리 ${
+            this.#titleCnt
+        }개 정도 추천해 주세요. ':' 로 제목과 줄거리를 구분해주세요. 제가 예시를 보여드리겠습니다. 잠자는 숲속의 공주: 옛날 옛적에 숲속의 공주가 ~... 절대로 '제목: 잠자는 숲속의 공주' 이런식으로 앞에 '제목'이나 '줄거리' 라는 단어를 붙이지 말아 주세요. `;
 
         console.log(content);
-
         try {
             const response: any = await this.#openai.createChatCompletion({
-                model: "gpt-4",
+                model: "gpt-3.5-turbo",
                 messages: [
                     {
                         role: "user",
@@ -48,7 +47,6 @@ class OpenAi {
                 ],
             });
             let text: string = response.data.choices[0].message.content;
-            console.log(text);
             texts = text.split("\n");
             texts = texts.filter((text) => text !== "");
             console.log(texts);
@@ -64,7 +62,7 @@ class OpenAi {
         let texts: Texts = { kor: [], eng: [], titleEng: "" };
         let content = "다음을 영어로 번역해 주세요. " + title;
         let response: any = await this.#openai.createChatCompletion({
-            model: "gpt-4",
+            model: "gpt-3.5-turbo",
             messages: [
                 {
                     role: "user",
@@ -76,9 +74,11 @@ class OpenAi {
 
         content =
             title +
-            "Please make a fairy tale story with the following content. Please make the story into 5 paragraphs. And please do it in the form of 'Number: Contents', like '1: content~ 2.content~'. Please make it in English and Korean respectively with separted paragraphs";
+            `Please make a fairy tale story with the following content. Please make the story into ${
+                this.#paraCnt
+            } paragraphs. Please make it in English and Korean respectively with separted paragraphs. And please do it in the form of 'Number: Contents', like 1: content~ 2: content~. `;
         response = await this.#openai.createChatCompletion({
-            model: "gpt-4",
+            model: "gpt-3.5-turbo",
             messages: [
                 {
                     role: "user",
@@ -93,7 +93,6 @@ class OpenAi {
         textSplited = textSplited.filter((text) => text !== "");
 
         for (let text of textSplited) {
-            console.log(text);
             if (text.length < 10) continue;
 
             if (this.checkLanguage(text) === "English") {
@@ -102,6 +101,7 @@ class OpenAi {
                 texts.kor.push(text);
             }
         }
+        console.log(texts);
 
         return texts;
     }

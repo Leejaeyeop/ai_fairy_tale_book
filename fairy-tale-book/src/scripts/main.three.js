@@ -177,7 +177,8 @@ export default class Main {
         makingStoryEl.style.display = "block";
 
         let makingStoryTextEl = document.querySelector("#making_story_title_text");
-        makingStoryTextEl.textContent = "이야기를 만들고 있어요. 잠시만 기다려 주세요! . . .";
+        makingStoryTextEl.textContent = `이야기를 만들고 있어요. 잠시만 기다려 주세요! . . .
+        최대 3분이 소요 됩니다.`;
         makingStoryTextEl.className = "dot";
     }
 
@@ -222,10 +223,12 @@ export default class Main {
     }
 
     async fetchGetTitles() {
-        console.log(document.getElementById("mainCharacter"));
-        console.log(document.getElementById("genre"));
-        const mainCharacter = document.getElementById("mainCharacter").value;
-        const genre = document.getElementById("genre").value;
+        const mainCharacter = document.querySelectorAll("#mainCharacter")[1].value;
+        console.log(mainCharacter);
+
+        const genre = document.querySelectorAll("#genre")[1].value;
+        console.log(genre);
+
         // const pageCount = document.getElementById("pageCount")?.value;
         const data = {
             mainCharacter: mainCharacter,
@@ -267,10 +270,10 @@ export default class Main {
     }
 
     async prepareBook(arrayBuffer, download) {
-        // // Create a Blob from the ArrayBuffer
+        // Create a Blob from the ArrayBuffer
         const pdfBlob = new Blob([arrayBuffer], { type: "application/pdf" });
 
-        // // Generate a Blob URL
+        // Generate a Blob URL
         const pdfUrl = URL.createObjectURL(pdfBlob);
 
         if (download) {
@@ -284,13 +287,13 @@ export default class Main {
         const images = await this.convertPdfToImages(pdfUrl);
 
         this.#images = images;
-        this.#unlimitControl();
 
+        this.#limitControls();
         this.endLoadingMakingBook();
         this.#intro.zoomCameraToLook();
+
         // stage 변경
         this.stage = "READ_BOOK";
-        //
         // 종료
         this.#book.createBookCover(images);
     }
@@ -353,15 +356,6 @@ export default class Main {
 
     removeAura() {
         this.#bookObj.remove(this.#auraSprite);
-    }
-
-    changeToBookLookStage() {
-        let makingStoryEl = document.querySelector("#making_story_title");
-        makingStoryEl.style.display = "block";
-
-        let makingStoryTextEl = document.querySelector("#making_story_title_text");
-        makingStoryTextEl.textContent = "이야기가 완성 되었어요! 클릭하시면 이야기를 읽을수 있어요!";
-        makingStoryTextEl.className = "";
     }
 
     createAuraTexture() {
