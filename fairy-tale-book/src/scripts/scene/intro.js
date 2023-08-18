@@ -1,8 +1,9 @@
 import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { pubSub } from "../utils/pubsub";
+import { fileUpload } from "../utils/file.functions";
+
 export default class Intro {
-    #scene;
     #camera;
     #renderer;
     #cssRenderer;
@@ -20,7 +21,7 @@ export default class Intro {
     #bookshelfFrameSideOverlay;
 
     constructor(scene, camera, renderer, cssRenderer) {
-        this.#scene = scene;
+        this.scene = scene;
         this.#camera = camera;
         this.#renderer = renderer;
         this.#cssRenderer = cssRenderer;
@@ -57,7 +58,7 @@ export default class Intro {
         startPonterOverlay.rotation.set(0, 0, -Math.PI / 2);
         startPonterOverlay.scale.set(0.008, 0.008, 0.008);
 
-        this.#cssRenderer.render(this.#scene, this.#camera);
+        this.#cssRenderer.render(this.scene, this.#camera);
 
         const deskFrameFront = document.getElementById("desk_frame_front");
         this.#deskFrameFront = deskFrameFront;
@@ -111,7 +112,7 @@ export default class Intro {
             loadPonterOverlay.position.y = 1.9 - zPos;
 
             startPonterOverlay.position.y = 1.1 - zPos;
-            this.#cssRenderer.render(this.#scene, this.#camera);
+            this.#cssRenderer.render(this.scene, this.#camera);
         };
         animate();
     }
@@ -136,12 +137,12 @@ export default class Intro {
                 quaternion.slerpQuaternions(startQuaternion, endQuaternion, easedProgress);
                 this.#camera.position.copy(currentPosition);
                 this.#camera.setRotationFromQuaternion(quaternion);
-                this.#renderer.render(this.#scene, this.#camera);
+                this.#renderer.render(this.scene, this.#camera);
                 requestAnimationFrame(move);
             } else {
                 this.#camera.position.copy(end);
                 this.#camera.setRotationFromQuaternion(endQuaternion);
-                this.#renderer.render(this.#scene, this.#camera);
+                this.#renderer.render(this.scene, this.#camera);
             }
         };
 
@@ -153,25 +154,25 @@ export default class Intro {
     }
 
     addScene() {
-        this.#scene.add(this.#loadOverlay);
-        this.#scene.add(this.#loadPonterOverlay);
-        this.#scene.add(this.#bookshelfFrameFrontOverlay);
-        this.#scene.add(this.#bookshelfFrameSideOverlay);
-        this.#scene.add(this.#startOverlay);
-        this.#scene.add(this.#startPonterOverlay);
-        this.#scene.add(this.#deskFrameOverlay);
-        this.#scene.add(this.#deskFrameTopOverlay);
+        this.scene.add(this.#loadOverlay);
+        this.scene.add(this.#loadPonterOverlay);
+        this.scene.add(this.#bookshelfFrameFrontOverlay);
+        this.scene.add(this.#bookshelfFrameSideOverlay);
+        this.scene.add(this.#startOverlay);
+        this.scene.add(this.#startPonterOverlay);
+        this.scene.add(this.#deskFrameOverlay);
+        this.scene.add(this.#deskFrameTopOverlay);
     }
 
     removeScene() {
-        this.#scene.remove(this.#loadOverlay);
-        this.#scene.remove(this.#loadPonterOverlay);
-        this.#scene.remove(this.#bookshelfFrameFrontOverlay);
-        this.#scene.remove(this.#bookshelfFrameSideOverlay);
-        this.#scene.remove(this.#startOverlay);
-        this.#scene.remove(this.#startPonterOverlay);
-        this.#scene.remove(this.#deskFrameOverlay);
-        this.#scene.remove(this.#deskFrameTopOverlay);
+        this.scene.remove(this.#loadOverlay);
+        this.scene.remove(this.#loadPonterOverlay);
+        this.scene.remove(this.#bookshelfFrameFrontOverlay);
+        this.scene.remove(this.#bookshelfFrameSideOverlay);
+        this.scene.remove(this.#startOverlay);
+        this.scene.remove(this.#startPonterOverlay);
+        this.scene.remove(this.#deskFrameOverlay);
+        this.scene.remove(this.#deskFrameTopOverlay);
     }
 
     setHoveringListener() {
@@ -227,7 +228,7 @@ export default class Intro {
 
         // 이야기 불러오기
         this.#bookshelfFrameFront.addEventListener("click", () => {
-            this.fileUpload();
+            fileUpload(this.removeScene.bind(this));
         });
 
         this.#bookshelfFrameSide.addEventListener("click", () => {
@@ -252,19 +253,5 @@ export default class Intro {
 
         const duration = 2000; // in milliseconds
         this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
-    }
-
-    // TODO 나중에 모듈화
-    fileUpload() {
-        let fileInput = document.getElementById("pdfUpload");
-        fileInput.click();
-
-        fileInput.addEventListener("change", () => {
-            if (fileInput.files.length > 0) {
-                let file = fileInput.files[0];
-                this.removeScene();
-                pubSub.publish("beginScene3", file);
-            }
-        });
     }
 }
