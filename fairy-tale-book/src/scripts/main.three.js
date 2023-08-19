@@ -429,9 +429,6 @@ export default class Main {
         this.#light = light;
         this.#scene.add(this.#light);
 
-        // const helper = new THREE.PointLightHelper(light);
-        // this.#scene.add(helper);
-
         // 임시
         const AmbientLight = new THREE.AmbientLight(0x404040, 1); // soft white light
         this.#AmbientLight = AmbientLight;
