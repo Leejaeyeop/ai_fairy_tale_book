@@ -21,9 +21,6 @@ jobs:
               with:
                 name: "key.json"
                 json: ${{ secrets.GCP_KEY_JSON }}
-          
-            - name: Set up environment
-              run: echo "$GC_KEY" > key.json
 
             - name: Authenticate with gcloud
               run: |
