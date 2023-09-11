@@ -15,6 +15,13 @@ jobs:
             - name: Setup Docker
               uses: docker/setup-buildx-action@v1
 
+            - name: create-json
+              id: create-json
+              uses: jsdaniell/create-json@1.1.2
+              with:
+                name: "key.json"
+                json: ${{ secrets.GCP_KEY_JSON }}
+          
             - name: Set up environment
               run: echo "$GC_KEY" > key.json
 
