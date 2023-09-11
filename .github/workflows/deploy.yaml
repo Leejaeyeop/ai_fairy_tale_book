@@ -27,11 +27,11 @@ jobs:
 
             - name: Authenticate with gcloud
               run: |
-                  gcloud auth activate-service-account deploy@fairytale-388005.iam.gserviceaccount.com --key-file=gcp-key.json
+                  gcloud auth activate-service-account deploy@fairytale-388005.iam.gserviceaccount.com --key-file=key.json
               env:
                   GC_KEY: ${{ secrets.GC_KEY }}
             - name: Login to Docker
-              run: echo ${{ secrets.GC_KEY }} | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev < gcp-key.json
+              run: echo ${{ secrets.GC_KEY }} | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev < key.json
 
             - name: Build and deploy backend
               run: |
