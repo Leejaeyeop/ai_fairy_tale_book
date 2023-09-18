@@ -10,7 +10,9 @@ export async function createImgByStabilityApi(title: string, texts: string[]) {
 
     if (!apiKey) throw new Error("Missing Stability API key.");
     let images: any[] = [];
-    for (let text of texts) {
+    for (let [index, text] of texts.entries()) {
+        console.log(index === 0 ? text.split(":")[0] : text.split(":")[1].split(".")[0]);
+
         const response = await fetch(`${apiHost}/v1/generation/${engineId}/text-to-image`, {
             method: "POST",
             headers: {
@@ -18,9 +20,8 @@ export async function createImgByStabilityApi(title: string, texts: string[]) {
                 Accept: "application/json",
                 Authorization: `Bearer ${apiKey}`,
             },
-
             body: JSON.stringify({
-                text_prompts: [{ text: text }],
+                text_prompts: [{ text: index === 0 ? text.split(":")[0] : text.split(":")[1].split(".")[0] }],
                 cfg_scale: 7,
                 clip_guidance_preset: "FAST_BLUE",
                 height: 512,

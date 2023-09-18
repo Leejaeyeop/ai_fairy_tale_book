@@ -16,7 +16,7 @@ export function init(app: Express) {
         let texts = await openAi.createStory(title);
 
         // img를 만든다. cover 용 title(eng) + eng
-        // let imgs = await createImgByDalleApi(texts.titleEng, texts.eng);
+        // let imgs = await openAi.createImgByDalleApi(texts.titleEng, texts.eng);
         let imgs = await createImgByStabilityApi(texts.titleEng, texts.eng);
         // cover 를 생성하기 위해 title text를 집어 넣는다.
         let coverTitle = title.split(":")[0].split(".")[1];

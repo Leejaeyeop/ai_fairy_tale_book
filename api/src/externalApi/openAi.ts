@@ -9,7 +9,6 @@ type Texts = {
 
 class OpenAi {
     #openai: OpenAIApi;
-    imgs: string[] = [];
     #titleCnt = 4;
     #paraCnt = 5;
 
@@ -70,13 +69,14 @@ class OpenAi {
                 },
             ],
         });
+
         texts.titleEng = response.data.choices[0].message.content;
 
         content =
             title +
             `Please make a fairy tale story with the following content. Please make the story into ${
                 this.#paraCnt
-            } paragraphs. Please make it in English and Korean respectively with separted paragraphs. And please do it in the form of 'Number: Contents', like 1: content~ 2: content~. `;
+            } paragraphs. And please do it in the form of 'Number: Contents', like 1: content~ 2: content~. `;
         response = await this.#openai.createChatCompletion({
             model: "gpt-3.5-turbo",
             messages: [
@@ -87,6 +87,20 @@ class OpenAi {
             ],
         });
         let text = response.data.choices[0].message.content;
+
+        content = `다음을 한글로 번역해 주세요. 
+        ${text}`;
+
+        response = await this.#openai.createChatCompletion({
+            model: "gpt-3.5-turbo",
+            messages: [
+                {
+                    role: "user",
+                    content: content,
+                },
+            ],
+        });
+        text += "\n" + response.data.choices[0].message.content;
 
         let textSplited: string[] = [];
         textSplited = text.split("\n");
@@ -120,7 +134,7 @@ class OpenAi {
     }
 
     async createImgByDalleApi(title: string, texts: string[]) {
-        this.imgs = [];
+        let imgs: any[] = [];
         texts.unshift(title);
         for (let text of texts) {
             const response: any = await this.#openai.createImage({
@@ -128,10 +142,9 @@ class OpenAi {
                 n: 1,
                 size: "256x256",
             });
-            this.imgs.push(response.data.data[0].url as string);
+            imgs.push(response.data.data[0].url as string);
         }
-        console.log(this.imgs);
-        return this.imgs;
+        return imgs;
     }
 }
 
