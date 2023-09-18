@@ -8,6 +8,7 @@ import axios from "axios";
 import Intro from "./scene/intro";
 import Book from "./elements/book";
 import Space from "./elements/space";
+import Particle from "./scene/particle";
 
 export default class Main {
     // private define
@@ -26,6 +27,7 @@ export default class Main {
     #bookObj;
     #auraSprite;
     #light;
+    #particle;
     #AmbientLight;
     stage = "";
     loadedPercent = 0;
@@ -84,6 +86,8 @@ export default class Main {
         const mouse = new THREE.Vector2();
         // this.#SELECTED = SELECTED
         this.#mouse = mouse;
+
+        this.#particle = new Particle(this.#scene, this.#renderer, this.#camera);
 
         myDiv.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
 
