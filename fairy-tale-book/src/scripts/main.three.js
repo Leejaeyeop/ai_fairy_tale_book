@@ -31,8 +31,8 @@ export default class Main {
   #AmbientLight;
   stage = '';
   loadedPercent = 0;
-  minDistance = 2;
-  maxDistance = 10;
+  minDistance = 1.6;
+  maxDistance = 7;
   maxAzimuthAngle = Math.PI / 4;
   minAzimuthAngle = -Math.PI / 4;
   maxPolarAngle = Math.PI / 3;
