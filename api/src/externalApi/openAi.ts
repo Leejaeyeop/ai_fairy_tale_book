@@ -1,5 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import dotenv from "dotenv";
+import https from "https";
 
 type Texts = {
     kor: string[];
@@ -73,7 +74,7 @@ class OpenAi {
         texts.titleEng = response.data.choices[0].message.content;
 
         content =
-            title +
+            texts.titleEng +
             `Please make a fairy tale story with the following content. Please make the story into ${
                 this.#paraCnt
             } paragraphs. And please do it in the form of 'Number: Contents', like 1: content~ 2: content~. `;
@@ -88,7 +89,7 @@ class OpenAi {
         });
         let text = response.data.choices[0].message.content;
 
-        content = `다음을 한글로 번역해 주세요. 
+        content = `다음을 한글로 번역해 주세요(어린 아이에게 읽어주는 동화느낌으로). 
         ${text}`;
 
         response = await this.#openai.createChatCompletion({
@@ -136,14 +137,17 @@ class OpenAi {
     async createImgByDalleApi(title: string, texts: string[]) {
         let imgs: any[] = [];
         texts.unshift(title);
-        for (let text of texts) {
+
+        for (let [index, text] of texts.entries()) {
             const response: any = await this.#openai.createImage({
                 prompt: text,
                 n: 1,
                 size: "256x256",
             });
+
             imgs.push(response.data.data[0].url as string);
         }
+
         return imgs;
     }
 }

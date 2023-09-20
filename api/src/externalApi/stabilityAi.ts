@@ -4,7 +4,7 @@ export async function createImgByStabilityApi(title: string, texts: string[]) {
     console.log("이미지 생성 시작");
     texts.unshift(title);
 
-    const engineId = "stable-diffusion-v1-5";
+    const engineId = "stable-diffusion-512-v2-1";
     const apiHost = process.env.API_HOST ?? "https://api.stability.ai";
     const apiKey = process.env.STABILITY_API_KEY;
 

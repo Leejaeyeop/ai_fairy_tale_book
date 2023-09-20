@@ -1,7 +1,7 @@
 import * as THREE from "three";
 
 export default class Particle {
-    constructor(scene,renderer,camera) {
+    constructor(scene, renderer, camera) {
         // 파티클 생성
         const particles = new THREE.Group();
         scene.add(particles);
@@ -9,7 +9,7 @@ export default class Particle {
         // 파티클 재료 생성
         const particleMaterial = new THREE.PointsMaterial({
             color: 0xffffff,
-            size: 0.01,
+            size: 0.0125,
         });
 
         // 파티클 생성 함수

@@ -52,12 +52,15 @@
             id="pageR2"
         >
             <p>주제를 골라 주세요!</p>
-            <div id="titleDesc"></div>
+            <div
+                id="titleDesc"
+                class="title-card"
+            ></div>
             <div>
                 선택된 이야기
                 <div
                     id="titleSelected"
-                    class="title-card"
+                    class="title-card-border title-card"
                 ></div>
             </div>
         </div>
@@ -152,7 +155,7 @@
     </div>
 </template>
 <script setup>
-const genres = ["전래동화", "아무거나", "모험", "동물", "다양성", "가족", "도전", "우정"];
+const genres = ["외국 전래동화", "해외 전래동화", "아무거나", "모험", "동물", "도전", "우정"];
 </script>
 <style>
 h3 {
@@ -319,8 +322,12 @@ h2 {
 .input {
     text-align: center;
 }
-.title-card {
+.title-card-border {
     border: 2px solid black;
+}
+.title-card {
+    max-height: 30rem;
+    overflow-y: auto;
 }
 .card {
     padding: 2rem;

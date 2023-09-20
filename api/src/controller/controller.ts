@@ -2,6 +2,7 @@ import { Express, Request, Response } from "express";
 import PdfHandler from "../modules/pdfHandler.js";
 import openAi from "../externalApi/openAi.js";
 import { createImgByStabilityApi } from "../externalApi/stabilityAi.js";
+import { createImgByDeepApi } from "../externalApi/deepAi.js";
 
 export function init(app: Express) {
     app.post("/api/books", async (req: Request, res: Response) => {
@@ -17,7 +18,9 @@ export function init(app: Express) {
 
         // img를 만든다. cover 용 title(eng) + eng
         // let imgs = await openAi.createImgByDalleApi(texts.titleEng, texts.eng);
-        let imgs = await createImgByStabilityApi(texts.titleEng, texts.eng);
+        let imgs = await createImgByDeepApi(texts.titleEng, texts.eng);
+
+        // let imgs = await createImgByStabilityApi(texts.titleEng, texts.eng);
         // cover 를 생성하기 위해 title text를 집어 넣는다.
         let coverTitle = title.split(":")[0].split(".")[1];
         texts.kor.unshift(coverTitle);
