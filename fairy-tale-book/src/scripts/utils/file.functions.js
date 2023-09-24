@@ -5,11 +5,15 @@ export function fileUpload(removeScene) {
     let fileInput = document.getElementById("pdfUpload");
     fileInput.click();
 
-    fileInput.addEventListener("change", () => {
+    const upload = function () {
         if (fileInput.files.length > 0) {
             let file = fileInput.files[0];
             removeScene();
+            console.log("tldgod");
             pubSub.publish("beginScene3", file);
+            fileInput.removeEventListener("change", upload);
         }
-    });
+    };
+
+    fileInput.addEventListener("change", upload);
 }

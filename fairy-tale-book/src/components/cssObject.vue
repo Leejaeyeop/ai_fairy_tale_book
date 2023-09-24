@@ -144,13 +144,37 @@
             />
         </div>
         <div id="making_story_title">
-            <h1
-                id="making_story_title_text"
+            <div id="making_story_title_text">
+                <h1>잠시만 기다려 주세요! . . . 최대 3분이 소요 됩니다.</h1>
+            </div>
+            <div id="making_story_title_steps">
+                <div
+                    id="making_story_title_step1"
+                    class="making_story_title_step"
+                >
+                    1. 이야기 생성
+                </div>
+                <div class="making_story_title_step">-></div>
+                <div
+                    id="making_story_title_step2"
+                    class="making_story_title_step"
+                >
+                    2. 그림 생성
+                </div>
+                <div class="making_story_title_step">-></div>
+                <div
+                    id="making_story_title_step3"
+                    class="making_story_title_step"
+                >
+                    3. pdf 생성
+                </div>
+            </div>
+            <div
+                id="making_story_title_sub_text"
                 class="dot"
-                style="display: inline"
             >
-                이야기를 만들고 있어요. 잠시만 기다려 주세요! . . .
-            </h1>
+                <h1>이야기를 만들고 있어요!</h1>
+            </div>
         </div>
     </div>
 </template>
@@ -198,8 +222,11 @@ option {
     color: white;
     margin-top: 10%;
     width: 100%;
-    text-align: center;
     position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 h1,
@@ -309,6 +336,30 @@ h2 {
     position: absolute;
     top: 0;
     left: 0;
+}
+
+#making_story_title > div {
+    position: relative;
+    display: block;
+}
+
+#making_story_title_steps {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: center;
+    width: 80%;
+}
+
+.making_story_title_step {
+    color: black;
+    position: relative !important;
+    display: block !important;
+    text-align: center;
+    margin-right: 2rem;
+}
+
+.current_step {
+    color: white;
 }
 
 .next-page,
