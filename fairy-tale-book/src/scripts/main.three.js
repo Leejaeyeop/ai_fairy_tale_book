@@ -178,7 +178,7 @@ export default class Main {
         this.#book.turnBackPageSecond();
         this.#book.turnBackCover();
         // 아우라 추가
-        this.addAura();
+        // this.addAura();
 
         // 카메라 이동
         const startPosition = this.#camera.position;
@@ -197,7 +197,7 @@ export default class Main {
 
     async endLoadingMakingBook() {
         // 아우라 제거
-        this.removeAura();
+        // this.removeAura();
 
         // text 변경
         let makingStoryEl = document.querySelector("#making_story_title");
