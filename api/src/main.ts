@@ -3,13 +3,12 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import controller from "./controller/controller.js";
+import { WebSocketServer } from "ws";
 
 dotenv.config();
 const app = express();
 
 console.log(process.env.NODE_ENV);
-console.log(process.env.OPENAI_API_KEY);
-console.log(process.env.PORT);
 const PORT = process.env.PORT;
 
 app.use(bodyParser.json());
@@ -27,8 +26,10 @@ app.use(
 );
 
 // server open
-app.listen(PORT, function () {
+const HTTPserver = app.listen(PORT, function () {
     console.log("The Api server has started");
 });
+// wesocket server open
+const wss = new WebSocketServer({ server: HTTPserver });
 
-controller.init(app);
+controller.init(app, wss);

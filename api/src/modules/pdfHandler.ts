@@ -150,4 +150,11 @@ export default class PdfHandler {
 
         console.log("종료");
     }
+
+    test() {
+        this.#doc.addPage();
+        this.#doc.text("- 이야기 끝 -");
+
+        this.#doc.pipe(fs.createWriteStream("output.pdf"));
+    }
 }
