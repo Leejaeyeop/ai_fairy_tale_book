@@ -169,6 +169,12 @@
                     3. pdf 생성
                 </div>
             </div>
+            <img
+                id="making_story_img"
+                style="height: 25%; width: 25%"
+                src="story.gif"
+            />
+
             <div
                 id="making_story_title_sub_text"
                 class="dot"
