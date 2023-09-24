@@ -11,7 +11,7 @@ type Texts = {
 class OpenAi {
     #openai: OpenAIApi;
     #titleCnt = 4;
-    #paraCnt = 5;
+    #paraCnt = 4;
 
     constructor() {
         dotenv.config();
