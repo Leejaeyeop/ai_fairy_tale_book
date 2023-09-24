@@ -276,11 +276,8 @@ export default class Main {
         };
         // 2-2) 메세지 수신 이벤트 처리
         webSocket.onmessage = async function (e) {
-            console.log(e.data);
-
             if (typeof e.data === "object") {
                 const arrayBuffer = e.data;
-                console.log(arrayBuffer);
                 await this.prepareBook(arrayBuffer, true);
                 webSocket.close();
             } else {
