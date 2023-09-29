@@ -8,14 +8,13 @@ export async function createImgByDeepApi(title: string, texts: string[]) {
 
     texts.unshift(title);
 
-    if (!apiKey) throw new Error("Missing Stability API key.");
+    if (!apiKey) throw new Error("Missing DEEPAI API key.");
     let images: any[] = [];
     for (let text of texts) {
         await (async function () {
             text = text.split(".")[0].length < 2 ? text.split(".")[1] : text.split(".")[0] ?? text;
             const resp = await deepai.callStandardApi("fantasy-world-generator" as any, {
                 text: text,
-                // text: text,
                 grid_size: "1",
             });
             images.push(resp.output_url);
