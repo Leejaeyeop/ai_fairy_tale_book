@@ -1,6 +1,4 @@
 import { Configuration, OpenAIApi } from "openai";
-import dotenv from "dotenv";
-import https from "https";
 
 type Texts = {
     kor: string[];
@@ -14,7 +12,6 @@ export default class OpenAi {
     #paraCnt = 4;
 
     constructor() {
-        dotenv.config();
         console.log(process.env.OPENAI_API_KEY);
 
         const configuration = new Configuration({

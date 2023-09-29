@@ -32,6 +32,7 @@ jobs:
 
             - name: Generate Environment Variables File for Production
               run: |
+                  cd api
                   echo "DEEPAI_API_KEY=$DEEPAI_API_KEY" >> .env
                   echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env
                   echo "STABILITY_API_KEY=$STABILITY_API_KEY" >> .env
