@@ -8,13 +8,14 @@ type Texts = {
     titleEng: string;
 };
 
-class OpenAi {
+export default class OpenAi {
     #openai: OpenAIApi;
     #titleCnt = 4;
     #paraCnt = 4;
 
     constructor() {
         dotenv.config();
+        console.log(process.env.OPENAI_API_KEY);
 
         const configuration = new Configuration({
             apiKey: process.env.OPENAI_API_KEY,
@@ -151,5 +152,3 @@ class OpenAi {
         return imgs;
     }
 }
-
-export default new OpenAi();

@@ -1,12 +1,14 @@
 import { Express, Request, Response } from "express";
 import PdfHandler from "../modules/pdfHandler.js";
-import openAi from "../externalApi/openAi.js";
+import OpenAi from "../externalApi/openAi.js";
 import { createImgByStabilityApi } from "../externalApi/stabilityAi.js";
 import { createImgByDeepApi } from "../externalApi/deepAi.js";
 import { WebSocketServer } from "ws";
 import blobStream from "blob-stream";
 
 export function init(app: Express, wss: WebSocketServer) {
+    const openAi = new OpenAi();
+
     app.get("/api/v1/title", async (req: Request, res: Response) => {
         try {
             let data = req.query;
