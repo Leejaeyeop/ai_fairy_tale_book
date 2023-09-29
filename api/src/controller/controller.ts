@@ -9,6 +9,8 @@ import blobStream from "blob-stream";
 export function init(app: Express, wss: WebSocketServer) {
     const openAi = new OpenAi();
     console.log(process.env.DEEPAI_API_KEY);
+    console.log(process.env.STABILITY_API_KEY);
+    console.log(process.env.OPENAI_API_KEY);
     app.get("/api/v1/title", async (req: Request, res: Response) => {
         try {
             let data = req.query;
