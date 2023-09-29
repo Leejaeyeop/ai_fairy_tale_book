@@ -34,12 +34,10 @@ jobs:
               run: |
                   cd api
                   echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env
-                  echo "STABILITY_API_KEY=$STABILITY_API_KEY" >> .env
                   echo "DEEPAI_API_KEY=$DEEPAI_API_KEY" >> .env
 
               env:
                   OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-                  STABILITY_API_KEY: ${{ secrets.STABILITY_API_KEY }}
                   DEEPAI_API_KEY: ${{ secrets.DEEPAI_API_KEY }}
 
             - name: Build and deploy backend
