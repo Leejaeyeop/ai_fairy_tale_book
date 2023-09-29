@@ -5,7 +5,7 @@ export async function createImgByStabilityApi(title: string, texts: string[]) {
     texts.unshift(title);
 
     const engineId = "stable-diffusion-512-v2-1";
-    const apiHost = process.env.API_HOST ?? "https://api.stability.ai";
+    const apiHost = process.env.STABILITY_API_HOST ?? "https://api.stability.ai";
     const apiKey = process.env.STABILITY_API_KEY;
 
     if (!apiKey) throw new Error("Missing Stability API key.");

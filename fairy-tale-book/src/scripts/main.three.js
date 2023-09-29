@@ -76,7 +76,6 @@ export default class Main {
 
         // resize
         window.onresize = this.resize.bind(this);
-        // this.resize();
 
         requestAnimationFrame(this.render.bind(this));
 
@@ -84,7 +83,6 @@ export default class Main {
         this.#raycaster = raycaster;
 
         const mouse = new THREE.Vector2();
-        // this.#SELECTED = SELECTED
         this.#mouse = mouse;
 
         this.#particle = new Particle(this.#scene, this.#renderer, this.#camera);
@@ -188,11 +186,6 @@ export default class Main {
         // text 추가
         let makingStoryEl = document.querySelector("#making_story_title");
         makingStoryEl.style.display = "flex";
-
-        // let makingStoryTextEl = document.querySelector("#making_story_title_text");
-        // makingStoryTextEl.textContent = `이야기를 만들고 있어요. 잠시만 기다려 주세요! . . .
-        // 최대 3분이 소요 됩니다.`;
-        // makingStoryTextEl.className = "dot";
     }
 
     async endLoadingMakingBook() {
@@ -242,11 +235,9 @@ export default class Main {
         const genre = document.querySelectorAll("#genre")[1].value;
         console.log(genre);
 
-        // const pageCount = document.getElementById("pageCount")?.value;
         const data = {
             mainCharacter: mainCharacter,
             genre: genre,
-            // pageCount: pageCount,
         };
 
         await axios
