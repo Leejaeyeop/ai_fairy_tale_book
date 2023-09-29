@@ -4,13 +4,18 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import controller from "./controller/controller.js";
 import { WebSocketServer } from "ws";
+import path from "path";
 
 dotenv.config();
-const app = express();
 
 console.log(process.env.NODE_ENV);
-const PORT = process.env.PORT;
+const __dirname = path.resolve();
+if (process.env.NODE_ENV === "development") {
+    dotenv.config({ path: path.join(__dirname, ".env.development") });
+}
 
+const app = express();
+const PORT = process.env.PORT;
 app.use(bodyParser.json());
 
 app.use(

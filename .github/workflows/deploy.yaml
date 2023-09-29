@@ -19,8 +19,8 @@ jobs:
               id: create-json
               uses: jsdaniell/create-json@1.1.2
               with:
-                name: "key.json"
-                json: ${{ secrets.GCP_KEY_JSON }}
+                  name: "key.json"
+                  json: ${{ secrets.GCP_KEY_JSON }}
 
             - name: Authenticate with gcloud
               run: |
@@ -29,6 +29,16 @@ jobs:
                   GC_KEY: ${{ secrets.GC_KEY }}
             - name: Login to Docker
               run: echo ${{ secrets.GC_KEY }} | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev < key.json
+
+            - name: Generate Environment Variables File for Production
+              run: |
+                  echo "DEEPAI_API_KEY=$DEEPAI_API_KEY" >> .env
+                  echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> .env
+                  echo "STABILITY_API_KEY=$STABILITY_API_KEY" >> .env
+              env:
+                  DEEPAI_API_KEY: ${{ secrets.DEEPAI_API_KEY }}
+                  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+                  STABILITY_API_KEY: ${{ secrets.STABILITY_API_KEY }}
 
             - name: Build and deploy backend
               run: |

@@ -4,3 +4,4 @@ fairy-tale-book/dist
 api/output.pdf
 api/src/**/*.js
 api/dist
+api/.env.development

@@ -6,7 +6,7 @@
     "scripts": {
         "build": "npx tsc",
         "test": "echo \"Error: no test specified\" && exit 1",
-        "dev": "npx tsc-watch --onSuccess \"cross-env NODE_ENV=develop PORT=3000 nodemon dist/main.js\"",
+        "dev": "npx tsc-watch --onSuccess \"cross-env NODE_ENV=development PORT=3000 nodemon dist/main.js\"",
         "preproduction": "npm run build",
         "production": "cross-env NODE_ENV=production PORT=8080 node dist/main.js "
     },
