@@ -8,7 +8,7 @@ import axios from "axios";
 import Intro from "./scene/intro";
 import Book from "./elements/book";
 import Space from "./elements/space";
-import Particle from "./scene/particle";
+import Particle from "./elements/particle";
 
 export default class Main {
     // private define

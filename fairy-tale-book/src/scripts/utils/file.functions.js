@@ -9,6 +9,7 @@ export function fileUpload(removeScene) {
             let file = fileInput.files[0];
             removeScene();
             pubSub.publish("beginScene3", file);
+            fileInput.value = null;
             fileInput.removeEventListener("change", upload);
         }
     };
