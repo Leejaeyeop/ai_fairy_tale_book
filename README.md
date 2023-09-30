@@ -6,8 +6,12 @@ https://leejaeyeop.github.io/
 ## 💡 Project Info
 최근에 핫한 openAi api를 사용하여 동화의 이야기를 생성하고, DeppAi api로 동화의 삽화를 생성합니다. THREE.js 라이브러리를 활용해 이를 3D 책 모델로 구현하는 프로젝트 입니다.
 
+## 💡 Project 계기
+### 재미있는걸 해보고 싶다!
 
-🔧 기술 Stack
+<br/>
+<br/>
+## 🔧 기술 Stack
 - Node.js (express)
 - Vue.js
 - OpenAi Api
