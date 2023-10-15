@@ -17,7 +17,7 @@ class App {
 
         console.log(process.env.NODE_ENV);
         const __dirname = path.resolve();
-        if (process.env.NODE_ENV === "development") {
+        if (process.env.NODE_ENV === "development" || "test") {
             dotenv.config({ path: path.join(__dirname, ".env.development") });
         }
 
