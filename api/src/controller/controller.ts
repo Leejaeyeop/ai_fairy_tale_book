@@ -1,8 +1,7 @@
 import { Express, Request, Response } from "express";
-import PdfHandler from "../modules/pdfHandler.js";
-import OpenAi from "../externalApi/openAi.js";
-import { createImgByStabilityApi } from "../externalApi/stabilityAi.js";
-import { createImgByDeepApi } from "../externalApi/deepAi.js";
+import PdfHandler from "../modules/pdfHandler";
+import OpenAi from "../externalApi/openAi";
+import { createImgByDeepApi } from "../externalApi/deepAi";
 import { WebSocketServer } from "ws";
 import blobStream from "blob-stream";
 
