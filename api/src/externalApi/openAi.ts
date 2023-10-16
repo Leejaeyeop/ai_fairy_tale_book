@@ -9,7 +9,7 @@ type Texts = {
 export default class OpenAi {
     #openai: OpenAIApi;
     #titleCnt = 4;
-    #paraCnt = 4;
+    #paraCnt = 3;
 
     constructor() {
         const configuration = new Configuration({
@@ -27,7 +27,9 @@ export default class OpenAi {
             genre = "";
         }
 
-        let content = `주인공의 이름이 ${data.mainCharacter}, ${genre}, 동화 이야기를 제목과 간략한 줄거리 ${
+        let content = `주인공의 이름이 반드시 "${
+            data.mainCharacter
+        }" 이고, ${genre}, 동화 이야기를 제목과 간략한 줄거리 ${
             this.#titleCnt
         }개 정도 추천해 주세요. 반드시 ':' 로 제목과 줄거리를 구분해주세요. 제가 예시를 보여드리겠습니다. 잠자는 숲속의 공주: 옛날 옛적에 숲속의 공주가 ~... 절대로 '제목: 잠자는 숲속의 공주' 이런식으로 앞에 '제목'이나 '줄거리' 라는 단어를 붙이지 말아 주세요. `;
 
