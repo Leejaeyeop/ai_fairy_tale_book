@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
-import axios from "axios";
+import {fetchTtsApi} from "../api/api"
 import { playAction, playReverseAction } from "../animation/playAction";
 import { pubSub } from "../utils/pubsub";
 
@@ -390,10 +390,10 @@ export default class Book {
         this.#overlayR.scale.set(0.0003, 0.0003, 0.0005);
         this.#scene.add(this.#overlayR);
 
-        ttsBtnR.addEventListener("click", () => {
+        ttsBtnR.addEventListener("click", async () => {
             console.log("book!");
 
-            this.fetchTts(this.extractedTexts[this.#currentPage]);
+            await this.fetchTts(this.extractedTexts[this.#currentPage]);
         });
     }
 
@@ -405,44 +405,18 @@ export default class Book {
         this.#scene.remove(this.#overlayR);
     }
 
-    fetchTts(text) {
-        let data = JSON.stringify({
-            voice: {
-                languageCode: "ko-KR",
-                ssmlGender: "FEMALE",
-                name: "ko-KR-Wavenet-A", // Specify the voice
-            },
-            input: {
-                text: text,
-            },
-            audioConfig: {
-                audioEncoding: "mp3",
-            },
-        });
+    async fetchTts(text) {
+        try {
+            const response = await fetchTtsApi(text)
+            let audioBase64 = response.data.audioContent;
 
-        let config = {
-            method: "post",
-            maxBodyLength: Infinity,
-            url: "https://texttospeech.googleapis.com/v1/text:synthesize?key=AIzaSyCKiq248cQRH-p3lGwK0SgGOdKFKw7dt0Q",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            data: data,
-        };
-
-        axios
-            .request(config)
-            .then((response) => {
-                let audioBase64 = response.data.audioContent;
-
-                let audioBlob = this.base64ToBlob(audioBase64, "mp3");
-                this.#audioFile.src = window.URL.createObjectURL(audioBlob);
-                this.#audioFile.playbackRate = 1; //재생속도
-                this.#audioFile.play();
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+            let audioBlob = this.base64ToBlob(audioBase64, "mp3");
+            this.#audioFile.src = window.URL.createObjectURL(audioBlob);
+            this.#audioFile.playbackRate = 1; //재생속도
+            this.#audioFile.play();
+        } catch(error) {
+            console.log(error);
+        }
     }
 
     base64ToBlob(base64, fileType) {

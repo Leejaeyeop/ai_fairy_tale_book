@@ -4,7 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { pubSub } from "./utils/pubsub";
-import axios from "axios";
+import {fetchGetTitles} from "./api/api"
 import Intro from "./scene/intro";
 import Book from "./elements/book";
 import Space from "./elements/space";
@@ -230,29 +230,15 @@ export default class Main {
 
     async fetchGetTitles() {
         const mainCharacter = document.querySelectorAll("#mainCharacter")[1].value;
-        console.log(mainCharacter);
 
         const genre = document.querySelectorAll("#genre")[1].value;
-        console.log(genre);
 
-        const data = {
-            mainCharacter: mainCharacter,
-            genre: genre,
-        };
-
-        await axios
-            .get(process.env.VUE_APP_API_URL + "api/v1/title", {
-                params: data, // Send data as query parameters
-                responseType: "json",
-            })
-            .then(async (response) => {
-                console.log(response);
-                // 종료
-                this.#book.createTitlesOnPage(response.data);
-            })
-            .catch((error) => {
-                console.error("Error fetching data:", error);
-            });
+        try {
+            const response = await fetchGetTitles({mainCharacter: mainCharacter, genre: genre})
+            this.#book.createTitlesOnPage(response.data);
+        } catch(error) {
+            console.error("Error fetching data:", error);
+        }
     }
 
     async fetchGetBook(title) {
