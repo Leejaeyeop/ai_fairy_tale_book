@@ -7,7 +7,11 @@
         "build": "vue-cli-service build",
         "lint": "vue-cli-service lint",
         "dev": "vue-cli-service serve --mode development",
-        "production": "vue-cli-service build --mode production"
+        "production": "vue-cli-service build --mode production",
+        "test:e2e": "cypress run --e2e",
+        "test:e2e:dev": "start-server-and-test 'npm dev --port 4173' http://localhost:4173 'cypress open --e2e'",
+        "test:unit": "cypress run --component",
+        "test:unit:dev": "cypress open --component"
     },
     "dependencies": {
         "@mdi/font": "5.9.55",
