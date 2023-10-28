@@ -35,7 +35,7 @@
             id="loading"
         >
             <p>잠시만 기다려 주세요!</p>
-            <img src="loading.gif" />
+            <img :src="require('../assets/images/loading.gif')" />
         </div>
 
         <div

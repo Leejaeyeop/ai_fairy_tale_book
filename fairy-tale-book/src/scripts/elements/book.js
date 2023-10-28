@@ -3,6 +3,8 @@ import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import {fetchTtsApi} from "../api/api"
 import { playAction, playReverseAction } from "../animation/playAction";
 import { pubSub } from "../utils/pubsub";
+import coverImg from "@/assets/images/cover.jpg"
+import pageImg from "@/assets/images/page.jpg"
 
 export default class Book {
     meshes = {};
@@ -43,14 +45,14 @@ export default class Book {
                                 let newTexture = null;
                                 // page
                                 if (child.name.includes("back")) {
-                                    newTexture = new THREE.TextureLoader().load("/page4.jpg");
+                                    newTexture = new THREE.TextureLoader().load(pageImg);
                                 } else {
-                                    newTexture = new THREE.TextureLoader().load("/page4.jpg");
+                                    newTexture = new THREE.TextureLoader().load(pageImg);
                                 }
                                 child.material.map = newTexture;
                                 child.material.needsUpdate = true;
                             } else {
-                                const newTexture = new THREE.TextureLoader().load("/cover.jpg");
+                                const newTexture = new THREE.TextureLoader().load(coverImg);
                                 child.material.map = newTexture;
                                 child.material.needsUpdate = true;
                             }

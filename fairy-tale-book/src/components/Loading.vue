@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <img class="background" src="background.jpg" />
+    <img class="background" :src="require('../assets/images/background.jpg')" />
     <div class="title">
       <div style="text-align: center">Fairy Tale</div>
       <div class="sub-title">인공지능 동화 생성</div>

@@ -1,7 +1,7 @@
 <template>
     <img
         class="background"
-        src="background_sky.jpg"
+        :src="require('@/assets/images/background_sky.jpg')"
         style="position: absolute"
     />
     <Loading v-if="!isLoaded"></Loading>
