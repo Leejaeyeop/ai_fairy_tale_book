@@ -21,7 +21,6 @@ export default class Space {
                 function (xhr) {
                     this.loadedPercent = (xhr.loaded / xhr.total) * 100;
                     store.dispatch("setLoadedPercent", this.loadedPercent);
-                    // console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
                 },
                 function (error) {
                     console.log("An error happened", error);

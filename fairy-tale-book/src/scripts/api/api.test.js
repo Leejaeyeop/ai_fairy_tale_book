@@ -18,7 +18,6 @@ describe("Test Create Title", () => {
             const url = `/api/v1/title?genre=${data.genre}&mainCharacter=${data.mainCharacter}`;
             const response = await request(app.app).get(encodeURI(url));
             expect(response.statusCode).toBe(200);
-            // console.log(response);
         },
         createTileTimeout
     );

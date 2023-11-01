@@ -37,7 +37,6 @@ export default class Book {
             this.#gltfLoader.load(
                 "book.glb",
                 function (gltf) {
-                    console.log(gltf.scene);
                     // 텍스쳐 입히기
                     gltf.scene.traverse(function (child) {
                         if (child.isMesh) {
@@ -99,7 +98,6 @@ export default class Book {
                 }.bind(this),
                 // called while loading is progressing
                 function (xhr) {
-                    console.log((xhr.loaded / xhr.total) * 100 + "% loaded");
                 },
                 // called when loading has errors
                 function (error) {
@@ -165,8 +163,6 @@ export default class Book {
     }
 
     async clickP3Front(images) {
-        console.log(images.length);
-        console.log(this.#currentPage + 1);
         // page limit 홀 짝도 계산
         if (images.length < this.#currentPage + 2) {
             return;
@@ -362,7 +358,6 @@ export default class Book {
     createTtsBtnL() {
         const globalPos = new THREE.Vector3();
         const ttsL = document.getElementById("ttsL").cloneNode(true);
-        console.log(ttsL);
         const ttsBtnL = ttsL.querySelector("#ttsBtnL");
 
         this.#overlayL = new CSS3DObject(ttsL);
@@ -393,8 +388,6 @@ export default class Book {
         this.#scene.add(this.#overlayR);
 
         ttsBtnR.addEventListener("click", async () => {
-            console.log("book!");
-
             await this.fetchTts(this.extractedTexts[this.#currentPage]);
         });
     }
@@ -452,7 +445,6 @@ export default class Book {
     }
 
     async insertImg(mesh, image, reverseLeft) {
-        console.log(mesh);
         return new Promise((resolve) => {
             if (image) {
                 new THREE.TextureLoader().load(image, async (texture) => {
