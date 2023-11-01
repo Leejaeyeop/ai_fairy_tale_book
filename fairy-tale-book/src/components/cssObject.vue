@@ -35,7 +35,9 @@
             id="loading"
         >
             <p>잠시만 기다려 주세요!</p>
-            <img :src="require('../assets/images/loading.gif')" />
+            <video autoplay loop muted playsinline>
+                <source :src="require('../assets/images/loading.webm')" type="video/webm" />
+            </video>
         </div>
 
         <div
@@ -169,11 +171,13 @@
                     3. pdf 생성
                 </div>
             </div>
-            <img
-                id="making_story_img"
+            <div
                 style="height: 25%; width: 25%"
-                src="story.gif"
-            />
+            >
+                <video autoplay loop muted playsinline>
+                    <source id="making_story_img" src="story.webm" type="video/webm" />
+                </video>
+            </div>
 
             <div
                 id="making_story_title_sub_text"

@@ -242,7 +242,7 @@ export default class Main {
     }
 
     async fetchGetBook(title) {
-        const imgs = ["story.gif", "picture.gif", "pdf.gif"];
+        const imgs = ["story.webm", "picture.webm", "pdf.webm"];
         // 1. 웹소켓 클라이언트 객체 생성
         const webSocket = new WebSocket(process.env.VUE_APP_WS_API_URL + "api/v1/books");
 
@@ -285,12 +285,12 @@ export default class Main {
         }.bind(this);
 
         // 2-3) 연결 종료 이벤트 처리
-        webSocket.onclose = function () {
-        };
+        // webSocket.onclose = function () {
+        // };
 
         // 2-4) 에러 발생 이벤트 처리
-        webSocket.onerror = function (event) {
-        };
+        // webSocket.onerror = function (event) {
+        // };
     }
 
     async prepareBook(arrayBuffer, download) {
