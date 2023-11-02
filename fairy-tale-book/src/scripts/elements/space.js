@@ -1,7 +1,7 @@
 import store from "@/store/store";
 export default class Space {
     #gltfLoader;
-
+    #totalSize = 78021208
     constructor(gltfLoader) {
         this.#gltfLoader = gltfLoader;
     }
@@ -18,8 +18,9 @@ export default class Space {
 
                     resolve(model);
                 },
-                function (xhr) {
-                    this.loadedPercent = (xhr.loaded / xhr.total) * 100;
+                (xhr) => {
+                    // console.log(xhr.loaded)
+                    this.loadedPercent = (xhr.loaded / this.#totalSize) * 100;
                     store.dispatch("setLoadedPercent", this.loadedPercent);
                 },
                 function (error) {

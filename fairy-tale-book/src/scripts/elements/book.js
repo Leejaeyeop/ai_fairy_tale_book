@@ -97,8 +97,7 @@ export default class Book {
                     resolve(book);
                 }.bind(this),
                 // called while loading is progressing
-                // function (xhr) {
-                // },
+                null,
                 // called when loading has errors
                 function (error) {
                     console.log("An error happened", error);

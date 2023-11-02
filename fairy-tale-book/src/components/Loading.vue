@@ -3,13 +3,28 @@
     <img class="background" :src="require('../assets/images/background.webp')" />
     <div class="title">
       <div style="text-align: center">Fairy Tale</div>
-      <div class="sub-title">인공지능 동화 생성</div>
+      <!-- <div class="sub-title">인공지능 동화 생성</div> -->
     </div>
-    <div class="content dot">불러오는 중...</div>
+    <div class="content">
+      <div class="dot">
+        불러오는 중...        
+      </div>
+      <div class="loaded-percent">
+        {{loadedPercent}} %
+      </div>
+    </div>
     <div></div>
   </div>
 </template>
-<script setup></script>
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
+const loadedPercent = computed(() => {
+  return Math.floor(store.getters.loadedPercent);
+});
+</script>
 <style scoped>
 .container {
   position: absolute;
@@ -38,7 +53,11 @@
 }
 .content {
   font-weight: 900;
-  font-size: 4rem;
+  font-size: 3rem;
   z-index: 1000;
+}
+.loaded-percent {
+  text-align: center;
+  font-size: 6rem;
 }
 </style>
