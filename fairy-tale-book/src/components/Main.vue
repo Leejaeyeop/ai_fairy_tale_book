@@ -33,6 +33,9 @@ async function goHome() {
 #main {
     position: relative;
 }
+#three {
+    cursor:grab
+}
 .home-btn {
     position: absolute;
     bottom: 0px;
