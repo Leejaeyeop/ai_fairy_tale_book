@@ -253,6 +253,7 @@ h2 {
 }
 @font-face {
     font-family: "InkLipquid";
+    font-display: swap;
     src: url("@/assets/fonts/InkLipquidFonts.ttf") format("truetype");
 }
 

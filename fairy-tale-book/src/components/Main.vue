@@ -42,6 +42,7 @@ async function goHome() {
     height: 2rem;
     width: 3rem;
     font-family: "InkLipquid";
+    font-display: swap;
     font-weight: bold;
     font-size: 2rem;
 }
