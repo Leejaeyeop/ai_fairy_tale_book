@@ -35,7 +35,7 @@ export default class OpenAi {
         console.log(content);
         try {
             const response: any = await this.#openai.chat.completions.create({
-                model: "gpt-4-1106-preview",
+                model: "gpt-4",
                 messages: [
                     {
                         role: "user",
