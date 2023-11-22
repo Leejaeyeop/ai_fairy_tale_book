@@ -1,4 +1,4 @@
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 
 type Texts = {
     kor: string[];
@@ -7,15 +7,14 @@ type Texts = {
 };
 
 export default class OpenAi {
-    #openai: OpenAIApi;
+    #openai: OpenAI;
     #titleCnt = 4;
     #paraCnt = 3;
 
     constructor() {
-        const configuration = new Configuration({
+        this.#openai = new OpenAI({
             apiKey: process.env.OPENAI_API_KEY,
         });
-        this.#openai = new OpenAIApi(configuration);
     }
     async createTitles(data: any) {
         console.log("createTitle!");
@@ -35,8 +34,8 @@ export default class OpenAi {
 
         console.log(content);
         try {
-            const response: any = await this.#openai.createChatCompletion({
-                model: "gpt-3.5-turbo",
+            const response: any = await this.#openai.chat.completions.create({
+                model: "gpt-4-1106-preview",
                 messages: [
                     {
                         role: "user",
@@ -44,7 +43,7 @@ export default class OpenAi {
                     },
                 ],
             });
-            let text: string = response.data.choices[0].message.content;
+            let text: string = response.choices[0].message.content;
             texts = text.split("\n");
             texts = texts.filter((text) => text !== "");
             console.log(texts);
@@ -59,8 +58,8 @@ export default class OpenAi {
         console.log("createStory!");
         let texts: Texts = { kor: [], eng: [], titleEng: "" };
         let content = "다음을 영어로 번역해 주세요. " + title;
-        let response: any = await this.#openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
+        let response: any = await this.#openai.chat.completions.create({
+            model: "gpt-3.5-turbo-1106",
             messages: [
                 {
                     role: "user",
@@ -69,15 +68,15 @@ export default class OpenAi {
             ],
         });
 
-        texts.titleEng = response.data.choices[0].message.content;
+        texts.titleEng = response.choices[0].message.content;
 
         content =
             texts.titleEng +
             `Please make a fairy tale story with the following content. Please make the story into ${
                 this.#paraCnt
             } paragraphs. And please do it in the form of 'Number: Contents', like 1: content~ 2: content~. `;
-        response = await this.#openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
+        response = await this.#openai.chat.completions.create({
+            model: "gpt-3.5-turbo-1106",
             messages: [
                 {
                     role: "user",
@@ -85,13 +84,13 @@ export default class OpenAi {
                 },
             ],
         });
-        let text = response.data.choices[0].message.content;
+        let text = response.choices[0].message.content;
 
         content = `다음을 한글로 번역해 주세요(어린 아이에게 읽어주는 동화느낌으로). 
         ${text}`;
 
-        response = await this.#openai.createChatCompletion({
-            model: "gpt-3.5-turbo",
+        response = await this.#openai.chat.completions.create({
+            model: "gpt-3.5-turbo-1106",
             messages: [
                 {
                     role: "user",
@@ -99,7 +98,7 @@ export default class OpenAi {
                 },
             ],
         });
-        text += "\n" + response.data.choices[0].message.content;
+        text += "\n" + response.choices[0].message.content;
 
         let textSplited: string[] = [];
         textSplited = text.split("\n");
@@ -132,20 +131,20 @@ export default class OpenAi {
         }
     }
 
-    async createImgByDalleApi(title: string, texts: string[]) {
-        let imgs: any[] = [];
-        texts.unshift(title);
+    // async createImgByDalleApi(title: string, texts: string[]) {
+    //     let imgs: any[] = [];
+    //     texts.unshift(title);
 
-        for (let [index, text] of texts.entries()) {
-            const response: any = await this.#openai.createImage({
-                prompt: text,
-                n: 1,
-                size: "256x256",
-            });
+    //     for (let [index, text] of texts.entries()) {
+    //         const response: any = await this.#openai.chat.completions.create({
+    //             prompt: text,
+    //             n: 1,
+    //             size: "256x256",
+    //         });
 
-            imgs.push(response.data.data[0].url as string);
-        }
+    //         imgs.push(response.data.data[0].url as string);
+    //     }
 
-        return imgs;
-    }
+    //     return imgs;
+    // }
 }
