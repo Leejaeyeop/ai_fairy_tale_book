@@ -174,7 +174,7 @@
             <div
                 style="height: 25%; width: 25%"
             >
-                <video autoplay loop muted playsinline>
+                <video id="making_story_video" autoplay loop muted playsinline>
                     <source id="making_story_img" src="story.webm" type="video/webm" />
                 </video>
             </div>

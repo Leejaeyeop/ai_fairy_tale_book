@@ -261,6 +261,7 @@ export default class Main {
                 let beginStage = JSON.parse(e.data).beginStage;
                 let makingStorySubTextEl = document.querySelector("#making_story_title_sub_text");
                 let makingStoryImgEl = document.getElementById("making_story_img");
+                let makingStoryVideoEl = document.getElementById("making_story_video");
                 if (beginStage === 1) {
                     makingStorySubTextEl.textContent = "이야기를 만들고 있어요.";
                     let step1 = document.querySelector("#making_story_title_step1");
@@ -269,17 +270,27 @@ export default class Main {
                     step2.className = "making_story_title_step";
                     let step3 = document.querySelector("#making_story_title_step3");
                     step3.className = "making_story_title_step";
+                    makingStoryVideoEl.pause()
                     makingStoryImgEl.src = imgs[0];
+                    makingStoryVideoEl.load()
+                    makingStoryVideoEl.play()
+
                 } else if (beginStage === 2) {
                     makingStorySubTextEl.textContent = "그림을 만들고 있어요.";
                     let step2 = document.querySelector("#making_story_title_step2");
                     step2.className += " current_step";
+                    makingStoryVideoEl.pause()
                     makingStoryImgEl.src = imgs[1];
+                    makingStoryVideoEl.load()
+                    makingStoryVideoEl.play()
                 } else if (beginStage === 3) {
                     makingStorySubTextEl.textContent = "Pdf 파일을 만들고 있어요.";
                     let step3 = document.querySelector("#making_story_title_step3");
                     step3.className += " current_step";
+                    makingStoryVideoEl.pause()
                     makingStoryImgEl.src = imgs[2];
+                    makingStoryVideoEl.load()
+                    makingStoryVideoEl.play()
                 }
             }
         }.bind(this);
