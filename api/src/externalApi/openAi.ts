@@ -26,7 +26,7 @@ export default class OpenAi {
             genre = "";
         }
 
-        let content = `주인공의 이름이 반드시 "${
+        let content = `이야기 주인공의 "이름"이 반드시 "${
             data.mainCharacter
         }" 이고, ${genre}, 동화 이야기를 제목과 간략한 줄거리 ${
             this.#titleCnt
@@ -35,7 +35,7 @@ export default class OpenAi {
         console.log(content);
         try {
             const response: any = await this.#openai.chat.completions.create({
-                model: "gpt-4",
+                model: "gpt-3.5-turbo-1106",
                 messages: [
                     {
                         role: "user",
