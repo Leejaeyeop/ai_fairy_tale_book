@@ -189,7 +189,7 @@
     </div>
 </template>
 <script setup>
-const genres = ["외국 전래동화", "해외 전래동화", "아무거나", "모험", "동물", "도전", "우정"];
+const genres = ["유명 전래동화", "아무거나", "모험", "동물", "도전", "우정"];
 </script>
 <style>
 h3 {
