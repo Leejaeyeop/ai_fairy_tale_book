@@ -1,3 +1,3 @@
 import App from "./app";
 
-new App();
+module.exports = new App();
