@@ -4,11 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npm install typescript -g && npx tsc",
+    "build": "npx tsc",
     "test": "jest --watchAll --no-cache --detectOpenHandles",
     "dev": "npx tsc-watch --onSuccess \"cross-env NODE_ENV=development PORT=3000 nodemon --experimental-specifier-resolution=node dist/index.js\"",
-    "preproduction": "npm run build",
-    "production": "cross-env NODE_ENV=production PORT=8080 node --experimental-specifier-resolution=node dist/index.js ",
+    "production": "cross-env NODE_ENV=production PORT=3000 node --experimental-specifier-resolution=node dist/index.js ",
     "start": "node --experimental-specifier-resolution=node dist/index.js"
   },
   "author": "",
