@@ -1,9 +1,14 @@
 <template>
   <div id="cssObjects">
-    <div class="page" id="pageL">
+    <form class="page" id="pageL">
       <div class="input">
         이야기 주인공의 이름은?
-        <input id="mainCharacter" placeholder="이름을 입력해주세요!" />
+        <input
+          id="mainCharacter"
+          placeholder="이름을 입력해주세요!"
+          required
+          pattern=".{1,30}"
+        />
       </div>
       <div class="input">
         이야기의 장르를 선택해 주세요!
@@ -13,10 +18,14 @@
           </option>
         </select>
       </div>
-      <div class="next-page" style="text-align: right; width: 100%">
+      <button
+        class="next-page"
+        style="text-align: right; width: 100%"
+        type="submit"
+      >
         <p>다음으로 이동 -></p>
-      </div>
-    </div>
+      </button>
+    </form>
     <div class="page dot center" id="loading">
       <p>잠시만 기다려 주세요!</p>
       <video autoplay loop muted playsinline>
