@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tsc",
+    "build": "npm install typescript -g && npx tsc",
     "test": "jest --watchAll --no-cache --detectOpenHandles",
     "dev": "npx tsc-watch --onSuccess \"cross-env NODE_ENV=development PORT=3000 nodemon --experimental-specifier-resolution=node dist/index.js\"",
     "preproduction": "npm run build",
