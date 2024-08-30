@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function fetchTtsApi(text) {
-    let res = null
+    let res = null;
     let data = JSON.stringify({
         voice: {
             languageCode: "ko-KR",
@@ -27,30 +27,30 @@ export async function fetchTtsApi(text) {
     };
 
     await axios
-    .request(config)
-    .then((response) => {
-        res = response
-    })
-    .catch((error) => {
-        throw error
-    });
-    return res
+        .request(config)
+        .then((response) => {
+            res = response;
+        })
+        .catch((error) => {
+            throw error;
+        });
+    return res;
 }
 
-export async function fetchGetTitles(data) {
-    let res = null
+export async function fetchGetTitles(data, abortController) {
+    let res = null;
     await axios
-    .get(process.env.VUE_APP_API_URL + "api/v1/title", {
-        params: data, // Send data as query parameters
-        responseType: "json",
-    })
-    .then((response) => {
-        res = response
-    })
-    .catch((error) => {
-        throw error
-    });
+        .get(process.env.VUE_APP_API_URL + "api/v1/title", {
+            params: data, // Send data as query parameters
+            responseType: "json",
+            signal: abortController.signal,
+        })
+        .then((response) => {
+            res = response;
+        })
+        .catch((error) => {
+            throw error;
+        });
 
-    return res
+    return res;
 }
-

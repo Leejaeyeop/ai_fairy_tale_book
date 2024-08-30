@@ -4,7 +4,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import { pubSub } from "./utils/pubsub";
-import {fetchGetTitles} from "./api/api"
+import { fetchGetTitles } from "./api/api";
 import Intro from "./scene/intro";
 import Book from "./elements/book";
 import Space from "./elements/space";
@@ -36,6 +36,8 @@ export default class Main {
     maxAzimuthAngle = Math.PI / 4;
     minAzimuthAngle = -Math.PI / 4;
     maxPolarAngle = Math.PI / 3;
+    abortController;
+    webSocket;
 
     init() {
         this.stage = "INTRO";
@@ -43,6 +45,7 @@ export default class Main {
         this.#scene = scene;
         const gltfLoader = new GLTFLoader();
         this.#gltfLoader = gltfLoader;
+        this.abortController = new AbortController();
 
         // render 설정
         const renderer = new THREE.WebGLRenderer({
@@ -61,7 +64,12 @@ export default class Main {
         this.#myDIv.appendChild(this.#renderer.domElement);
 
         this.#initModel();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
         this.#setupCamera(camera);
         this.#setupControls();
 
@@ -85,9 +93,17 @@ export default class Main {
         const mouse = new THREE.Vector2();
         this.#mouse = mouse;
 
-        this.#particle = new Particle(this.#scene, this.#renderer, this.#camera);
+        this.#particle = new Particle(
+            this.#scene,
+            this.#renderer,
+            this.#camera
+        );
 
-        myDiv.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
+        myDiv.addEventListener(
+            "mousedown",
+            this.onDocumentMouseDown.bind(this),
+            false
+        );
 
         pubSub.subscribe("getTitles", this.getTitles.bind(this));
         pubSub.subscribe("makeStory", this.makeStory.bind(this));
@@ -103,7 +119,9 @@ export default class Main {
         this.#raycaster.setFromCamera(this.#mouse, this.#camera);
 
         // 레이캐스팅 결과를 저장할 배열입니다.
-        const intersects = this.#raycaster.intersectObjects(this.#scene.children);
+        const intersects = this.#raycaster.intersectObjects(
+            this.#scene.children
+        );
 
         let clickedMesh = null;
         for (let intersect of intersects) {
@@ -146,6 +164,10 @@ export default class Main {
     }
 
     async goHome() {
+        if (this.webSocket) {
+            this.webSocket.close();
+        }
+        this.abortController.abort();
         this.#intro.addScene();
         this.#unlimitControl();
         this.#setupCamera(this.#camera);
@@ -155,7 +177,13 @@ export default class Main {
         let selectedObject = this.#scene.getObjectByName("book");
         this.#scene.remove(selectedObject);
 
-        const book = new Book(this.#scene, this.#camera, this.#cssRenderer, this.#gltfLoader, this.#renderer);
+        const book = new Book(
+            this.#scene,
+            this.#camera,
+            this.#cssRenderer,
+            this.#gltfLoader,
+            this.#renderer
+        );
         this.#book = book;
         const bookObj = await book.loadBook();
         this.#bookObj = bookObj;
@@ -182,7 +210,12 @@ export default class Main {
         const startPosition = this.#camera.position;
         const endPosition = new THREE.Vector3(0.443, 3, 0.702);
         const duration = 2000;
-        this.animateCamera(startPosition, endPosition, duration, this.easeInOutQuad);
+        this.animateCamera(
+            startPosition,
+            endPosition,
+            duration,
+            this.easeInOutQuad
+        );
         // text 추가
         let makingStoryEl = document.querySelector("#making_story_title");
         makingStoryEl.style.display = "flex";
@@ -215,7 +248,9 @@ export default class Main {
 
             if (progress < 1) {
                 const easedProgress = easing(progress);
-                const currentPosition = start.clone().add(diffPosition.clone().multiplyScalar(easedProgress));
+                const currentPosition = start
+                    .clone()
+                    .add(diffPosition.clone().multiplyScalar(easedProgress));
                 this.#camera.position.copy(currentPosition);
                 this.#renderer.render(this.#scene, this.#camera);
                 requestAnimationFrame(move);
@@ -229,14 +264,21 @@ export default class Main {
     }
 
     async fetchGetTitles() {
-        const mainCharacter = document.querySelectorAll("#mainCharacter")[1].value;
+        const mainCharacter =
+            document.querySelectorAll("#mainCharacter")[1].value;
 
         const genre = document.querySelectorAll("#genre")[1].value;
 
         try {
-            const response = await fetchGetTitles({mainCharacter: mainCharacter, genre: genre})
+            const response = await fetchGetTitles(
+                {
+                    mainCharacter: mainCharacter,
+                    genre: genre,
+                },
+                this.abortController
+            );
             this.#book.createTitlesOnPage(response.data);
-        } catch(error) {
+        } catch (error) {
             console.error("Error fetching data:", error);
         }
     }
@@ -244,53 +286,70 @@ export default class Main {
     async fetchGetBook(title) {
         const imgs = ["story.webm", "picture.webm", "pdf.webm"];
         // 1. 웹소켓 클라이언트 객체 생성
-        const webSocket = new WebSocket(process.env.VUE_APP_WS_API_URL + "api/v1/books");
+        this.webSocket = new WebSocket(
+            process.env.VUE_APP_WS_API_URL + "api/v1/books"
+        );
 
         // 2. 웹소켓 이벤트 처리
         // 2-1) 연결 이벤트 처리
-        webSocket.onopen = () => {
-            webSocket.send(title);
+        this.webSocket.onopen = () => {
+            this.webSocket.send(title);
         };
         // 2-2) 메세지 수신 이벤트 처리
-        webSocket.onmessage = async function (e) {
+        this.webSocket.onmessage = async function (e) {
             if (typeof e.data === "object") {
                 const arrayBuffer = e.data;
                 await this.prepareBook(arrayBuffer, true);
-                webSocket.close();
+                this.webSocket.close();
             } else {
                 let beginStage = JSON.parse(e.data).beginStage;
-                let makingStorySubTextEl = document.querySelector("#making_story_title_sub_text");
-                let makingStoryImgEl = document.getElementById("making_story_img");
-                let makingStoryVideoEl = document.getElementById("making_story_video");
+                let makingStorySubTextEl = document.querySelector(
+                    "#making_story_title_sub_text"
+                );
+                let makingStoryImgEl =
+                    document.getElementById("making_story_img");
+                let makingStoryVideoEl =
+                    document.getElementById("making_story_video");
                 if (beginStage === 1) {
-                    makingStorySubTextEl.textContent = "이야기를 만들고 있어요.";
-                    let step1 = document.querySelector("#making_story_title_step1");
+                    makingStorySubTextEl.textContent =
+                        "이야기를 만들고 있어요.";
+                    let step1 = document.querySelector(
+                        "#making_story_title_step1"
+                    );
                     step1.className = "making_story_title_step current_step";
-                    let step2 = document.querySelector("#making_story_title_step2");
+                    let step2 = document.querySelector(
+                        "#making_story_title_step2"
+                    );
                     step2.className = "making_story_title_step";
-                    let step3 = document.querySelector("#making_story_title_step3");
+                    let step3 = document.querySelector(
+                        "#making_story_title_step3"
+                    );
                     step3.className = "making_story_title_step";
-                    makingStoryVideoEl.pause()
+                    makingStoryVideoEl.pause();
                     makingStoryImgEl.src = imgs[0];
-                    makingStoryVideoEl.load()
-                    makingStoryVideoEl.play()
-
+                    makingStoryVideoEl.load();
+                    makingStoryVideoEl.play();
                 } else if (beginStage === 2) {
                     makingStorySubTextEl.textContent = "그림을 만들고 있어요.";
-                    let step2 = document.querySelector("#making_story_title_step2");
+                    let step2 = document.querySelector(
+                        "#making_story_title_step2"
+                    );
                     step2.className += " current_step";
-                    makingStoryVideoEl.pause()
+                    makingStoryVideoEl.pause();
                     makingStoryImgEl.src = imgs[1];
-                    makingStoryVideoEl.load()
-                    makingStoryVideoEl.play()
+                    makingStoryVideoEl.load();
+                    makingStoryVideoEl.play();
                 } else if (beginStage === 3) {
-                    makingStorySubTextEl.textContent = "Pdf 파일을 만들고 있어요.";
-                    let step3 = document.querySelector("#making_story_title_step3");
+                    makingStorySubTextEl.textContent =
+                        "Pdf 파일을 만들고 있어요.";
+                    let step3 = document.querySelector(
+                        "#making_story_title_step3"
+                    );
                     step3.className += " current_step";
-                    makingStoryVideoEl.pause()
+                    makingStoryVideoEl.pause();
                     makingStoryImgEl.src = imgs[2];
-                    makingStoryVideoEl.load()
-                    makingStoryVideoEl.play()
+                    makingStoryVideoEl.load();
+                    makingStoryVideoEl.play();
                 }
             }
         }.bind(this);
@@ -471,7 +530,10 @@ export default class Main {
 
     #setupControls() {
         // orbit controls
-        this.#controls = new OrbitControls(this.#camera, this.#renderer.domElement);
+        this.#controls = new OrbitControls(
+            this.#camera,
+            this.#renderer.domElement
+        );
         // Set the constraints
         this.#controls.maxPolarAngle = this.maxPolarAngle; // Minimum polar angle (45 degrees)
         this.#controls.minDistance = this.minDistance;
@@ -494,7 +556,13 @@ export default class Main {
     async #initModel() {
         const obj = new THREE.Object3D();
 
-        const book = new Book(this.#scene, this.#camera, this.#cssRenderer, this.#gltfLoader, this.#renderer);
+        const book = new Book(
+            this.#scene,
+            this.#camera,
+            this.#cssRenderer,
+            this.#gltfLoader,
+            this.#renderer
+        );
         this.#book = book;
         const bookObj = await book.loadBook();
         this.#bookObj = bookObj;
@@ -506,7 +574,12 @@ export default class Main {
         this.#scene.add(obj);
         this.#setupLight();
 
-        const intro = new Intro(this.#scene, this.#camera, this.#renderer, this.#cssRenderer);
+        const intro = new Intro(
+            this.#scene,
+            this.#camera,
+            this.#renderer,
+            this.#cssRenderer
+        );
         this.#intro = intro;
         store.dispatch("setInitCompleted", true);
     }
