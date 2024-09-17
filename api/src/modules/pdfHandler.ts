@@ -2,7 +2,7 @@ import PDFDocument from "pdfkit";
 import fs from "fs";
 import path from "path";
 import https from "https";
-import { Url } from "url";
+import {Url} from "url";
 
 export default class PdfHandler {
     #doc;
@@ -33,17 +33,17 @@ export default class PdfHandler {
             imgPromises.push(
                 new Promise((resolve, reject) => {
                     https
-                        .get(imgUrl, (response) => {
+                        .get(imgUrl, response => {
                             const chunks: any = [];
-                            response.on("data", (chunk) => {
+                            response.on("data", chunk => {
                                 chunks.push(chunk);
                             });
                             response.on("end", () => {
                                 const buffer = Buffer.concat(chunks);
-                                resolve({ buffer, text });
+                                resolve({buffer, text});
                             });
                         })
-                        .on("error", (error) => {
+                        .on("error", error => {
                             reject(error);
                         });
                 })
@@ -53,7 +53,7 @@ export default class PdfHandler {
         let i = 0;
         // 1페이지 에는 cover를 넣는다!
         // 순서를 보장한다... 즉, 여기서 buffer로 보내도 되고, pdf를 생성 해도 된다.
-        for await (const { buffer, text } of imgPromises) {
+        for await (const {buffer, text} of imgPromises) {
             if (i === 0) {
                 // 표지 만들기
                 this.#doc

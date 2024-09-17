@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import store from "@/store/store";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import { CSS3DRenderer } from "three/examples/jsm/renderers/CSS3DRenderer.js";
-import { pubSub } from "./utils/pubsub";
-import { fetchGetTitles } from "./api/api";
+import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
+import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
+import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
+import {pubSub} from "./utils/pubsub";
+import {fetchGetTitles} from "./api/api";
 import Intro from "./scene/intro";
 import Book from "./elements/book";
 import Space from "./elements/space";
@@ -64,16 +64,11 @@ export default class Main {
         this.#myDIv.appendChild(this.#renderer.domElement);
 
         this.#initModel();
-        const camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-        );
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.#setupCamera(camera);
         this.#setupControls();
 
-        const cssRenderer = new CSS3DRenderer({ antialias: true });
+        const cssRenderer = new CSS3DRenderer({antialias: true});
         this.#cssRenderer = cssRenderer;
         this.#cssRenderer.setSize(window.innerWidth, window.innerHeight);
         this.#cssRenderer.domElement.style.position = "absolute";
@@ -93,17 +88,9 @@ export default class Main {
         const mouse = new THREE.Vector2();
         this.#mouse = mouse;
 
-        this.#particle = new Particle(
-            this.#scene,
-            this.#renderer,
-            this.#camera
-        );
+        this.#particle = new Particle(this.#scene, this.#renderer, this.#camera);
 
-        myDiv.addEventListener(
-            "mousedown",
-            this.onDocumentMouseDown.bind(this),
-            false
-        );
+        myDiv.addEventListener("mousedown", this.onDocumentMouseDown.bind(this), false);
 
         pubSub.subscribe("getTitles", this.getTitles.bind(this));
         pubSub.subscribe("makeStory", this.makeStory.bind(this));
@@ -119,9 +106,7 @@ export default class Main {
         this.#raycaster.setFromCamera(this.#mouse, this.#camera);
 
         // 레이캐스팅 결과를 저장할 배열입니다.
-        const intersects = this.#raycaster.intersectObjects(
-            this.#scene.children
-        );
+        const intersects = this.#raycaster.intersectObjects(this.#scene.children);
 
         let clickedMesh = null;
         for (let intersect of intersects) {
@@ -177,13 +162,7 @@ export default class Main {
         let selectedObject = this.#scene.getObjectByName("book");
         this.#scene.remove(selectedObject);
 
-        const book = new Book(
-            this.#scene,
-            this.#camera,
-            this.#cssRenderer,
-            this.#gltfLoader,
-            this.#renderer
-        );
+        const book = new Book(this.#scene, this.#camera, this.#cssRenderer, this.#gltfLoader, this.#renderer);
         this.#book = book;
         const bookObj = await book.loadBook();
         this.#bookObj = bookObj;
@@ -210,12 +189,7 @@ export default class Main {
         const startPosition = this.#camera.position;
         const endPosition = new THREE.Vector3(0.443, 3, 0.702);
         const duration = 2000;
-        this.animateCamera(
-            startPosition,
-            endPosition,
-            duration,
-            this.easeInOutQuad
-        );
+        this.animateCamera(startPosition, endPosition, duration, this.easeInOutQuad);
         // text 추가
         let makingStoryEl = document.querySelector("#making_story_title");
         makingStoryEl.style.display = "flex";
@@ -242,15 +216,13 @@ export default class Main {
         const end = endPosition.clone();
         const diffPosition = end.clone().sub(start);
 
-        const move = (timestamp) => {
+        const move = timestamp => {
             const elapsedTime = timestamp - startTime;
             const progress = elapsedTime / duration;
 
             if (progress < 1) {
                 const easedProgress = easing(progress);
-                const currentPosition = start
-                    .clone()
-                    .add(diffPosition.clone().multiplyScalar(easedProgress));
+                const currentPosition = start.clone().add(diffPosition.clone().multiplyScalar(easedProgress));
                 this.#camera.position.copy(currentPosition);
                 this.#renderer.render(this.#scene, this.#camera);
                 requestAnimationFrame(move);
@@ -264,8 +236,7 @@ export default class Main {
     }
 
     async fetchGetTitles() {
-        const mainCharacter =
-            document.querySelectorAll("#mainCharacter")[1].value;
+        const mainCharacter = document.querySelectorAll("#mainCharacter")[1].value;
 
         const genre = document.querySelectorAll("#genre")[1].value;
 
@@ -286,9 +257,7 @@ export default class Main {
     async fetchGetBook(title) {
         const imgs = ["story.webm", "picture.webm", "pdf.webm"];
         // 1. 웹소켓 클라이언트 객체 생성
-        this.webSocket = new WebSocket(
-            process.env.VUE_APP_WS_API_URL + "api/v1/books"
-        );
+        this.webSocket = new WebSocket(process.env.VUE_APP_WS_API_URL + "api/v1/books");
 
         // 2. 웹소켓 이벤트 처리
         // 2-1) 연결 이벤트 처리
@@ -303,27 +272,16 @@ export default class Main {
                 this.webSocket.close();
             } else {
                 let beginStage = JSON.parse(e.data).beginStage;
-                let makingStorySubTextEl = document.querySelector(
-                    "#making_story_title_sub_text"
-                );
-                let makingStoryImgEl =
-                    document.getElementById("making_story_img");
-                let makingStoryVideoEl =
-                    document.getElementById("making_story_video");
+                let makingStorySubTextEl = document.querySelector("#making_story_title_sub_text");
+                let makingStoryImgEl = document.getElementById("making_story_img");
+                let makingStoryVideoEl = document.getElementById("making_story_video");
                 if (beginStage === 1) {
-                    makingStorySubTextEl.textContent =
-                        "이야기를 만들고 있어요.";
-                    let step1 = document.querySelector(
-                        "#making_story_title_step1"
-                    );
+                    makingStorySubTextEl.textContent = "이야기를 만들고 있어요.";
+                    let step1 = document.querySelector("#making_story_title_step1");
                     step1.className = "making_story_title_step current_step";
-                    let step2 = document.querySelector(
-                        "#making_story_title_step2"
-                    );
+                    let step2 = document.querySelector("#making_story_title_step2");
                     step2.className = "making_story_title_step";
-                    let step3 = document.querySelector(
-                        "#making_story_title_step3"
-                    );
+                    let step3 = document.querySelector("#making_story_title_step3");
                     step3.className = "making_story_title_step";
                     makingStoryVideoEl.pause();
                     makingStoryImgEl.src = imgs[0];
@@ -331,20 +289,15 @@ export default class Main {
                     makingStoryVideoEl.play();
                 } else if (beginStage === 2) {
                     makingStorySubTextEl.textContent = "그림을 만들고 있어요.";
-                    let step2 = document.querySelector(
-                        "#making_story_title_step2"
-                    );
+                    let step2 = document.querySelector("#making_story_title_step2");
                     step2.className += " current_step";
                     makingStoryVideoEl.pause();
                     makingStoryImgEl.src = imgs[1];
                     makingStoryVideoEl.load();
                     makingStoryVideoEl.play();
                 } else if (beginStage === 3) {
-                    makingStorySubTextEl.textContent =
-                        "Pdf 파일을 만들고 있어요.";
-                    let step3 = document.querySelector(
-                        "#making_story_title_step3"
-                    );
+                    makingStorySubTextEl.textContent = "Pdf 파일을 만들고 있어요.";
+                    let step3 = document.querySelector("#making_story_title_step3");
                     step3.className += " current_step";
                     makingStoryVideoEl.pause();
                     makingStoryImgEl.src = imgs[2];
@@ -365,7 +318,7 @@ export default class Main {
 
     async prepareBook(arrayBuffer, download) {
         // Create a Blob from the ArrayBuffer
-        const pdfBlob = new Blob([arrayBuffer], { type: "application/pdf" });
+        const pdfBlob = new Blob([arrayBuffer], {type: "application/pdf"});
 
         // Generate a Blob URL
         const pdfUrl = URL.createObjectURL(pdfBlob);
@@ -407,14 +360,14 @@ export default class Main {
         for (let i = 1; i <= numPages; i++) {
             const page = await pdf.getPage(i);
             const scale = 3.0;
-            const viewport = page.getViewport({ scale });
+            const viewport = page.getViewport({scale});
 
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("2d");
             canvas.width = viewport.width;
             canvas.height = viewport.height;
 
-            await page.render({ canvasContext: context, viewport }).promise;
+            await page.render({canvasContext: context, viewport}).promise;
 
             const dataUrl = canvas.toDataURL("image/jpeg");
             images.push(dataUrl);
@@ -423,7 +376,7 @@ export default class Main {
             let extractedText = "";
             const textContent = await page.getTextContent();
             // Concatenate the extracted text
-            textContent.items.forEach((item) => {
+            textContent.items.forEach(item => {
                 extractedText += item.str + " ";
             });
             this.extractedTexts.push(extractedText);
@@ -457,14 +410,7 @@ export default class Main {
         canvas.height = 128;
         const context = canvas.getContext("2d");
 
-        const gradient = context.createRadialGradient(
-            canvas.width / 2,
-            canvas.height / 2,
-            0,
-            canvas.width / 2,
-            canvas.height / 2,
-            canvas.width / 2
-        );
+        const gradient = context.createRadialGradient(canvas.width / 2, canvas.height / 2, 0, canvas.width / 2, canvas.height / 2, canvas.width / 2);
 
         gradient.addColorStop(0, "rgba(128, 0, 255, 1)");
         gradient.addColorStop(0.4, "rgba(128, 0, 255, 0.6)");
@@ -492,7 +438,7 @@ export default class Main {
         this.#bookObj.add(auraSprite); // 메쉬에 스프라이트를 자식으로 추가
         auraSprite.position.set(-1, 0, 0); // 원하는 위치에 스프라이트를 놓으세요.
 
-        const animate = (time) => {
+        const animate = time => {
             requestAnimationFrame(animate);
 
             const delta = (Math.sin(time * 0.001) + 1) / 2;
@@ -530,10 +476,7 @@ export default class Main {
 
     #setupControls() {
         // orbit controls
-        this.#controls = new OrbitControls(
-            this.#camera,
-            this.#renderer.domElement
-        );
+        this.#controls = new OrbitControls(this.#camera, this.#renderer.domElement);
         // Set the constraints
         this.#controls.maxPolarAngle = this.maxPolarAngle; // Minimum polar angle (45 degrees)
         this.#controls.minDistance = this.minDistance;
@@ -556,13 +499,7 @@ export default class Main {
     async #initModel() {
         const obj = new THREE.Object3D();
 
-        const book = new Book(
-            this.#scene,
-            this.#camera,
-            this.#cssRenderer,
-            this.#gltfLoader,
-            this.#renderer
-        );
+        const book = new Book(this.#scene, this.#camera, this.#cssRenderer, this.#gltfLoader, this.#renderer);
         this.#book = book;
         const bookObj = await book.loadBook();
         this.#bookObj = bookObj;
@@ -574,12 +511,7 @@ export default class Main {
         this.#scene.add(obj);
         this.#setupLight();
 
-        const intro = new Intro(
-            this.#scene,
-            this.#camera,
-            this.#renderer,
-            this.#cssRenderer
-        );
+        const intro = new Intro(this.#scene, this.#camera, this.#renderer, this.#cssRenderer);
         this.#intro = intro;
         store.dispatch("setInitCompleted", true);
     }

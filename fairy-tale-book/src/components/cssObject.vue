@@ -3,12 +3,7 @@
         <form class="page" id="pageL">
             <div class="input">
                 이야기 주인공의 이름은?
-                <input
-                    id="mainCharacter"
-                    placeholder="이름을 입력해주세요!"
-                    required
-                    pattern=".{1,30}"
-                />
+                <input id="mainCharacter" placeholder="이름을 입력해주세요!" required pattern=".{1,30}" />
             </div>
             <div class="input">
                 이야기의 장르를 선택해 주세요!
@@ -18,21 +13,14 @@
                     </option>
                 </select>
             </div>
-            <button
-                class="next-page"
-                style="text-align: right; width: 100%"
-                type="submit"
-            >
+            <button class="next-page" style="text-align: right; width: 100%" type="submit">
                 <p>다음으로 이동 -></p>
             </button>
         </form>
         <div class="page dot center" id="loading">
             <p>잠시만 기다려 주세요!</p>
             <video autoplay loop muted playsinline>
-                <source
-                    :src="require('../assets/images/loading.webm')"
-                    type="video/webm"
-                />
+                <source :src="require('../assets/images/loading.webm')" type="video/webm" />
             </video>
         </div>
 
@@ -47,10 +35,7 @@
             <div id="titleDesc" class="title-card"></div>
             <div>
                 선택된 이야기
-                <div
-                    id="titleSelected"
-                    class="title-card-border title-card"
-                ></div>
+                <div id="titleSelected" class="title-card-border title-card"></div>
             </div>
         </div>
 
@@ -98,46 +83,22 @@
         <div id="load">
             <div id="circle"></div>
             <h1 class="intro_text">이야기 불러오기</h1>
-            <input
-                type="file"
-                id="pdfUpload"
-                accept=".pdf"
-                style="display: none; !important"
-            />
+            <input type="file" id="pdfUpload" accept=".pdf" style="display: none; important" />
         </div>
         <div id="making_story_title">
             <div id="making_story_title_text">
                 <h1>잠시만 기다려 주세요! . . . 최대 3분이 소요 됩니다.</h1>
             </div>
             <div id="making_story_title_steps">
-                <div
-                    id="making_story_title_step1"
-                    class="making_story_title_step"
-                >
-                    1. 이야기 생성
-                </div>
+                <div id="making_story_title_step1" class="making_story_title_step">1. 이야기 생성</div>
                 <div class="making_story_title_step">-></div>
-                <div
-                    id="making_story_title_step2"
-                    class="making_story_title_step"
-                >
-                    2. 그림 생성
-                </div>
+                <div id="making_story_title_step2" class="making_story_title_step">2. 그림 생성</div>
                 <div class="making_story_title_step">-></div>
-                <div
-                    id="making_story_title_step3"
-                    class="making_story_title_step"
-                >
-                    3. pdf 생성
-                </div>
+                <div id="making_story_title_step3" class="making_story_title_step">3. pdf 생성</div>
             </div>
             <div>
                 <video id="making_story_video" autoplay loop muted playsinline>
-                    <source
-                        id="making_story_img"
-                        src="story.webm"
-                        type="video/webm"
-                    />
+                    <source id="making_story_img" src="story.webm" type="video/webm" />
                 </video>
             </div>
 
@@ -148,15 +109,7 @@
     </div>
 </template>
 <script setup>
-const genres = [
-    "외국 전래동화",
-    "해외 전래동화",
-    "아무거나",
-    "모험",
-    "동물",
-    "도전",
-    "우정",
-];
+const genres = ["외국 전래동화", "해외 전래동화", "아무거나", "모험", "동물", "도전", "우정"];
 </script>
 <style>
 h3 {

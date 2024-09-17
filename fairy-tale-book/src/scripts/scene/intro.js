@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
-import { pubSub } from "../utils/pubsub";
-import { fileUpload } from "../utils/file.functions";
+import {CSS3DObject} from "three/examples/jsm/renderers/CSS3DRenderer.js";
+import {pubSub} from "../utils/pubsub";
+import {fileUpload} from "../utils/file.functions";
 
 export default class Intro {
     #camera;
@@ -75,7 +75,9 @@ export default class Intro {
         deskFrameTopOverlay.rotation.set(Math.PI / 2, 0, 0);
         deskFrameTopOverlay.scale.set(0.13, 0.06, 0.1);
 
-        const bookshelfFrameFront = document.getElementById("bookshelf_frame_front");
+        const bookshelfFrameFront = document.getElementById(
+            "bookshelf_frame_front"
+        );
         this.#bookshelfFrameFront = bookshelfFrameFront;
         const bookshelfFrameFrontOverlay = new CSS3DObject(bookshelfFrameFront);
         this.#bookshelfFrameFrontOverlay = bookshelfFrameFrontOverlay;
@@ -83,7 +85,9 @@ export default class Intro {
         bookshelfFrameFrontOverlay.rotation.set(0, Math.PI / 4, 0);
         bookshelfFrameFrontOverlay.scale.set(0.05, 0.15, 0.1);
 
-        const bookshelfFrameSide = document.getElementById("bookshelf_frame_side");
+        const bookshelfFrameSide = document.getElementById(
+            "bookshelf_frame_side"
+        );
         this.#bookshelfFrameSide = bookshelfFrameSide;
         const bookshelfFrameSideOverlay = new CSS3DObject(bookshelfFrameSide);
         this.#bookshelfFrameSideOverlay = bookshelfFrameSideOverlay;
@@ -106,7 +110,8 @@ export default class Intro {
             const progress = (elapsedTime % period) / period;
 
             // Calculate the new Z position using a combination of sine and cosine functions
-            const zPos = (amplitude * (1 - Math.cos(progress * 2 * Math.PI))) / 2;
+            const zPos =
+                (amplitude * (1 - Math.cos(progress * 2 * Math.PI))) / 2;
             // Update the Mesh object's position
             loadPonterOverlay.position.z = 3.4 - zPos;
             loadPonterOverlay.position.y = 1.9 - zPos;
@@ -118,7 +123,14 @@ export default class Intro {
     }
 
     // Animation function
-    animateCamera(startPosition, endPosition, startRotation, endRotation, duration, easing) {
+    animateCamera(
+        startPosition,
+        endPosition,
+        startRotation,
+        endRotation,
+        duration,
+        easing
+    ) {
         const startTime = performance.now();
         const start = startPosition.clone();
         const end = endPosition.clone();
@@ -127,14 +139,20 @@ export default class Intro {
         const endQuaternion = endRotation.clone();
         const quaternion = new THREE.Quaternion();
 
-        const move = (timestamp) => {
+        const move = timestamp => {
             const elapsedTime = timestamp - startTime;
             const progress = elapsedTime / duration;
 
             if (progress < 1) {
                 const easedProgress = easing(progress);
-                const currentPosition = start.clone().add(diffPosition.clone().multiplyScalar(easedProgress));
-                quaternion.slerpQuaternions(startQuaternion, endQuaternion, easedProgress);
+                const currentPosition = start
+                    .clone()
+                    .add(diffPosition.clone().multiplyScalar(easedProgress));
+                quaternion.slerpQuaternions(
+                    startQuaternion,
+                    endQuaternion,
+                    easedProgress
+                );
                 this.#camera.position.copy(currentPosition);
                 this.#camera.setRotationFromQuaternion(quaternion);
                 this.#renderer.render(this.scene, this.#camera);
@@ -234,11 +252,22 @@ export default class Intro {
         this.#bookshelfFrameSide.addEventListener("click", () => {
             const startPosition = this.#camera.position;
             const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
-            const startRotation = new THREE.Quaternion().setFromEuler(this.#camera.rotation);
-            const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
+            const startRotation = new THREE.Quaternion().setFromEuler(
+                this.#camera.rotation
+            );
+            const endRotation = new THREE.Quaternion().setFromEuler(
+                new THREE.Euler(-1.561, 0, 0.00038)
+            );
 
             const duration = 2000; // in milliseconds
-            this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
+            this.animateCamera(
+                startPosition,
+                endPosition,
+                startRotation,
+                endRotation,
+                duration,
+                this.easeInOutQuad
+            );
 
             pubSub.publish("beginScene2");
         });
@@ -248,10 +277,21 @@ export default class Intro {
         // Usage example
         const startPosition = this.#camera.position;
         const endPosition = new THREE.Vector3(0.443, 1.103, 0.702);
-        const startRotation = new THREE.Quaternion().setFromEuler(this.#camera.rotation);
-        const endRotation = new THREE.Quaternion().setFromEuler(new THREE.Euler(-1.561, 0, 0.00038));
+        const startRotation = new THREE.Quaternion().setFromEuler(
+            this.#camera.rotation
+        );
+        const endRotation = new THREE.Quaternion().setFromEuler(
+            new THREE.Euler(-1.561, 0, 0.00038)
+        );
 
         const duration = 2000; // in milliseconds
-        this.animateCamera(startPosition, endPosition, startRotation, endRotation, duration, this.easeInOutQuad);
+        this.animateCamera(
+            startPosition,
+            endPosition,
+            startRotation,
+            endRotation,
+            duration,
+            this.easeInOutQuad
+        );
     }
 }

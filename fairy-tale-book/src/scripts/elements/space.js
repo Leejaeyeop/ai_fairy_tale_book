@@ -1,16 +1,16 @@
 import store from "@/store/store";
 export default class Space {
     #gltfLoader;
-    #totalSize = 78021208
+    #totalSize = 78021208;
     constructor(gltfLoader) {
         this.#gltfLoader = gltfLoader;
     }
 
     async loadSpace() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             this.#gltfLoader.load(
                 "workshop.glb",
-                (gltf) => {
+                gltf => {
                     // add the loaded glTF model to the scene
                     const model = gltf.scene;
 
@@ -18,7 +18,7 @@ export default class Space {
 
                     resolve(model);
                 },
-                (xhr) => {
+                xhr => {
                     // console.log(xhr.loaded)
                     this.loadedPercent = (xhr.loaded / this.#totalSize) * 100;
                     store.dispatch("setLoadedPercent", this.loadedPercent);

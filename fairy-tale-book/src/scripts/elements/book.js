@@ -1,8 +1,8 @@
 import * as THREE from "three";
-import { CSS3DObject } from "three/examples/jsm/renderers/CSS3DRenderer.js";
-import { fetchTtsApi } from "../api/api";
-import { playAction, playReverseAction } from "../animation/playAction";
-import { pubSub } from "../utils/pubsub";
+import {CSS3DObject} from "three/examples/jsm/renderers/CSS3DRenderer.js";
+import {fetchTtsApi} from "../api/api";
+import {playAction, playReverseAction} from "../animation/playAction";
+import {pubSub} from "../utils/pubsub";
 import coverImg from "@/assets/images/cover.jpg";
 import pageImg from "@/assets/images/page.jpg";
 
@@ -33,7 +33,7 @@ export default class Book {
     }
 
     async loadBook() {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             this.#gltfLoader.load(
                 "book.glb",
                 function (gltf) {
@@ -44,19 +44,14 @@ export default class Book {
                                 let newTexture = null;
                                 // page
                                 if (child.name.includes("back")) {
-                                    newTexture = new THREE.TextureLoader().load(
-                                        pageImg
-                                    );
+                                    newTexture = new THREE.TextureLoader().load(pageImg);
                                 } else {
-                                    newTexture = new THREE.TextureLoader().load(
-                                        pageImg
-                                    );
+                                    newTexture = new THREE.TextureLoader().load(pageImg);
                                 }
                                 child.material.map = newTexture;
                                 child.material.needsUpdate = true;
                             } else {
-                                const newTexture =
-                                    new THREE.TextureLoader().load(coverImg);
+                                const newTexture = new THREE.TextureLoader().load(coverImg);
                                 child.material.map = newTexture;
                                 child.material.needsUpdate = true;
                             }
@@ -66,7 +61,7 @@ export default class Book {
                     const book = gltf.scene;
 
                     // mesh를 배열로 만든다.
-                    book.traverse((object) => {
+                    book.traverse(object => {
                         if (object instanceof THREE.Mesh) {
                             this.meshes[object.name] = object;
                         }
@@ -75,7 +70,7 @@ export default class Book {
                     const animations = gltf.animations;
                     this.#animations = animations;
 
-                    animations.forEach((element) => {
+                    animations.forEach(element => {
                         this.#animations[element.name] = element;
                     });
 
@@ -138,11 +133,7 @@ export default class Book {
     async clickCoverFront(images) {
         this.#currentPage = 0;
         this.turnCover();
-        await this.insertImg(
-            this.meshes.Page1Front,
-            images[++this.#currentPage],
-            true
-        );
+        await this.insertImg(this.meshes.Page1Front, images[++this.#currentPage], true);
 
         this.createTtsBtnR();
     }
@@ -156,30 +147,16 @@ export default class Book {
     // if: 만들어진 책을 확인하는 상황
     async clickP1Front(images) {
         this.turnPageFirst();
-        await this.insertImg(
-            this.meshes.Page1Back,
-            images[++this.#currentPage]
-        );
-        await this.insertImg(
-            this.meshes.Page2Front,
-            images[++this.#currentPage],
-            true
-        );
+        await this.insertImg(this.meshes.Page1Back, images[++this.#currentPage]);
+        await this.insertImg(this.meshes.Page2Front, images[++this.#currentPage], true);
         this.createTtsBtnL();
         this.createTtsBtnR();
     }
 
     async clickP2Front(images) {
         this.tunPageSecond();
-        await this.insertImg(
-            this.meshes.Page2Back,
-            images[++this.#currentPage]
-        );
-        await this.insertImg(
-            this.meshes.Pages,
-            images[++this.#currentPage],
-            true
-        );
+        await this.insertImg(this.meshes.Page2Back, images[++this.#currentPage]);
+        await this.insertImg(this.meshes.Pages, images[++this.#currentPage], true);
         this.createTtsBtnL();
         this.createTtsBtnR();
     }
@@ -189,25 +166,11 @@ export default class Book {
         if (images.length < this.#currentPage + 2) {
             return;
         }
-        await this.insertImg(
-            this.meshes.Page1Back,
-            images[this.#currentPage - 1]
-        );
-        await this.insertImg(
-            this.meshes.Page2Front,
-            images[this.#currentPage],
-            true
-        );
+        await this.insertImg(this.meshes.Page1Back, images[this.#currentPage - 1]);
+        await this.insertImg(this.meshes.Page2Front, images[this.#currentPage], true);
         this.tunPageSecond();
-        await this.insertImg(
-            this.meshes.Page2Back,
-            images[++this.#currentPage]
-        );
-        await this.insertImg(
-            this.meshes.Pages,
-            images[++this.#currentPage],
-            true
-        );
+        await this.insertImg(this.meshes.Page2Back, images[++this.#currentPage]);
+        await this.insertImg(this.meshes.Pages, images[++this.#currentPage], true);
         this.createTtsBtnL();
         this.createTtsBtnR();
     }
@@ -226,15 +189,8 @@ export default class Book {
 
     // todo
     async clickP2Back(images) {
-        await this.insertImg(
-            this.meshes.Page2Back,
-            images[this.#currentPage - 1]
-        );
-        await this.insertImg(
-            this.meshes.Pages,
-            images[this.#currentPage],
-            true
-        );
+        await this.insertImg(this.meshes.Page2Back, images[this.#currentPage - 1]);
+        await this.insertImg(this.meshes.Pages, images[this.#currentPage], true);
 
         this.#currentPage -= 2;
         let clampWhenFinished = true;
@@ -285,7 +241,7 @@ export default class Book {
 
         this.removeMakeStoryLayout();
         const pageL = document.getElementById("pageL").cloneNode(true);
-        pageL.addEventListener("submit", async (e) => {
+        pageL.addEventListener("submit", async e => {
             e.preventDefault();
             pubSub.publish("getTitles");
         });
@@ -358,11 +314,9 @@ export default class Book {
 
         const globalPos = new THREE.Vector3();
         const pageL = document.getElementById("cards").cloneNode(true);
-        pageL
-            .querySelector(".next-page2")
-            .addEventListener("click", async () => {
-                pubSub.publish("makeStory");
-            });
+        pageL.querySelector(".next-page2").addEventListener("click", async () => {
+            pubSub.publish("makeStory");
+        });
 
         this.#overlayL = new CSS3DObject(pageL);
         const pagePosL = this.#book.children[7].getWorldPosition(globalPos);
@@ -496,9 +450,9 @@ export default class Book {
     }
 
     async insertImg(mesh, image, reverseLeft) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             if (image) {
-                new THREE.TextureLoader().load(image, async (texture) => {
+                new THREE.TextureLoader().load(image, async texture => {
                     // 좌우 반전
                     if (reverseLeft) {
                         texture.wrapS = THREE.RepeatWrapping;

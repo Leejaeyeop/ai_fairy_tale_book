@@ -28,10 +28,10 @@ export async function fetchTtsApi(text) {
 
     await axios
         .request(config)
-        .then((response) => {
+        .then(response => {
             res = response;
         })
-        .catch((error) => {
+        .catch(error => {
             throw error;
         });
     return res;
@@ -45,10 +45,10 @@ export async function fetchGetTitles(data, abortController) {
             responseType: "json",
             signal: abortController.signal,
         })
-        .then((response) => {
+        .then(response => {
             res = response;
         })
-        .catch((error) => {
+        .catch(error => {
             throw error;
         });
 
