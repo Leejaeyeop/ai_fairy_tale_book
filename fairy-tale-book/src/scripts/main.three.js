@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import store from "@/store/store";
 import {GLTFLoader} from "three/examples/jsm/loaders/GLTFLoader.js";
+import {DRACOLoader} from "three/examples/jsm/loaders/DRACOLoader.js";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls.js";
 import {CSS3DRenderer} from "three/examples/jsm/renderers/CSS3DRenderer.js";
 import {pubSub} from "./utils/pubsub";
@@ -44,6 +45,9 @@ export default class Main {
         const scene = new THREE.Scene();
         this.#scene = scene;
         const gltfLoader = new GLTFLoader();
+        const dracoLoader = new DRACOLoader();
+        dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+        gltfLoader.setDRACOLoader(dracoLoader);
         this.#gltfLoader = gltfLoader;
         this.abortController = new AbortController();
 
