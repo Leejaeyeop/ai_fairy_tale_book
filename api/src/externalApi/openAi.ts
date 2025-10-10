@@ -31,7 +31,7 @@ export default class OpenAi {
         console.log(content);
         try {
             const response: any = await this.openai.chat.completions.create({
-                model: "gpt-4-turbo",
+                model: "gpt-4o-mini",
                 messages: [
                     {
                         role: "user",
@@ -55,7 +55,7 @@ export default class OpenAi {
         let texts: Texts = {kor: [], eng: [], titleEng: ""};
         let content = "다음을 영어로 번역해 주세요. " + title;
         let response: any = await this.openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o-mini",
             messages: [
                 {
                     role: "user",
@@ -70,7 +70,7 @@ export default class OpenAi {
             texts.titleEng +
             `Please make a fairy tale story with the following content. Please make the story into ${this.paraCnt} paragraphs. And please do it in the form of 'Number: Contents', like 1: content~ 2: content~. `;
         response = await this.openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o-mini",
             messages: [
                 {
                     role: "user",
@@ -84,7 +84,7 @@ export default class OpenAi {
         ${text}`;
 
         response = await this.openai.chat.completions.create({
-            model: "gpt-4-turbo",
+            model: "gpt-4o-mini",
             messages: [
                 {
                     role: "user",
